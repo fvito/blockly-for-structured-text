@@ -6,10 +6,10 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- Base Blockly-->
-    <script src="lib/blockly/blockly_compressed.js"></script>
+    <script src="lib/blockly/blockly_uncompressed.js"></script>
     <script src="lib/blockly/msg/js/en-gb.js"></script>
 
-    <!-- Blocks -->
+    <!-- Blocks Definitions -->
     <script src="lib/blockly/blocks/lists.js"></script>
     <script src="lib/blockly/blocks/logic.js"></script>
     <script src="lib/blockly/blocks/loops.js"></script>
@@ -20,15 +20,33 @@
     <script src="lib/blockly/blocks/variables_dynamic.js"></script>
 
     <!-- Custom blocks -->
+    <script src="js/blocks/bit.js"></script>
+
+    <!-- Generators -->
+    <script src="js/generators/structured_text.js"></script>
+
+    <script src="js/generators/structured_text/logic.js"></script>
+    <script src="js/generators/structured_text/math.js"></script>
+    <script src="js/generators/structured_text/bit.js"></script>
+
+
+    <script src="lib/blockly/javascript_compressed.js"></script>
+
+    <!-- Editor logic -->
+    <script src="js/editor.js"></script>
 
     <!-- Language support -->
     <script src="js/generators/structured_text.js"></script>
     <title>Document</title>
 </head>
 <body>
-<div id="blocklyArea" style="width: 900px; height: 900px;"></div>
+<div>
+    <input  type="button" id="generate" value="Generate"/>
+</div>
+<div id="blocklyArea" style="width: 900px; height: 900px; display: inline-block;"></div>
+<textarea id="output" style="height: 900px; width: 300px; border: solid 1px gray;"></textarea>
 <xml id="toolbox" style="display: none">
-    <category name="%{BKY_CATLOGIC}" colour="%{BKY_LOGIC_HUE}">
+    <category name="Logic" colour="%{BKY_LOGIC_HUE}">
         <block type="controls_if"></block>
         <block type="logic_compare"></block>
         <block type="logic_operation"></block>
@@ -37,7 +55,7 @@
         <block type="logic_null"></block>
         <block type="logic_ternary"></block>
     </category>
-    <category name="%{BKY_CATLOOPS}" colour="%{BKY_LOOPS_HUE}">
+    <category name="Loops" colour="%{BKY_LOOPS_HUE}">
         <block type="controls_repeat_ext">
             <value name="TIMES">
                 <shadow type="math_number">
@@ -66,7 +84,7 @@
         <block type="controls_forEach"></block>
         <block type="controls_flow_statements"></block>
     </category>
-    <category name="%{BKY_CATMATH}" colour="%{BKY_MATH_HUE}">
+    <category name="Math" colour="%{BKY_MATH_HUE}">
         <block type="math_number">
             <field name="NUM">123</field>
         </block>
@@ -155,7 +173,7 @@
         </block>
         <block type="math_random_float"></block>
     </category>
-    <category name="%{BKY_CATTEXT}" colour="%{BKY_TEXTS_HUE}">
+    <category name="Text" colour="%{BKY_TEXTS_HUE}">
         <block type="text"></block>
         <block type="text_join"></block>
         <block type="text_append">
@@ -232,7 +250,7 @@
             </value>
         </block>
     </category>
-    <category name="%{BKY_CATLISTS}" colour="%{BKY_LISTS_HUE}">
+    <category name="List" colour="%{BKY_LISTS_HUE}">
         <block type="lists_create_with">
             <mutation items="0"></mutation>
         </block>
@@ -283,7 +301,7 @@
         </block>
         <block type="lists_sort"></block>
     </category>
-    <category name="%{BKY_CATCOLOUR}" colour="%{BKY_COLOUR_HUE}">
+    <category name="Colour" colour="%{BKY_COLOUR_HUE}">
         <block type="colour_picker"></block>
         <block type="colour_random"></block>
         <block type="colour_rgb">
@@ -321,16 +339,12 @@
             </value>
         </block>
     </category>
+    <category name="Other" colour="%{BKY_LISTS_HUE}">
+        <block type="bit_shift"></block>
+    </category>
     <sep></sep>
-    <category name="%{BKY_CATVARIABLES}" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>
-    <category name="%{BKY_CATFUNCTIONS}" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE"></category>
+    <category name="Variables" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>
+    <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE"></category>
 </xml>
 </body>
-<script type="application/javascript">
-    var workspace = Blockly.inject("blocklyArea",
-        {
-            media:"lib/blockly/media/",
-            toolbox: document.getElementById("toolbox")
-        });
-</script>
 </html>

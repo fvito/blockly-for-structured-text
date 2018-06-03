@@ -1,4 +1,5 @@
 'use strict';
+
 goog.provide('Blockly.ST');
 goog.require('Blockly.Generator');
 
@@ -53,7 +54,8 @@ Blockly.ST.finish = function (code) {
         code = Blockly.ST.prefixLines(code, Blockly.ST.INDENT);
     }
     //Replace with Structured text version
-    code = 'main() {\n'+code+'}';
+    code = 'PROGRAM\n'+code+'\nEND_PROGRAM';
+    return code;
 };
 
 Blockly.ST.scrubNakedValue = function (line) {
