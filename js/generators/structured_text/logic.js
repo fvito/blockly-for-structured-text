@@ -7,16 +7,20 @@ goog.require('Blockly.ST');
 Blockly.ST['controls_if'] = function (block) {
 
     var n = 0;
-    var code = 'IF', conditionCode, brachCode;
-    conditionCode = Blockly.ST.valueToCode(block, 'IF' + n,
-        Blockly.ST.ORDER_NONE) || 'FALSE';
-    brachCode = Blockly.ST.statementToCode(block, "DO" + n);
-    code += " " + conditionCode + " THEN\n\t" + brachCode + "\n";
+    var code = '', conditionCode, branchCode;
+    do {
+        conditionCode = Blockly.ST.valueToCode(block, 'IF' + n,
+            Blockly.ST.ORDER_NONE) || 'FALSE';
+        branchCode = Blockly.ST.statementToCode(block, 'DO' + n);
+        code += (n > 0 ? 'ELSE' : '') +
+            'IF ' + conditionCode + ' THEN\n\t' + branchCode + '\n';
 
+        ++n;
+    } while (block.getInput('IF' + n));
 
     if (block.getInput("ELSE")) {
-        console.log("Else");
-        code += "ELSE\n\t-code-\n";
+        branchCode = Blockly.ST.statementToCode(block, 'ELSE');
+        code += "ELSE\n\t" + branchCode + "\n";
     }
     return code + "END_IF";
 };
@@ -50,13 +54,16 @@ Blockly.ST['logic_boolean'] = function (block) {
 };
 
 Blockly.ST['logic_operation'] = function (block) {
-    var operator = (block.getFieldValue('OP') == 'AND') ? '&&' : '||';
+    var operator = block.getFieldValue('OP');
     var order;
-    if (operator === "&&") {
+    if (operator === "AND") {
         order = Blockly.ST.ORDER_BITWISE_AND;
-    } else if (operator === "||") {
+    } else if (operator === "OR") {
         order = Blockly.ST.ORDER_BITWISE_OR;
-    } else if (operator === "")
-        var argument0 = Blockly.Dart.valueToCode(block, 'A', order);
-    var argument1 = Blockly.Dart.valueToCode(block, 'B', order);
+    }
+    var argument0 = Blockly.ST.valueToCode(block, 'A', order);
+    var argument1 = Blockly.ST.valueToCode(block, 'B', order);
+
+    var code = argument0 + " " + operator + " " + argument1;
+    return[code, order];
 };
