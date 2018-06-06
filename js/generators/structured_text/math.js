@@ -30,6 +30,16 @@ Blockly.ST['math_arithmetic'] = function (block) {
     return [code, order];
 };
 
+Blockly.ST['math_single'] = function(block){
+    var operator = block.getFieldValue('OP');
+    var arg = Blockly.ST.valueToCode(block, 'NUM',
+        Blockly.ST.ORDER_NONE) || '0';
+    var code = operator + "("+arg+")";
+    return [code, Blockly.ST.ORDER_FUNCTION_CALL];
+};
+
+Blockly.ST['math_trig'] = Blockly.ST['math_single'];
+
 Blockly.ST['math_limit'] = function (block) {
     var valueIn = Blockly.ST.valueToCode(block, "IN", Blockly.ST.ORDER_ATOMIC);
     var valueMax = Blockly.ST.valueToCode(block, "MX", Blockly.ST.ORDER_ATOMIC);
