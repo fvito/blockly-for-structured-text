@@ -37,6 +37,8 @@ Blockly.ST.init = function (workspace) {
         Blockly.ST.variableDB_ .reset();
     }
 
+    Blockly.ST.variableDB_.setVariableMap(workspace.getVariableMap());
+
     var defvars = [];
     var defVarList = Blockly.Variables.allDeveloperVariables(workspace);
     for (var i = 0; i < defVarList.length; i++) {

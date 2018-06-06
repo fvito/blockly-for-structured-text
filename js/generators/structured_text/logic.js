@@ -60,10 +60,19 @@ Blockly.ST['logic_operation'] = function (block) {
         order = Blockly.ST.ORDER_BITWISE_AND;
     } else if (operator === "OR") {
         order = Blockly.ST.ORDER_BITWISE_OR;
+    } else if (operator === "XOR") {
+        order = Blockly.ST.ORDER_BITWISE_XOR;
     }
     var argument0 = Blockly.ST.valueToCode(block, 'A', order);
     var argument1 = Blockly.ST.valueToCode(block, 'B', order);
 
     var code = argument0 + " " + operator + " " + argument1;
     return[code, order];
+};
+
+Blockly.ST['logic_negate'] = function (block) {
+    var order = Blockly.ST.ORDER_UNARY_NEGATION;
+    var argument0 = Blockly.ST.valueToCode(block, 'BOOL', order) || 'TRUE';
+    var code = 'NOT ' + argument0;
+    return [code, order];
 };

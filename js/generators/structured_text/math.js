@@ -49,3 +49,14 @@ Blockly.ST['math_max'] = function (block) {
     var code = 'MAX(' + elements.join(', ') + ')';
     return [code, Blockly.ST.ORDER_ATOMIC];
 };
+
+
+Blockly.ST['math_change'] = function(block) {
+    // Add to a variable in place.
+    var argument0 = Blockly.ST.valueToCode(block, 'DELTA',
+        Blockly.ST.ORDER_ADDITION) || '0';
+    var varName = Blockly.ST.variableDB_.getName(
+        block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
+    return varName + ' := '+ varName + " + " + argument0 + ';\n';
+};
+
