@@ -56,7 +56,7 @@ Blockly.ST.finish = function (code) {
         code = Blockly.ST.prefixLines(code, Blockly.ST.INDENT);
     }
     //Replace with Structured text version
-    code = 'PROGRAM\n'+code+'\nEND_PROGRAM';
+    code = 'PROGRAM\n'+code+'\nEND_PROGRAM;';
     return code;
 };
 

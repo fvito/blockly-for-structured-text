@@ -76,3 +76,7 @@ Blockly.ST['logic_negate'] = function (block) {
     var code = 'NOT ' + argument0;
     return [code, order];
 };
+
+Blockly.ST['logic_switch'] = function (block) {
+    return "SWITCH";
+};
