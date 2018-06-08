@@ -145,7 +145,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             }
         ],
         "inputsInline": true,
-        "output": "Boolean",
+        "output": "BYTE",
         "colour": "%{BKY_LOGIC_HUE}",
         "helpUrl": "%{BKY_LOGIC_COMPARE_HELPURL}",
         "extensions": ["logic_compare", "logic_op_tooltip"]
@@ -172,7 +172,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "B",
-                "check": "Boolean"
+                "check": Blockly.ST.BIT_TYPE
             }
         ],
         "inputsInline": true,

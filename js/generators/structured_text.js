@@ -27,6 +27,34 @@ Blockly.ST.ORDER_EXPONENTIATION = 9; // EXPT
 Blockly.ST.ORDER_FUNCTION_CALL = 10; // Function name
 Blockly.ST.ORDER_NONE = 99; // ()
 
+/** Elementary types that language supports */
+Blockly.ST.TIME_TYPE = 'TIME';
+Blockly.ST.STRING_TYPE = 'STRING';
+
+Blockly.ST.ANY_BIT_TYPE = [
+    'BOOL', 'BYTE', 'WORD', 'DWORD'
+];
+Blockly.ST.ANY_INT_TYPE = [
+    'SINT', 'INT', 'DINT', 'USINT', 'UINT', 'UDINT'
+];
+Blockly.ST.ANY_REAL_TYPE = [
+    'REAL', 'LREAL'
+];
+
+Blockly.ST.ANY_DATE_TYPE = [
+    'DATE', 'TIME_OF_DAY', 'TOD', 'DATE_AND_TIME', 'DT'
+];
+Blockly.ST.ANY_ELEMENTARY_TYPE = [].concat(
+    Blockly.ST.ANY_BIT_TYPE,
+    Blockly.ST.ANY_INT_TYPE,
+    Blockly.ST.ANY_DATE_TYPE,
+    Blockly.ST.TIME_TYPE,
+    Blockly.ST.STRING_TYPE);
+
+Blockly.ST.ANY_NUM_TYPE = [].concat(
+    Blockly.ST.ANY_INT_TYPE,
+    Blockly.ST.ANY_REAL_TYPE);
+
 Blockly.ST.init = function (workspace) {
     Blockly.ST.definitions_ = Object.create(null);
     Blockly.ST.functionNames_ = Object.create(null);
@@ -34,7 +62,7 @@ Blockly.ST.init = function (workspace) {
     if (!Blockly.ST.variableDB_) {
         Blockly.ST.variableDB_ = new Blockly.Names(Blockly.ST.RESERVED_WORDS_);
     } else {
-        Blockly.ST.variableDB_ .reset();
+        Blockly.ST.variableDB_.reset();
     }
 
     Blockly.ST.variableDB_.setVariableMap(workspace.getVariableMap());
@@ -56,7 +84,7 @@ Blockly.ST.finish = function (code) {
         code = Blockly.ST.prefixLines(code, Blockly.ST.INDENT);
     }
     //Replace with Structured text version
-    code = 'PROGRAM\n'+code+'\nEND_PROGRAM;';
+    code = 'PROGRAM\n' + code + '\nEND_PROGRAM;';
     return code;
 };
 
