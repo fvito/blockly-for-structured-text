@@ -59,6 +59,21 @@ Blockly.ST['controls_for'] = function (block) {
     return code;
 };
 
+Blockly.ST['controls_do'] = function(block){
+    var statement = Blockly.ST.statementToCode(block, "DO");
+    var argument0 = Blockly.ST.valueToCode(block, 'TERM',
+
+            Blockly.ST.ORDER_NONE) || 'FALSE';
+    var cond = block.getFieldValue("COND");
+    var code = "REPEAT\n"+statement+"UNTIL ";
+    if(cond === "UNTIL"){
+        code += "NOT ";
+    }
+    code += argument0+"\n";
+    code +="END_REPEAT;";
+    return code;
+};
+
 Blockly.ST['controls_flow_statements'] = function (block) {
     switch (block.getFieldValue('FLOW')) {
         case 'BREAK':

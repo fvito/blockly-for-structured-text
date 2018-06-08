@@ -239,7 +239,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     },
     {
         "type": "logic_switch",
-        "message0": "Check if %1 matches with",
+        "message0": "If the following value %1",
         "args0": [
             {
                 "type": "input_value",
@@ -283,10 +283,15 @@ Blockly.defineBlocksWithJsonArray([ // Mutator blocks. Do not extract.
         "colour": "%{BKY_LOGIC_HUE}",
         "tooltip": "%{BKY_CONTROLS_IF_ELSE_TOOLTIP}"
     },
-
     {
-        "type": "controls_match_with",
-        "message0": "Matches with ",
+        "type": "controls_switch_switch",
+        "message0": "Switch",
+        "nextStatement": null,
+        "enableContextMenu": false
+    },
+    {
+        "type": "controls_switch_case",
+        "message0": "Matches with",
         "previousStatement": null,
         "nextStatement": null,
         "enableContextMenu": false,
@@ -489,7 +494,7 @@ Blockly.Constants.Logic.CONTROLS_IF_MUTATOR_MIXIN = {
 Blockly.Constants.Logic.CONTROLS_SWITCH_MUTATOR_MIXIN = {
 
     matchesCount_: 0,
-    defaultCount_:0,
+    defaultCount_: 0,
 
     /**
      * Serializes the mutation to XML
@@ -503,7 +508,7 @@ Blockly.Constants.Logic.CONTROLS_SWITCH_MUTATOR_MIXIN = {
         if (this.matchesCount_) {
             container.setAttribute("matches", this.matchesCount_);
         }
-        if(this.defaultCount_){
+        if (this.defaultCount_) {
             container.setAttribute("default", this.defaultCount_);
         }
         return container;
@@ -520,16 +525,16 @@ Blockly.Constants.Logic.CONTROLS_SWITCH_MUTATOR_MIXIN = {
     },
 
     decompose: function (workspace) {
-        var containerBlock = workspace.newBlock("controls_if_if");
+        var containerBlock = workspace.newBlock("controls_switch_switch");
         containerBlock.initSvg();
         var connection = containerBlock.nextConnection;
         for (var i = 1; i <= this.matchesCount_; i++) {
-            var caseBlock = workspace.newBlock("controls_match_with");
+            var caseBlock = workspace.newBlock("controls_switch_case");
             caseBlock.initSvg();
             connection.connect(caseBlock.previousConnection);
             connection = caseBlock.nextConnection;
         }
-        if(this.defaultCount_){
+        if (this.defaultCount_) {
             var defaultBlock = workspace.newBlock("controls_switch_default");
             defaultBlock.initSvg();
             connection.connect(defaultBlock.previousConnection);
@@ -546,7 +551,7 @@ Blockly.Constants.Logic.CONTROLS_SWITCH_MUTATOR_MIXIN = {
         var defaultConnections = null;
         while (clauseBlock) {
             switch (clauseBlock.type) {
-                case 'controls_match_with':
+                case 'controls_switch_case':
                     this.matchesCount_++;
                     valueConnections.push(clauseBlock.valueConnection_);
                     statementConnections.push(clauseBlock.statementConnection_);
@@ -567,13 +572,34 @@ Blockly.Constants.Logic.CONTROLS_SWITCH_MUTATOR_MIXIN = {
     },
 
     saveConnections: function (containerBlock) {
-
+        var causeBlock = containerBlock.nextConnection.targetBlock();
+        var i = 1;
+        while (causeBlock) {
+            switch (causeBlock.type) {
+                case "controls_switch_case":
+                    var caseInput = this.getInput("CASE" + i);
+                    var caseDo = this.getInput("DO" + i);
+                    causeBlock.valueConnection_ = caseInput && caseInput.connection.targetConnection;
+                    causeBlock.statementConnection_ = caseDo && caseDo.connection.targetConnection;
+                    i++;
+                    break;
+                case "controls_switch_default":
+                    var defaultDo = this.getInput("DEFAULT");
+                    causeBlock.statementConnection_ = defaultDo && defaultDo.connection.targetConnection;
+                    break;
+            }
+            causeBlock = causeBlock.nextConnection && causeBlock.nextConnection.targetBlock();
+        }
     },
 
     updateShape_: function () {
 
-        if(this.getInput("DEFAULT")){
+        if (this.getInput("DEFAULT")) {
             this.removeInput("DEFAULT");
+        }
+
+        if(this.getInput("SPACING")){
+            this.removeInput("SPACING");
         }
 
         var i = 1;
@@ -582,14 +608,14 @@ Blockly.Constants.Logic.CONTROLS_SWITCH_MUTATOR_MIXIN = {
             this.removeInput("DO" + i);
             i++;
         }
+        this.appendDummyInput("SPACING").appendField(" ");
         for (var i = 1; i <= this.matchesCount_; i++) {
             this.appendValueInput("CASE" + i)
-                .setCheck("Boolean")
-                .appendField("Case ");
+                .appendField("Matches with");
             this.appendStatementInput("DO" + i)
-                .appendField("Do ");
+                .appendField("Do");
         }
-        if(this.defaultCount_){
+        if (this.defaultCount_) {
             this.appendStatementInput("DEFAULT")
                 .appendField("No match");
         }
@@ -602,7 +628,7 @@ Blockly.Extensions.registerMutator('controls_if_mutator',
 
 
 Blockly.Extensions.registerMutator("controls_switch_mutator",
-    Blockly.Constants.Logic.CONTROLS_SWITCH_MUTATOR_MIXIN, null, ['controls_match_with', 'controls_switch_default']);
+    Blockly.Constants.Logic.CONTROLS_SWITCH_MUTATOR_MIXIN, null, ['controls_switch_case', 'controls_switch_default']);
 /**
  * "controls_if" extension function. Adds mutator, shape updating methods, and
  * dynamic tooltip to "controls_if" blocks.
