@@ -56,7 +56,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
                 ]
             }
         ],
-        "output": "Boolean",
+        "output": "BOOL",
         "colour": "%{BKY_LOGIC_HUE}",
         "tooltip": "%{BKY_LOGIC_BOOLEAN_TOOLTIP}",
         "helpUrl": "%{BKY_LOGIC_BOOLEAN_HELPURL}"
@@ -69,7 +69,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "IF0",
-                "check": "Boolean"
+                "check": "BOOL"
             }
         ],
         "message1": "%{BKY_CONTROLS_IF_MSG_THEN} %1",
@@ -94,7 +94,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "IF0",
-                "check": "Boolean"
+                "check": "BOOL"
             }
         ],
         "message1": "%{BKY_CONTROLS_IF_MSG_THEN} %1",
@@ -125,7 +125,8 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "args0": [
             {
                 "type": "input_value",
-                "name": "A"
+                "name": "A",
+                "check": Blockly.ST.ANY_ELEMENTARY_TYPE
             },
             {
                 "type": "field_dropdown",
@@ -141,11 +142,12 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             },
             {
                 "type": "input_value",
-                "name": "B"
+                "name": "B",
+                "check": Blockly.ST.ANY_ELEMENTARY_TYPE
             }
         ],
         "inputsInline": true,
-        "output": "BYTE",
+        "output": "BOOL",
         "colour": "%{BKY_LOGIC_HUE}",
         "helpUrl": "%{BKY_LOGIC_COMPARE_HELPURL}",
         "extensions": ["logic_compare", "logic_op_tooltip"]
@@ -158,7 +160,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "A",
-                "check": "Boolean"
+                "check": Blockly.ST.ANY_BIT_TYPE
             },
             {
                 "type": "field_dropdown",
@@ -172,11 +174,11 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "B",
-                "check": Blockly.ST.BIT_TYPE
+                "check": Blockly.ST.ANY_BIT_TYPE
             }
         ],
         "inputsInline": true,
-        "output": "Boolean",
+        "output": Blockly.ST.ANY_BIT_TYPE,
         "colour": "%{BKY_LOGIC_HUE}",
         "helpUrl": "%{BKY_LOGIC_OPERATION_HELPURL}",
         "extensions": ["logic_op_tooltip"]
@@ -189,10 +191,10 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "BOOL",
-                "check": "Boolean"
+                "check": Blockly.ST.ANY_BIT_TYPE
             }
         ],
-        "output": "Boolean",
+        "output": Blockly.ST.ANY_BIT_TYPE,
         "colour": "%{BKY_LOGIC_HUE}",
         "tooltip": "%{BKY_LOGIC_NEGATE_TOOLTIP}",
         "helpUrl": "%{BKY_LOGIC_NEGATE_HELPURL}"
@@ -243,7 +245,8 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "args0": [
             {
                 "type": "input_value",
-                "name": "IF"
+                "name": "IF",
+                "check": "BOOL"
             }
         ],
         "colour": "%{BKY_LOGIC_HUE}",

@@ -16,7 +16,7 @@ Blockly.ST['math_arithmetic'] = function (block) {
         'MULTIPLY': [' * ', Blockly.ST.ORDER_MULTIPLICATIVE],
         'DIVIDE': [' / ', Blockly.ST.ORDER_MULTIPLICATIVE],
         'POWER': [' ** ', Blockly.ST.ORDER_MULTIPLICATIVE],
-        'MOD': [' modulo ', Blockly.ST.ORDER_NONE]
+        'MOD': [' MOD ', Blockly.ST.ORDER_NONE]
     };
     var tuple = OPERATORS[block.getFieldValue('OP')];
     var operator = tuple[0];

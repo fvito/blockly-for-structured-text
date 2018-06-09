@@ -141,7 +141,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "TERM",
-                "check":"Boolean"
+                "check": "BOOL"
             }
         ],
         "previousStatement": null,

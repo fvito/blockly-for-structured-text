@@ -21,20 +21,20 @@ Blockly.defineBlocksWithJsonArray([
             {
                 "type": "input_value",
                 "name": "IN",
-                "check": "Number"
+                "check": Blockly.ST.ANY_ELEMENTARY_TYPE
             },
             {
                 "type": "input_value",
                 "name": "MX",
-                "check": "Number"
+                "check": Blockly.ST.ANY_ELEMENTARY_TYPE
             },
             {
                 "type": "input_value",
                 "name": "MN",
-                "check": "Number"
+                "check": Blockly.ST.ANY_ELEMENTARY_TYPE
             }
         ],
-        "output": null,
+        "output": Blockly.ST.ANY_ELEMENTARY_TYPE,
         "colour": 230,
         "tooltip": "Max",
         "helpUrl": ""
@@ -51,7 +51,7 @@ Blockly.Blocks['math_max'] = {
         this.setColour(Blockly.Msg.LISTS_HUE);
         this.itemCount_ = 3;
         this.updateShape_();
-        this.setOutput(true, 'Number');
+        this.setOutput(true, Blockly.ST.ANY_ELEMENTARY_TYPE);
         this.setMutator(new Blockly.Mutator(['math_max_mutator']));
         this.setTooltip("Max tooltip");
     },

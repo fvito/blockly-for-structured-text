@@ -32,6 +32,7 @@
     <script src="js/generators/structured_text/math.js"></script>
     <script src="js/generators/structured_text/bit.js"></script>
     <script src="js/generators/structured_text/variables.js"></script>
+    <script src="js/generators/structured_text/text.js"></script>
 
 
 
@@ -53,7 +54,9 @@
         <block type="logic_operation"></block>
         <block type="logic_negate"></block>
         <block type="logic_boolean"></block>
-        <block type="logic_switch"></block>
+        <block type="logic_switch">
+            <mutation matches="1" default="1"></mutation>
+        </block>
         <block type="logic_ternary"></block>
     </category>
     <category name="Loops" colour="%{BKY_LOOPS_HUE}">
@@ -346,6 +349,8 @@
     <category name="Other" colour="%{BKY_LISTS_HUE}">
         <block type="bit_shift"></block>
     </category>
+    <category name="Conversions" colour="%{BKY_COLOUR_HUE}"></category>
+    <category name="Time and Date" colour="%{BKY_COLOUR_HUE}"></category>
     <sep></sep>
     <category name="Variables" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>
     <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE"></category>

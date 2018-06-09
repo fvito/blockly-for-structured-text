@@ -40,7 +40,6 @@ Blockly.ST.ANY_INT_TYPE = [
 Blockly.ST.ANY_REAL_TYPE = [
     'REAL', 'LREAL'
 ];
-
 Blockly.ST.ANY_DATE_TYPE = [
     'DATE', 'TIME_OF_DAY', 'TOD', 'DATE_AND_TIME', 'DT'
 ];

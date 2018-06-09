@@ -40,14 +40,18 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             },
             {
                 "type": "input_value",
-                "name": "IN"
+                "name": "IN",
+                "check": Blockly.ST.ANY_BIT_TYPE
             },
             {
                 "type": "input_value",
-                "name": "BITS"
+                "name": "BITS",
+                "check": Blockly.ST.ANY_INT_TYPE
+
             }
         ],
         "inputsInline": true,
+        "output": Blockly.ST.ANY_BIT_TYPE,
         "colour": 230,
         "tooltip": "Bit shift",
         "helpUrl": ""
