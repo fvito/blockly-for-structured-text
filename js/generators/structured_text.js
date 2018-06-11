@@ -91,6 +91,15 @@ Blockly.ST.scrubNakedValue = function (line) {
     return line + ";\n";
 };
 
+Blockly.ST.quote_ = function(string) {
+    // Can't use goog.string.quote since $ must also be escaped.
+    string = string.replace(/\\/g, '\\\\')
+        .replace(/\n/g, '\\\n')
+        .replace(/\$/g, '\\$')
+        .replace(/'/g, '\\\'');
+    return '\'' + string + '\'';
+};
+
 
 
 
