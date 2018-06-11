@@ -50,7 +50,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     "args0": [{
       "type": "input_value",
       "name": "TIMES",
-      "check": "Number"
+      "check": Blockly.ST.ANY_NUM_TYPE
     }],
     "message1": "%{BKY_CONTROLS_REPEAT_INPUT_DO} %1",
     "args1": [{
@@ -102,7 +102,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
       {
         "type": "input_value",
         "name": "BOOL",
-        "check": "Boolean"
+        "check": "BOOL"
       }
     ],
     "message1": "%{BKY_CONTROLS_REPEAT_INPUT_DO} %1",
@@ -163,19 +163,19 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
       {
         "type": "input_value",
         "name": "FROM",
-        "check": "Number",
+        "check": Blockly.ST.ANY_NUM_TYPE,
         "align": "RIGHT"
       },
       {
         "type": "input_value",
         "name": "TO",
-        "check": "Number",
+        "check": Blockly.ST.ANY_NUM_TYPE,
         "align": "RIGHT"
       },
       {
         "type": "input_value",
         "name": "BY",
-        "check": "Number",
+        "check": Blockly.ST.ANY_NUM_TYPE,
         "align": "RIGHT"
       }
     ],

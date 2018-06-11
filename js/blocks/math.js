@@ -184,7 +184,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "NUMBER_TO_CHECK",
-                "check": "Number"
+                "check": Blockly.ST.ANY_NUM_TYPE
             },
             {
                 "type": "field_dropdown",
@@ -220,7 +220,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "DELTA",
-                "check": "Number"
+                "check": Blockly.ST.ANY_NUM_TYPE
             }
         ],
         "previousStatement": null,
@@ -247,7 +247,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "NUM",
-                "check": "Number"
+                "check": Blockly.ST.ANY_NUM_TYPE
             }
         ],
         "output": "Number",
@@ -297,12 +297,12 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "DIVIDEND",
-                "check": "Number"
+                "check": Blockly.ST.ANY_NUM_TYPE
             },
             {
                 "type": "input_value",
                 "name": "DIVISOR",
-                "check": "Number"
+                "check": Blockly.ST.ANY_NUM_TYPE
             }
         ],
         "inputsInline": true,
@@ -320,17 +320,17 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "VALUE",
-                "check": "Number"
+                "check": Blockly.ST.ANY_NUM_TYPE
             },
             {
                 "type": "input_value",
                 "name": "LOW",
-                "check": "Number"
+                "check": Blockly.ST.ANY_NUM_TYPE
             },
             {
                 "type": "input_value",
                 "name": "HIGH",
-                "check": "Number"
+                "check": Blockly.ST.ANY_NUM_TYPE
             }
         ],
         "inputsInline": true,
@@ -348,12 +348,12 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "FROM",
-                "check": "Number"
+                "check": Blockly.ST.ANY_NUM_TYPE
             },
             {
                 "type": "input_value",
                 "name": "TO",
-                "check": "Number"
+                "check": Blockly.ST.ANY_NUM_TYPE
             }
         ],
         "inputsInline": true,
@@ -367,7 +367,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     {
         "type": "math_random_float",
         "message0": "%{BKY_MATH_RANDOM_FLOAT_TITLE_RANDOM}",
-        "output": "Number",
+        "output": Blockly.ST.ANY_NUM_TYPE,
         "colour": "%{BKY_MATH_HUE}",
         "tooltip": "%{BKY_MATH_RANDOM_FLOAT_TOOLTIP}",
         "helpUrl": "%{BKY_MATH_RANDOM_FLOAT_HELPURL}"

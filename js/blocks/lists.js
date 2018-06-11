@@ -67,7 +67,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
       {
         "type": "input_value",
         "name": "NUM",
-        "check": "Number"
+        "check": Blockly.ST.ANY_NUM_TYPE
       }
     ],
     "output": "Array",
