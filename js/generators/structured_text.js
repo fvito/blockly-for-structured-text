@@ -30,6 +30,7 @@ Blockly.ST.ORDER_NONE = 99; // ()
 /** Elementary types that language supports */
 Blockly.ST.TIME_TYPE = 'TIME';
 Blockly.ST.STRING_TYPE = 'STRING';
+Blockly.ST.CHAR_TYPE = 'BYTE';
 
 Blockly.ST.ANY_BIT_TYPE = [
     'BOOL', 'BYTE', 'WORD', 'DWORD'

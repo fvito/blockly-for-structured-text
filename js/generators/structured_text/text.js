@@ -46,11 +46,53 @@ Blockly.ST['text_isEmpty'] = function (block) {
 };
 
 Blockly.ST['text_indexOf'] = function (block) {
-    return "find";
+    var operator = block.getFieldValue('END') == 'FIRST' ?
+        'FIND' : '';
+    var substring = Blockly.ST.valueToCode(block, 'FIND',
+        Blockly.ST.ORDER_NONE) || '\'\'';
+    var text = Blockly.ST.valueToCode(block, 'VALUE',
+        Blockly.ST.ORDER_NONE) || '\'\'';
+    var code = operator + '('+ text + "," + substring + ')';
+    return [code, Blockly.ST.ORDER_FUNCTION_CALL];
+};
+
+Blockly.ST['text_charAt'] = function(block) {
+    var where = block.getFieldValue('WHERE') || 'FROM_START';
+    var text = Blockly.ST.valueToCode(block, 'VALUE',
+        Blockly.ST.ORDER_NONE) || '\'\'';
+    switch (where){
+        case 'FROM_START':
+            var at = Blockly.ST.valueToCode(block, 'AT',
+                Blockly.ST.ORDER_NONE) || '0';
+            var code = text+'['+at+']';
+            return [code, Blockly.ST.ORDER_FUNCTION_CALL];
+            break;
+        case 'FIRST':
+            var code = text+'[0]';
+            return [code, Blockly.ST.ORDER_ATOMIC];
+            break;
+        case 'LAST':
+            var code = text+'[' + 'LEN('+ text +') - 1'+']';
+            return [code, Blockly.ST.ORDER_ATOMIC];
+            break;
+    }
+    throw 'Unhandled option (text_charAt).';
 };
 
 Blockly.ST['text_getSubstring'] = function (block) {
     return "substring";
+};
+
+Blockly.ST['text_replace'] = function(block){
+    return 'replace';
+};
+
+Blockly.ST['text_delete'] = function(block){
+    return 'delete';
+};
+
+Blockly.ST['text_insert'] = function(block){
+
 };
 
 Blockly.ST['text_changeCase'] = function (block) {

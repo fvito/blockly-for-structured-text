@@ -43,7 +43,7 @@
 </head>
 <body>
 <div>
-    <input  type="button" id="generate" value="Generate"/>
+    <input type="button" id="generate" value="Variable TEST"/>
 </div>
 <div id="blocklyArea" style="width: 900px; height: 900px; display: inline-block;"></div>
 <textarea id="output" style="height: 900px; width: 300px; border: solid 1px gray;"></textarea>
@@ -228,6 +228,20 @@
         </block>
         <block type="text_getSubstring">
             <value name="STRING">
+                <block type="variables_get">
+                    <field name="VAR">{textVariable}</field>
+                </block>
+            </value>
+        </block>
+        <block type="text_replace">
+            <value name="TEXT">
+                <block type="variables_get">
+                    <field name="VAR">{textVariable}</field>
+                </block>
+            </value>
+        </block>
+        <block type="text_delete">
+            <value name="TEXT">
                 <block type="variables_get">
                     <field name="VAR">{textVariable}</field>
                 </block>

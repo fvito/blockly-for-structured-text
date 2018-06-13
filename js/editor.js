@@ -29,4 +29,9 @@ Editor.init = function() {
 
 };
 
-window.addEventListener('load', Editor.init);
+window.addEventListener('load', () => {
+    Editor.init();
+    document.getElementById('generate').addEventListener('click',() => {
+       Editor.workspace.createVariable('TEST', Blockly.ST.STRING_TYPE);
+    });
+});

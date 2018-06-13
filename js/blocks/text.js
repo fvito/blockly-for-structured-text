@@ -208,14 +208,12 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
                 "name": "WHERE",
                 "options": [
                     ["%{BKY_TEXT_CHARAT_FROM_START}", "FROM_START"],
-                    ["%{BKY_TEXT_CHARAT_FROM_END}", "FROM_END"],
                     ["%{BKY_TEXT_CHARAT_FIRST}", "FIRST"],
-                    ["%{BKY_TEXT_CHARAT_LAST}", "LAST"],
-                    ["%{BKY_TEXT_CHARAT_RANDOM}", "RANDOM"]
+                    ["%{BKY_TEXT_CHARAT_LAST}", "LAST"]
                 ]
             }
         ],
-        "output": Blockly.ST.STRING_TYPE,
+        "output": Blockly.ST.CHAR_TYPE,
         "colour": "%{BKY_TEXTS_HUE}",
         "helpUrl": "%{BKY_TEXT_CHARAT_HELPURL}",
         "inputsInline": true,
@@ -556,6 +554,36 @@ Blockly.Blocks['text_replace'] = {
     }
 };
 
+Blockly.Blocks['text_delete'] = {
+  init: function () {
+      this.jsonInit({
+          "message0": 'Delete from %1 at %2 to %3',
+          "args0": [
+              {
+                  "type": "input_value",
+                  "name": "TEXT",
+                  "check": Blockly.ST.STRING_TYPE
+              },
+              {
+                  "type": "input_value",
+                  "name": "FROM",
+                  "check": Blockly.ST.STRING_TYPE
+              },
+              {
+                  "type": "input_value",
+                  "name": "TO",
+                  "check": Blockly.ST.STRING_TYPE
+              }
+          ],
+          "output": Blockly.ST.STRING_TYPE,
+          "inputsInline": true,
+          "colour": Blockly.Msg.TEXTS_HUE,
+          "tooltip": Blockly.Msg.TEXT_REPLACE_TOOLTIP,
+          "helpUrl": Blockly.Msg.TEXT_REPLACE_HELPURL
+      });
+  }
+};
+
 Blockly.Blocks['text_reverse'] = {
     /**
      * Block for reversing a string.
@@ -856,7 +884,7 @@ Blockly.Constants.Text.TEXT_CHARAT_MUTATOR_MIXIN = {
         this.removeInput('ORDINAL', true);
         // Create either a value 'AT' input or a dummy input.
         if (isAt) {
-            this.appendValueInput('AT').setCheck('Number');
+            this.appendValueInput('AT').setCheck(Blockly.ST.ANY_NUM_TYPE);
             if (Blockly.Msg.ORDINAL_NUMBER_SUFFIX) {
                 this.appendDummyInput('ORDINAL')
                     .appendField(Blockly.Msg.ORDINAL_NUMBER_SUFFIX);
