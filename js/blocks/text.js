@@ -293,7 +293,7 @@ Blockly.Blocks['text_getSubstring'] = {
         this.removeInput('ORDINAL' + n, true);
         // Create either a value 'AT' input or a dummy input.
         if (isAt) {
-            this.appendValueInput('AT' + n).setCheck('Number');
+            this.appendValueInput('AT' + n).setCheck(Blockly.ST.ANY_INT_TYPE);
             if (Blockly.Msg.ORDINAL_NUMBER_SUFFIX) {
                 this.appendDummyInput('ORDINAL' + n)
                     .appendField(Blockly.Msg.ORDINAL_NUMBER_SUFFIX);

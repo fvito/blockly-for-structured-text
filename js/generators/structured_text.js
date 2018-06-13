@@ -31,6 +31,7 @@ Blockly.ST.ORDER_NONE = 99; // ()
 Blockly.ST.TIME_TYPE = 'TIME';
 Blockly.ST.STRING_TYPE = 'STRING';
 Blockly.ST.CHAR_TYPE = 'BYTE';
+Blockly.ST.ARRAY_TYPE = 'ARRAY';
 
 Blockly.ST.ANY_BIT_TYPE = [
     'BOOL', 'BYTE', 'WORD', 'DWORD'
@@ -83,7 +84,6 @@ Blockly.ST.finish = function (code) {
     if (code) {
         code = Blockly.ST.prefixLines(code, Blockly.ST.INDENT);
     }
-    //Replace with Structured text version
     code = 'PROGRAM\n' + code + '\nEND_PROGRAM;';
     return code;
 };
@@ -99,6 +99,40 @@ Blockly.ST.quote_ = function(string) {
         .replace(/\$/g, '\\$')
         .replace(/'/g, '\\\'');
     return '\'' + string + '\'';
+};
+
+Blockly.Dart.scrub_ = function(block, code) {
+    var commentCode = '';
+    // Only collect comments for blocks that aren't inline.
+    if (!block.outputConnection || !block.outputConnection.targetConnection) {
+        // Collect comment for this block.
+        var comment = block.getCommentText();
+        comment = Blockly.utils.wrap(comment, Blockly.ST.COMMENT_WRAP - 3);
+        if (comment) {
+            if (block.getProcedureDef) {
+                // Use documentation comment for function comments.
+                commentCode += Blockly.ST.prefixLines(comment + '\n', '/// ');
+            } else {
+                commentCode += Blockly.ST.prefixLines(comment + '\n', '// ');
+            }
+        }
+        // Collect comments for all value arguments.
+        // Don't collect comments for nested statements.
+        for (var i = 0; i < block.inputList.length; i++) {
+            if (block.inputList[i].type == Blockly.INPUT_VALUE) {
+                var childBlock = block.inputList[i].connection.targetBlock();
+                if (childBlock) {
+                    var comment = Blockly.ST.allNestedComments(childBlock);
+                    if (comment) {
+                        commentCode += Blockly.ST.prefixLines(comment, '// ');
+                    }
+                }
+            }
+        }
+    }
+    var nextBlock = block.nextConnection && block.nextConnection.targetBlock();
+    var nextCode = Blockly.ST.blockToCode(nextBlock);
+    return commentCode + code + nextCode;
 };
 
 

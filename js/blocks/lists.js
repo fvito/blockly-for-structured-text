@@ -50,7 +50,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
   {
     "type": "lists_create_empty",
     "message0": "%{BKY_LISTS_CREATE_EMPTY_TITLE}",
-    "output": "Array",
+    "output": Blockly.ST.ARRAY_TYPE,
     "colour": "%{BKY_LISTS_HUE}",
     "tooltip": "%{BKY_LISTS_CREATE_EMPTY_TOOLTIP}",
     "helpUrl": "%{BKY_LISTS_CREATE_EMPTY_HELPURL}"
@@ -70,7 +70,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "check": Blockly.ST.ANY_NUM_TYPE
       }
     ],
-    "output": "Array",
+    "output": Blockly.ST.ARRAY_TYPE,
     "colour": "%{BKY_LISTS_HUE}",
     "tooltip": "%{BKY_LISTS_REPEAT_TOOLTIP}",
     "helpUrl": "%{BKY_LISTS_REPEAT_HELPURL}"
@@ -83,10 +83,10 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
       {
         "type": "input_value",
         "name": "LIST",
-        "check": "Array"
+        "check": Blockly.ST.ARRAY_TYPE
       }
     ],
-    "output": "Array",
+    "output": Blockly.ST.ARRAY_TYPE,
     "inputsInline": true,
     "colour": "%{BKY_LISTS_HUE}",
     "tooltip": "%{BKY_LISTS_REVERSE_TOOLTIP}",
@@ -100,10 +100,10 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
       {
         "type": "input_value",
         "name": "VALUE",
-        "check": ["String", "Array"]
+        "check": [Blockly.ST.STRING_TYPE, Blockly.ST.ARRAY_TYPE]
       }
     ],
-    "output": "Boolean",
+    "output": 'BOOL',
     "colour": "%{BKY_LISTS_HUE}",
     "tooltip": "%{BKY_LISTS_ISEMPTY_TOOLTIP}",
     "helpUrl": "%{BKY_LISTS_ISEMPTY_HELPURL}"
@@ -116,10 +116,10 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
       {
         "type": "input_value",
         "name": "VALUE",
-        "check": ["String", "Array"]
+        "check": [Blockly.ST.STRING_TYPE,Blockly.ST.ARRAY_TYPE]
       }
     ],
-    "output": "Number",
+    "output": Blockly.ST.ANY_NUM_TYPE,
     "colour": "%{BKY_LISTS_HUE}",
     "tooltip": "%{BKY_LISTS_LENGTH_TOOLTIP}",
     "helpUrl": "%{BKY_LISTS_LENGTH_HELPURL}"
@@ -136,7 +136,7 @@ Blockly.Blocks['lists_create_with'] = {
     this.setColour(Blockly.Msg.LISTS_HUE);
     this.itemCount_ = 3;
     this.updateShape_();
-    this.setOutput(true, 'Array');
+    this.setOutput(true, Blockly.ST.ARRAY_TYPE);
     this.setMutator(new Blockly.Mutator(['lists_create_with_item']));
     this.setTooltip(Blockly.Msg.LISTS_CREATE_WITH_TOOLTIP);
   },
@@ -294,9 +294,9 @@ Blockly.Blocks['lists_indexOf'] = {
         ];
     this.setHelpUrl(Blockly.Msg.LISTS_INDEX_OF_HELPURL);
     this.setColour(Blockly.Msg.LISTS_HUE);
-    this.setOutput(true, 'Number');
+    this.setOutput(true, Blockly.ST.ANY_INT_TYPE);
     this.appendValueInput('VALUE')
-        .setCheck('Array')
+        .setCheck(Blockly.ST.ARRAY_TYPE)
         .appendField(Blockly.Msg.LISTS_INDEX_OF_INPUT_IN_LIST);
     this.appendValueInput('FIND')
         .appendField(new Blockly.FieldDropdown(OPERATORS), 'END');
@@ -337,7 +337,7 @@ Blockly.Blocks['lists_getIndex'] = {
       this.sourceBlock_.updateStatement_(isStatement);
     });
     this.appendValueInput('VALUE')
-        .setCheck('Array')
+        .setCheck(Blockly.ST.ARRAY_TYPE)
         .appendField(Blockly.Msg.LISTS_GET_INDEX_INPUT_IN_LIST);
     this.appendDummyInput()
         .appendField(modeMenu, 'MODE')
@@ -468,7 +468,7 @@ Blockly.Blocks['lists_getIndex'] = {
     this.removeInput('ORDINAL', true);
     // Create either a value 'AT' input or a dummy input.
     if (isAt) {
-      this.appendValueInput('AT').setCheck('Number');
+      this.appendValueInput('AT').setCheck(Blockly.ST.ANY_INT_TYPE);
       if (Blockly.Msg.ORDINAL_NUMBER_SUFFIX) {
         this.appendDummyInput('ORDINAL')
             .appendField(Blockly.Msg.ORDINAL_NUMBER_SUFFIX);
@@ -517,7 +517,7 @@ Blockly.Blocks['lists_setIndex'] = {
     this.setHelpUrl(Blockly.Msg.LISTS_SET_INDEX_HELPURL);
     this.setColour(Blockly.Msg.LISTS_HUE);
     this.appendValueInput('LIST')
-        .setCheck('Array')
+        .setCheck(Blockly.ST.ARRAY_TYPE)
         .appendField(Blockly.Msg.LISTS_SET_INDEX_INPUT_IN_LIST);
     this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown(MODE), 'MODE')
@@ -606,7 +606,7 @@ Blockly.Blocks['lists_setIndex'] = {
     this.removeInput('ORDINAL', true);
     // Create either a value 'AT' input or a dummy input.
     if (isAt) {
-      this.appendValueInput('AT').setCheck('Number');
+      this.appendValueInput('AT').setCheck(Blockly.ST.ANY_INT_TYPE);
       if (Blockly.Msg.ORDINAL_NUMBER_SUFFIX) {
         this.appendDummyInput('ORDINAL')
             .appendField(Blockly.Msg.ORDINAL_NUMBER_SUFFIX);
@@ -665,7 +665,7 @@ Blockly.Blocks['lists_getSublist'] = {
           .appendField(Blockly.Msg.LISTS_GET_SUBLIST_TAIL);
     }
     this.setInputsInline(true);
-    this.setOutput(true, 'Array');
+    this.setOutput(true, Blockly.ST.ARRAY_TYPE);
     this.updateAt_(1, true);
     this.updateAt_(2, true);
     this.setTooltip(Blockly.Msg.LISTS_GET_SUBLIST_TOOLTIP);
@@ -709,7 +709,7 @@ Blockly.Blocks['lists_getSublist'] = {
     this.removeInput('ORDINAL' + n, true);
     // Create either a value 'AT' input or a dummy input.
     if (isAt) {
-      this.appendValueInput('AT' + n).setCheck('Number');
+      this.appendValueInput('AT' + n).setCheck(Blockly.ST.ANY_INT_TYPE);
       if (Blockly.Msg.ORDINAL_NUMBER_SUFFIX) {
         this.appendDummyInput('ORDINAL' + n)
             .appendField(Blockly.Msg.ORDINAL_NUMBER_SUFFIX);
@@ -775,10 +775,10 @@ Blockly.Blocks['lists_sort'] = {
         {
           "type": "input_value",
           "name": "LIST",
-          "check": "Array"
+          "check": Blockly.ST.ARRAY_TYPE
         }
       ],
-      "output": "Array",
+      "output": Blockly.ST.ARRAY_TYPE,
       "colour": Blockly.Msg.LISTS_HUE,
       "tooltip": Blockly.Msg.LISTS_SORT_TOOLTIP,
       "helpUrl": Blockly.Msg.LISTS_SORT_HELPURL
@@ -805,10 +805,10 @@ Blockly.Blocks['lists_split'] = {
     this.setHelpUrl(Blockly.Msg.LISTS_SPLIT_HELPURL);
     this.setColour(Blockly.Msg.LISTS_HUE);
     this.appendValueInput('INPUT')
-        .setCheck('String')
+        .setCheck(Blockly.ST.STRING_TYPE)
         .appendField(dropdown, 'MODE');
     this.appendValueInput('DELIM')
-        .setCheck('String')
+        .setCheck(Blockly.ST.STRING_TYPE)
         .appendField(Blockly.Msg.LISTS_SPLIT_WITH_DELIMITER);
     this.setInputsInline(true);
     this.setOutput(true, 'Array');
@@ -830,11 +830,11 @@ Blockly.Blocks['lists_split'] = {
    */
   updateType_: function(newMode) {
     if (newMode == 'SPLIT') {
-      this.outputConnection.setCheck('Array');
-      this.getInput('INPUT').setCheck('String');
+      this.outputConnection.setCheck(Blockly.ST.ARRAY_TYPE);
+      this.getInput('INPUT').setCheck(Blockly.ST.STRING_TYPE);
     } else {
-      this.outputConnection.setCheck('String');
-      this.getInput('INPUT').setCheck('Array');
+      this.outputConnection.setCheck(Blockly.ST.STRING_TYPE);
+      this.getInput('INPUT').setCheck(Blockly.ST.ARRAY_TYPE);
     }
   },
   /**
