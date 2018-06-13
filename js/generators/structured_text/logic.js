@@ -67,7 +67,7 @@ Blockly.ST['logic_operation'] = function (block) {
     var argument1 = Blockly.ST.valueToCode(block, 'B', order);
 
     var code = argument0 + " " + operator + " " + argument1;
-    return[code, order];
+    return [code, order];
 };
 
 Blockly.ST['logic_negate'] = function (block) {
@@ -78,5 +78,22 @@ Blockly.ST['logic_negate'] = function (block) {
 };
 
 Blockly.ST['logic_switch'] = function (block) {
-    return "SWITCH";
+    var variable = Blockly.ST.valueToCode(block, 'IF', Blockly.ST.ORDER_NONE) || 'FALSE';
+    var code = 'CASE ' + variable + ' OF\n';
+
+    var n = 1;
+    var conditionCode, branchCode;
+    do {
+        conditionCode = Blockly.ST.valueToCode(block, 'CASE' + n,
+            Blockly.ST.ORDER_NONE) || 'FALSE';
+        branchCode = Blockly.ST.statementToCode(block, 'DO' + n);
+        code += conditionCode + ':\n\t' + branchCode + "\n";
+        n++;
+    } while (block.getInput('CASE' + n));
+    if(block.getInput('DEFAULT')){
+        branchCode = Blockly.ST.statementToCode(block, 'DEFAULT');
+        code += 'ELSE\n\t'+branchCode+"\n";
+    }
+    code += "END_CASE;";
+    return code;
 };
