@@ -84,7 +84,7 @@ Blockly.ST.finish = function (code) {
     if (code) {
         code = Blockly.ST.prefixLines(code, Blockly.ST.INDENT);
     }
-    code = 'PROGRAM\n' + code + '\nEND_PROGRAM;';
+    //code = 'PROGRAM\n' + code + '\nEND_PROGRAM;';
     return code;
 };
 
@@ -92,7 +92,7 @@ Blockly.ST.scrubNakedValue = function (line) {
     return line + ";\n";
 };
 
-Blockly.ST.quote_ = function(string) {
+Blockly.ST.quote_ = function (string) {
     // Can't use goog.string.quote since $ must also be escaped.
     string = string.replace(/\\/g, '\\\\')
         .replace(/\n/g, '\\\n')
@@ -101,7 +101,7 @@ Blockly.ST.quote_ = function(string) {
     return '\'' + string + '\'';
 };
 
-Blockly.Dart.scrub_ = function(block, code) {
+Blockly.ST.scrub_ = function (block, code) {
     var commentCode = '';
     // Only collect comments for blocks that aren't inline.
     if (!block.outputConnection || !block.outputConnection.targetConnection) {
@@ -132,7 +132,7 @@ Blockly.Dart.scrub_ = function(block, code) {
     }
     var nextBlock = block.nextConnection && block.nextConnection.targetBlock();
     var nextCode = Blockly.ST.blockToCode(nextBlock);
-    return commentCode + code + nextCode;
+    return commentCode + code + '\n' + nextCode;
 };
 
 

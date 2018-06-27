@@ -29,6 +29,20 @@ goog.provide('Blockly.Blocks.procedures');
 goog.require('Blockly.Blocks');
 goog.require('Blockly');
 
+Blockly.Blocks['procedures_program'] = {
+  init: function () {
+      this.appendDummyInput()
+          .appendField("Program name")
+          .appendField(new Blockly.FieldTextInput("PLC_PROG"),"NAME");
+      this.appendStatementInput('STATEMENTS')
+          .setCheck(null);
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(230);
+      this.setTooltip("Program entry point");
+      this.setHelpUrl("");
+  },
+};
 
 Blockly.Blocks['procedures_defnoreturn'] = {
   /**
