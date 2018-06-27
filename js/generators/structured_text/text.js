@@ -1,4 +1,4 @@
-'use string';
+'use strict';
 
 goog.provide('Blockly.ST.text');
 

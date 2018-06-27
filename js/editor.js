@@ -25,13 +25,17 @@ Editor.init = function() {
     Editor.workspace.addChangeListener(() => {
         var code = Blockly.ST.workspaceToCode(Editor.workspace);
         document.getElementById('output').value = code;
-    })
+    });
+
+    //Editor.workspace.addTopBlock(Editor.workspace.newBlock('procedures_program'));
 
 };
 
 window.addEventListener('load', () => {
     Editor.init();
     document.getElementById('generate').addEventListener('click',() => {
-       Editor.workspace.createVariable('TEST', Blockly.ST.STRING_TYPE);
+        Editor.workspace.createVariable('TEST', Blockly.ST.STRING_TYPE);
+        //var code = Blockly.ST.workspaceToCode(Editor.workspace);
+        //document.getElementById('output').value = code;
     });
 });

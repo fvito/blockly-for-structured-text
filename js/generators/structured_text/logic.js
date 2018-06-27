@@ -25,9 +25,7 @@ Blockly.ST['controls_if'] = function (block) {
     return code + "END_IF";
 };
 
-Blockly.ST['controls_ifelse'] = function (block) {
-    return "ELSE IF\n";
-};
+Blockly.ST['controls_ifelse'] = Blockly.ST['controls_if'];
 
 Blockly.ST['logic_compare'] = function (block) {
     var OPERATORS = {
