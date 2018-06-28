@@ -84,7 +84,7 @@ Blockly.ST.finish = function (code) {
     if (code) {
         code = Blockly.ST.prefixLines(code, Blockly.ST.INDENT);
     }
-    //code = 'PROGRAM\n' + code + '\nEND_PROGRAM;';
+    code = 'PROGRAM\n' + code + '\nEND_PROGRAM;';
     return code;
 };
 
@@ -119,7 +119,7 @@ Blockly.ST.scrub_ = function (block, code) {
         // Collect comments for all value arguments.
         // Don't collect comments for nested statements.
         for (var i = 0; i < block.inputList.length; i++) {
-            if (block.inputList[i].type == Blockly.INPUT_VALUE) {
+            if (block.inputList[i].type === Blockly.INPUT_VALUE) {
                 var childBlock = block.inputList[i].connection.targetBlock();
                 if (childBlock) {
                     var comment = Blockly.ST.allNestedComments(childBlock);
@@ -132,7 +132,7 @@ Blockly.ST.scrub_ = function (block, code) {
     }
     var nextBlock = block.nextConnection && block.nextConnection.targetBlock();
     var nextCode = Blockly.ST.blockToCode(nextBlock);
-    return commentCode + code + '\n' + nextCode;
+    return commentCode + code + nextCode;
 };
 
 

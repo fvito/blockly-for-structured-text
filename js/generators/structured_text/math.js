@@ -40,10 +40,10 @@ Blockly.ST['math_single'] = function(block){
 
 Blockly.ST['math_trig'] = Blockly.ST['math_single'];
 
-Blockly.ST['math_limit'] = function (block) {
-    var valueIn = Blockly.ST.valueToCode(block, "IN", Blockly.ST.ORDER_ATOMIC);
-    var valueMax = Blockly.ST.valueToCode(block, "MX", Blockly.ST.ORDER_ATOMIC);
-    var valueMin = Blockly.ST.valueToCode(block, "MN", Blockly.ST.ORDER_ATOMIC);
+Blockly.ST['math_constrain'] = function (block) {
+    var valueIn = Blockly.ST.valueToCode(block, "VALUE", Blockly.ST.ORDER_ATOMIC);
+    var valueMax = Blockly.ST.valueToCode(block, "HIGH", Blockly.ST.ORDER_ATOMIC);
+    var valueMin = Blockly.ST.valueToCode(block, "LOW", Blockly.ST.ORDER_ATOMIC);
 
     var code = "LIMIT(IN:="+valueIn+",MN:="+valueMin+",MX:="+valueMax+")";
     return [code, Blockly.ST.ORDER_NONE];
@@ -69,4 +69,56 @@ Blockly.ST['math_change'] = function(block) {
         block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
     return varName + ' := '+ varName + " + " + argument0 + ';\n';
 };
+
+Blockly.ST['math_constant'] = function (block) {
+    var CONSTANTS = {
+        'PI':           '3.1415926535',
+        'E':            '2.7182818284',
+        'GOLDEN_RATIO':'1.6180339887',
+        'SQRT2':        '1.4142135623',
+        'SQRT1_2':      '0.7071067811'
+    };
+    var selected = block.getFieldValue('CONSTANT');
+    return [CONSTANTS[selected], Blockly.ST.ORDER_ATOMIC];
+};
+
+Blockly.ST['math_number_property'] = function (block) {
+  var number_to_check = Blockly.ST.valueToCode(block, 'NUMBER_TO_CHECK', Blockly.ST.ORDER_MULTIPLICATIVE) || '0';
+  var property = block.getFieldValue('PROPERTY');
+  var code;
+  switch (property){
+      case 'EVEN':
+          code = number_to_check + ' MOD 2 = 0';
+          break;
+      case 'ODD':
+          code = number_to_check + ' MOD 2 = 1';
+          break;
+      case 'WHOLE':
+          code = number_to_check + ' MOd 1 = 0';
+          break;
+      case 'POSITIVE':
+          code = number_to_check + ' > 0';
+          break;
+      case 'NEGATIVE':
+          code = number_to_check + ' < 0';
+          break;
+      case 'DIVISIBLE_BY':
+          var divisor = Blockly.ST.valueToCode(block, 'DIVISOR', Blockly.ST.ORDER_MULTIPLICATIVE);
+          if(!divisor || divisor === '0'){
+              return ['error', Blockly.ST.ORDER_ATOMIC];
+          }
+          code = number_to_check + ' % ' + divisor + ' = 0';
+          break;
+  }
+  return [code, Blockly.ST.ORDER_NONE];
+};
+
+Blockly.ST['math_modulo'] = function (block) {
+  var dividend = Blockly.ST.valueToCode(block, 'DIVIDEND', Blockly.ST.ORDER_ATOMIC) || '0';
+  var divisor = Blockly.ST.valueToCode(block, 'DIVISOR', Blockly.ST.ORDER_ATOMIC) || '0';
+
+  var code = dividend + ' MOD ' + divisor;
+  return [code, Blockly.ST.ORDER_NONE];
+};
+
 

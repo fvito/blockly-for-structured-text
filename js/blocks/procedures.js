@@ -33,7 +33,7 @@ Blockly.Blocks['procedures_program'] = {
   init: function () {
       this.appendDummyInput()
           .appendField("Program name")
-          .appendField(new Blockly.FieldTextInput("PLC_PROG"),"NAME");
+          .appendField(new Blockly.FieldTextInput("PLC_PROG"), "NAME");
       this.appendStatementInput('STATEMENTS')
           .setCheck(null);
       this.setPreviousStatement(true, null);

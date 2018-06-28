@@ -164,8 +164,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
                     ["e", "E"],
                     ["\u03c6", "GOLDEN_RATIO"],
                     ["sqrt(2)", "SQRT2"],
-                    ["sqrt(\u00bd)", "SQRT1_2"],
-                    ["\u221e", "INFINITY"]
+                    ["sqrt(\u00bd)", "SQRT1_2"]
                 ]
             }
         ],
@@ -201,7 +200,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             }
         ],
         "inputsInline": true,
-        "output": "Boolean",
+        "output": "BOOL",
         "colour": "%{BKY_MATH_HUE}",
         "tooltip": "%{BKY_MATH_IS_TOOLTIP}",
         "mutator": "math_is_divisibleby_mutator"
@@ -297,16 +296,16 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "DIVIDEND",
-                "check": Blockly.ST.ANY_NUM_TYPE
+                "check": Blockly.ST.ANY_INT_TYPE
             },
             {
                 "type": "input_value",
                 "name": "DIVISOR",
-                "check": Blockly.ST.ANY_NUM_TYPE
+                "check": Blockly.ST.ANY_INT_TYPE
             }
         ],
         "inputsInline": true,
-        "output": "Number",
+        "output": Blockly.ST.ANY_INT_TYPE,
         "colour": "%{BKY_MATH_HUE}",
         "tooltip": "%{BKY_MATH_MODULO_TOOLTIP}",
         "helpUrl": "%{BKY_MATH_MODULO_HELPURL}"
