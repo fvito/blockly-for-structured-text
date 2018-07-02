@@ -95,3 +95,13 @@ Blockly.ST['logic_switch'] = function (block) {
     code += "END_CASE;";
     return code;
 };
+
+Blockly.ST['logic_ternary'] = function (block) {
+    var condition = Blockly.ST.valueToCode(block, 'IF', Blockly.ST.ORDER_NONE) || 'FALSE';
+    var branchTrue = Blockly.ST.valueToCode(block, 'THEN', Blockly.ST.ORDER_NONE);
+    var branchFalse = Blockly.ST.valueToCode(block, 'ELSE', Blockly.ST.ORDER_NONE);
+
+    var code = 'SEL(G:'+condition+", IN0:"+branchFalse+" ,IN1:"+branchTrue+')';
+    return [code, Blockly.ST.ORDER_FUNCTION_CALL];
+
+};

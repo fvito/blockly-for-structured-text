@@ -23,11 +23,10 @@
     <script src="js/blocks/text.js"></script>
     <script src="js/blocks/variables.js"></script>
     <script src="js/blocks/variables_dynamic.js"></script>
-
-    <!-- Generator -->
+    <script src="js/blocks/conversions.js"></script>
     <script src="js/blocks/bit.js"></script>
-    <script src="js/blocks/math_ext.js"></script>
 
+    <!-- Generators -->
     <script src="js/generators/structured_text/logic.js"></script>
     <script src="js/generators/structured_text/loops.js"></script>
     <script src="js/generators/structured_text/math.js"></script>
@@ -129,14 +128,6 @@
                 </shadow>
             </value>
         </block>
-        <block type="math_round">
-            <value name="NUM">
-                <shadow type="math_number">
-                    <field name="NUM">3.1</field>
-                </shadow>
-            </value>
-        </block>
-        <block type="math_on_list"></block>
         <block type="math_modulo">
             <value name="DIVIDEND">
                 <shadow type="math_number">
@@ -166,21 +157,12 @@
                 </shadow>
             </value>
         </block>
-        <block type="math_random_int">
-            <value name="FROM">
-                <shadow type="math_number">
-                    <field name="NUM">1</field>
-                </shadow>
-            </value>
-            <value name="TO">
-                <shadow type="math_number">
-                    <field name="NUM">100</field>
-                </shadow>
-            </value>
+        <block type="math_max">
+            <mutation inputs="2"></mutation>
         </block>
-        <block type="math_random_float"></block>
-        <block type="math_limit"></block>
-        <block type="math_max"></block>
+        <block type="math_min">
+            <mutation inputs="2"></mutation>
+        </block>
     </category>
     <category name="Text" colour="%{BKY_TEXTS_HUE}">
         <block type="text"></block>
@@ -372,7 +354,10 @@
         <block type="procedures_program"></block>
         <block type="variable_declare"></block>
     </category>
-    <category name="Conversions" colour="%{BKY_COLOUR_HUE}"></category>
+    <category name="Conversions" colour="%{BKY_COLOUR_HUE}">
+        <block type="conversion_general"></block>
+        <block type="conversion_trunc"></block>
+    </category>
     <category name="Time and Date" colour="%{BKY_COLOUR_HUE}"></category>
     <sep></sep>
     <category name="Variables" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>

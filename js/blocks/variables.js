@@ -29,6 +29,9 @@
  */
 'use strict';
 
+goog.provide('Blockly.Blocks.variables');  // Deprecated.
+goog.provide('Blockly.Constants.Variables');
+
 goog.require('Blockly.Blocks');
 goog.require('Blockly');
 
@@ -37,30 +40,49 @@ goog.require('Blockly');
  * Unused constant for the common HSV hue for all blocks in this category.
  * @deprecated Use Blockly.Msg.VARIABLES_HUE. (2018 April 5)
  */
-//Blockly.Constants.Variables.HUE = 330;
+Blockly.Constants.Variables.HUE = 330;
 
-Blockly.Blocks['variable_declare'] = {
-  init: function () {
-      var TYPE =
-          [
-              ['int', 'int'],
-              ['uint', 'unsigned int'],
-              ['float', 'float'],
-              ['double', 'double'],
-              ['char', 'char']];
-    this.setColour(330);
-    var name = Blockly.Procedures.findLegalName(Blockly.Msg.VARIABLES_DEFAULT_NAME, this);
-    this.interpolateMsg(
-        '%1 variable, name %2, type %3',
-        ['TYPES', new Blockly.FieldDropdown(TYPE, null)],
-        ['VAR', new Blockly.FieldTextInput(name, Blockly.Procedures.rename)],
-        ['VALUE', null, Blockly.ALIGN_RIGHT],
-        Blockly.ALIGN_RIGHT
-    );
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
+Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
+  // Block for variable getter.
+  {
+    "type": "variables_get",
+    "message0": "%1",
+    "args0": [
+      {
+        "type": "field_variable",
+        "name": "VAR",
+        "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
+      }
+    ],
+    "output": null,
+    "colour": "%{BKY_VARIABLES_HUE}",
+    "helpUrl": "%{BKY_VARIABLES_GET_HELPURL}",
+    "tooltip": "%{BKY_VARIABLES_GET_TOOLTIP}",
+    "extensions": ["contextMenu_variableSetterGetter"]
   },
-};
+  // Block for variable setter.
+  {
+    "type": "variables_set",
+    "message0": "%{BKY_VARIABLES_SET}",
+    "args0": [
+      {
+        "type": "field_variable",
+        "name": "VAR",
+        "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
+      },
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "%{BKY_VARIABLES_HUE}",
+    "tooltip": "%{BKY_VARIABLES_SET_TOOLTIP}",
+    "helpUrl": "%{BKY_VARIABLES_SET_HELPURL}",
+    "extensions": ["contextMenu_variableSetterGetter"]
+  }
+]);  // END JSON EXTRACT (Do not delete this comment.)
 
 /**
  * Mixin to add context menu items to create getter/setter blocks for this

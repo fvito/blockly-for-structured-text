@@ -370,6 +370,22 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "colour": "%{BKY_MATH_HUE}",
         "tooltip": "%{BKY_MATH_RANDOM_FLOAT_TOOLTIP}",
         "helpUrl": "%{BKY_MATH_RANDOM_FLOAT_HELPURL}"
+    },
+    {
+        "type": "math_max",
+        "message0": "Max of",
+        "output": Blockly.ST.ANY_NUM_TYPE,
+        "mutator": "math_multiple_inputs_mutator",
+        "tooltip": "Tool tip",
+        "helpUrl": "Help url"
+    },
+    {
+        "type": "math_min",
+        "message0": "Min of",
+        "output": Blockly.ST.ANY_NUM_TYPE,
+        "mutator": "math_multiple_inputs_mutator",
+        "tooltip": "Tool tip",
+        "helpUrl": "Help url"
     }
 ]);  // END JSON EXTRACT (Do not delete this comment.)
 
@@ -420,6 +436,98 @@ Blockly.Extensions.register('math_op_tooltip',
     Blockly.Extensions.buildTooltipForDropdown(
         'OP', Blockly.Constants.Math.TOOLTIPS_BY_OP));
 
+Blockly.defineBlocksWithJsonArray([
+    {
+        "type":"math_inputs_container",
+        "message0":"Inputs",
+        "nextStatement":null,
+        "enableContextMenu":false
+    },
+    {
+        "type":"math_single_input",
+        "message0":"Input",
+        "previousStatement":null,
+        "nextStatement":null,
+        "enableContextMenu":false
+    }
+]);
+Blockly.Constants.Math.MULTIPLE_INPUTS_MUTATOR_MIXIN = {
+    inputsCount_: 0,
+
+    mutationToDom: function () {
+        if(!this.inputsCount_){
+            return null;
+        }
+        var container = document.createElement('mutation');
+        if(this.inputsCount_){
+            container.setAttribute('inputs', this.inputsCount_);
+        }
+        return container;
+    },
+
+    domToMutation: function (xmlElement) {
+        this.inputsCount_ = parseInt(xmlElement.getAttribute('inputs', 10)) || 0;
+        this.updateShape_();
+    },
+
+    decompose: function (workspace) {
+        var containerBlock = workspace.newBlock('math_inputs_container');
+        containerBlock.initSvg();
+        var connection = containerBlock.nextConnection;
+        for(var i = 1; i <= this.inputsCount_; i++){
+            var inputBlock = workspace.newBlock('math_single_input');
+            inputBlock.initSvg();
+            connection.connect(inputBlock.previousConnection);
+            connection = inputBlock.nextConnection;
+        }
+        return containerBlock;
+    },
+
+    compose: function (containerBlock) {
+        var inputBlock = containerBlock.nextConnection.targetBlock();
+        this.inputsCount_ = 0;
+        var inputConnections = [null];
+        while (inputBlock){
+            this.inputsCount_++;
+            inputConnections.push(inputBlock.valueConnection_);
+            inputBlock = inputBlock.nextConnection && inputBlock.nextConnection.targetBlock();
+        }
+        this.updateShape_();
+        for(var i = 1; i<= this.inputsCount_; i++){
+            Blockly.Mutator.reconnect(inputConnections[i], this, 'IN'+i);
+        }
+    },
+
+    saveConnections: function (containerBlock) {
+        var inputBlock = containerBlock.nextConnection.targetBlock();
+        var i = 1;
+        while (inputBlock){
+            var valueInput = this.getInput('IN'+i);
+            inputBlock.valueConnection_ = valueInput && valueInput.connection.targetConnection;
+            i++;
+            inputBlock = inputBlock.nextConnection && inputBlock.nextConnection.targetBlock();
+        }
+    },
+
+    updateShape_: function () {
+        var i = 1;
+        while (this.getInput('IN'+i)){
+            this.removeInput('IN'+i);
+            i++;
+        }
+        for(var i = 1; i <= this.inputsCount_; i++){
+            this.appendValueInput('IN'+i)
+                .appendField('Input '+i)
+                .setCheck(Blockly.ST.ANY_ELEMENTARY_TYPE)
+        }
+    }
+};
+
+Blockly.Extensions.registerMutator('math_multiple_inputs_mutator',
+    Blockly.Constants.Math.MULTIPLE_INPUTS_MUTATOR_MIXIN,
+    null,
+    ['math_single_input']
+);
 
 /**
  * Mixin for mutator functions in the 'math_is_divisibleby_mutator'

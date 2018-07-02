@@ -216,7 +216,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
             {
                 "type": "input_value",
                 "name": "IF",
-                "check": "Boolean"
+                "check": "BOOL"
             }
         ],
         "message1": "%{BKY_LOGIC_TERNARY_IF_TRUE} %1",
