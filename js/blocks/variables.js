@@ -43,45 +43,7 @@ goog.require('Blockly');
 Blockly.Constants.Variables.HUE = 330;
 
 Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
-    // Block for variable getter.
-    {
-        "type": "variables_get",
-        "message0": "%1",
-        "args0": [
-            {
-                "type": "field_variable",
-                "name": "VAR",
-                "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
-            }
-        ],
-        "output": null,
-        "colour": "%{BKY_VARIABLES_HUE}",
-        "helpUrl": "%{BKY_VARIABLES_GET_HELPURL}",
-        "tooltip": "%{BKY_VARIABLES_GET_TOOLTIP}",
-        "extensions": ["contextMenu_variableSetterGetter"]
-    },
     // Block for variable setter.
-    {
-        "type": "variables_set",
-        "message0": "%{BKY_VARIABLES_SET}",
-        "args0": [
-            {
-                "type": "field_variable",
-                "name": "VAR",
-                "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
-            },
-            {
-                "type": "input_value",
-                "name": "VALUE"
-            }
-        ],
-        "previousStatement": null,
-        "nextStatement": null,
-        "colour": "%{BKY_VARIABLES_HUE}",
-        "tooltip": "%{BKY_VARIABLES_SET_TOOLTIP}",
-        "helpUrl": "%{BKY_VARIABLES_SET_HELPURL}",
-        "extensions": ["contextMenu_variableSetterGetter"]
-    },
     {
         "type": "variables_local",
         "message0": "Local variables %1 %2",
@@ -122,11 +84,11 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
 
 /** Declare a new variable block **/
 Blockly.Blocks['variables_declare'] = {
-    init: function() {
+    init: function () {
         var TYPES = [
-          ['INT','INT'],
-          ['REAL','REAL'],
-          ['BOOL','BOOL']
+            ['INT', 'INT'],
+            ['REAL', 'REAL'],
+            ['BOOL', 'BOOL']
         ];
         var name = Blockly.Procedures.findLegalName("myVariable", this);
         this.appendDummyInput()
@@ -151,12 +113,47 @@ Blockly.Blocks['variables_declare'] = {
 
     onchange: function () {
         var type = this.getFieldValue('TYPE');
-        if(type === false) {
+        if (type === false) {
             type = 'INT';
         }
         this.getInput('VALUE').setCheck(type);
     },
 
+};
+Blockly.Blocks['variables_get'] = {
+    init: function () {
+        this.appendDummyInput()
+            .appendField(new Blockly.FieldVariable("item"), "VAR");
+        this.setOutput(true);
+        this.setColour(330);
+        this.setTooltip("Returns the value of this variable.");
+        this.setHelpUrl("https://github.com/google/blockly/wiki/Variables#get");
+    },
+
+    onchange: function () {
+        var variable = this.getField('VAR').variable_;
+        this.setOutput(true, variable.type);
+    }
+};
+
+Blockly.Blocks['variables_set'] = {
+    init: function () {
+        this.appendValueInput("VALUE")
+            .setCheck(null)
+            .appendField("set")
+            .appendField(new Blockly.FieldVariable("item"), "VAR")
+            .appendField("to");
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+        this.setColour(330);
+        this.setTooltip("Sets this variable to be equal to the input.");
+        this.setHelpUrl("https://github.com/google/blockly/wiki/Variables#set");
+    },
+
+    onchange: function () {
+        var variable = this.getField('VAR').variable_;
+        this.getInput('VALUE').setCheck(variable.type);
+    },
 };
 
 /**
