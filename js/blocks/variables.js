@@ -43,46 +43,121 @@ goog.require('Blockly');
 Blockly.Constants.Variables.HUE = 330;
 
 Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
-  // Block for variable getter.
-  {
-    "type": "variables_get",
-    "message0": "%1",
-    "args0": [
-      {
-        "type": "field_variable",
-        "name": "VAR",
-        "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
-      }
-    ],
-    "output": null,
-    "colour": "%{BKY_VARIABLES_HUE}",
-    "helpUrl": "%{BKY_VARIABLES_GET_HELPURL}",
-    "tooltip": "%{BKY_VARIABLES_GET_TOOLTIP}",
-    "extensions": ["contextMenu_variableSetterGetter"]
-  },
-  // Block for variable setter.
-  {
-    "type": "variables_set",
-    "message0": "%{BKY_VARIABLES_SET}",
-    "args0": [
-      {
-        "type": "field_variable",
-        "name": "VAR",
-        "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
-      },
-      {
-        "type": "input_value",
-        "name": "VALUE"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": "%{BKY_VARIABLES_HUE}",
-    "tooltip": "%{BKY_VARIABLES_SET_TOOLTIP}",
-    "helpUrl": "%{BKY_VARIABLES_SET_HELPURL}",
-    "extensions": ["contextMenu_variableSetterGetter"]
-  }
+    // Block for variable getter.
+    {
+        "type": "variables_get",
+        "message0": "%1",
+        "args0": [
+            {
+                "type": "field_variable",
+                "name": "VAR",
+                "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
+            }
+        ],
+        "output": null,
+        "colour": "%{BKY_VARIABLES_HUE}",
+        "helpUrl": "%{BKY_VARIABLES_GET_HELPURL}",
+        "tooltip": "%{BKY_VARIABLES_GET_TOOLTIP}",
+        "extensions": ["contextMenu_variableSetterGetter"]
+    },
+    // Block for variable setter.
+    {
+        "type": "variables_set",
+        "message0": "%{BKY_VARIABLES_SET}",
+        "args0": [
+            {
+                "type": "field_variable",
+                "name": "VAR",
+                "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
+            },
+            {
+                "type": "input_value",
+                "name": "VALUE"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "%{BKY_VARIABLES_HUE}",
+        "tooltip": "%{BKY_VARIABLES_SET_TOOLTIP}",
+        "helpUrl": "%{BKY_VARIABLES_SET_HELPURL}",
+        "extensions": ["contextMenu_variableSetterGetter"]
+    },
+    {
+        "type": "variables_local",
+        "message0": "Local variables %1 %2",
+        "args0": [
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "VARIABLES",
+                "check": null
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 230,
+        "tooltip": "",
+        "helpUrl": ""
+    },
+    {
+        "type": "variables_global",
+        "message0": "Global variables %1 %2",
+        "args0": [
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "VARIABLES",
+                "check": null
+            }
+        ],
+        "colour": 230,
+        "tooltip": "",
+        "helpUrl": ""
+    },
 ]);  // END JSON EXTRACT (Do not delete this comment.)
+
+/** Declare a new variable block **/
+Blockly.Blocks['variables_declare'] = {
+    init: function() {
+        var TYPES = [
+          ['INT','INT'],
+          ['REAL','REAL'],
+          ['BOOL','BOOL']
+        ];
+        var name = Blockly.Procedures.findLegalName("myVariable", this);
+        this.appendDummyInput()
+            .appendField("new");
+        this.appendDummyInput()
+            .appendField(new Blockly.FieldDropdown(TYPES), "TYPE");
+        this.appendDummyInput()
+            .appendField("variable");
+        this.appendDummyInput()
+            .appendField(new Blockly.FieldTextInput(name), "NAME");
+        this.appendDummyInput()
+            .appendField("init with");
+        this.appendValueInput("VALUE")
+            .setCheck(null);
+        this.setInputsInline(true);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(230);
+        this.setTooltip("");
+        this.setHelpUrl("");
+    },
+
+    onchange: function () {
+        var type = this.getFieldValue('TYPE');
+        if(type === false) {
+            type = 'INT';
+        }
+        this.getInput('VALUE').setCheck(type);
+    },
+
+};
 
 /**
  * Mixin to add context menu items to create getter/setter blocks for this
@@ -94,34 +169,34 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
  * @readonly
  */
 Blockly.Constants.Variables.CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN = {
-  /**
-   * Add menu option to create getter/setter block for this setter/getter.
-   * @param {!Array} options List of menu options to add to.
-   * @this Blockly.Block
-   */
-  customContextMenu: function(options) {
-    if (this.isInFlyout){
-      return;
-    }
-    // Getter blocks have the option to create a setter block, and vice versa.
-    if (this.type == 'variables_get') {
-      var opposite_type = 'variables_set';
-      var contextMenuMsg = Blockly.Msg.VARIABLES_GET_CREATE_SET;
-    } else {
-      var opposite_type = 'variables_get';
-      var contextMenuMsg = Blockly.Msg.VARIABLES_SET_CREATE_GET;
-    }
+    /**
+     * Add menu option to create getter/setter block for this setter/getter.
+     * @param {!Array} options List of menu options to add to.
+     * @this Blockly.Block
+     */
+    customContextMenu: function (options) {
+        if (this.isInFlyout) {
+            return;
+        }
+        // Getter blocks have the option to create a setter block, and vice versa.
+        if (this.type == 'variables_get') {
+            var opposite_type = 'variables_set';
+            var contextMenuMsg = Blockly.Msg.VARIABLES_GET_CREATE_SET;
+        } else {
+            var opposite_type = 'variables_get';
+            var contextMenuMsg = Blockly.Msg.VARIABLES_SET_CREATE_GET;
+        }
 
-    var option = {enabled: this.workspace.remainingCapacity() > 0};
-    var name = this.getField('VAR').getText();
-    option.text = contextMenuMsg.replace('%1', name);
-    var xmlField = goog.dom.createDom('field', null, name);
-    xmlField.setAttribute('name', 'VAR');
-    var xmlBlock = goog.dom.createDom('block', null, xmlField);
-    xmlBlock.setAttribute('type', opposite_type);
-    option.callback = Blockly.ContextMenu.callbackFactory(this, xmlBlock);
-    options.push(option);
-  }
+        var option = {enabled: this.workspace.remainingCapacity() > 0};
+        var name = this.getField('VAR').getText();
+        option.text = contextMenuMsg.replace('%1', name);
+        var xmlField = goog.dom.createDom('field', null, name);
+        xmlField.setAttribute('name', 'VAR');
+        var xmlBlock = goog.dom.createDom('block', null, xmlField);
+        xmlBlock.setAttribute('type', opposite_type);
+        option.callback = Blockly.ContextMenu.callbackFactory(this, xmlBlock);
+        options.push(option);
+    }
 };
 
 Blockly.Extensions.registerMixin('contextMenu_variableSetterGetter',

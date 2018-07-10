@@ -36,8 +36,6 @@ Blockly.Blocks['procedures_program'] = {
           .appendField(new Blockly.FieldTextInput("PLC_PROG"), "NAME");
       this.appendStatementInput('STATEMENTS')
           .setCheck(null);
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
       this.setColour(230);
       this.setTooltip("Program entry point");
       this.setHelpUrl("");

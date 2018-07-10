@@ -80,11 +80,61 @@ Blockly.ST.init = function (workspace) {
     }
 };
 
+Blockly.ST.workspaceToCode = function (workspace) {
+    if (!workspace) {
+        // Backwards compatibility from before there could be multiple workspaces.
+        console.warn('No workspace specified in workspaceToCode call.  Guessing.');
+        workspace = Blockly.getMainWorkspace();
+    }
+    var code = [];
+    this.init(workspace);
+    var blocks = workspace.getTopBlocks(true);
+    for (var x = 0, block; block = blocks[x]; x++) {
+        var line = this.blockToCode(block);
+        if (goog.isArray(line)) {
+            // Value blocks return tuples of code and operator order.
+            // Top-level blocks don't care about operator order.
+            line = line[0];
+        }
+        if (line) {
+            if (block.outputConnection) {
+                // This block is a naked value.  Ask the language's code generator if
+                // it wants to append a semicolon, or something.
+                line = this.scrubNakedValue(line);
+            }
+            code.push(line);
+        }
+    }
+    code = code.join('\n');  // Blank line between each section.
+    code = this.finish(code);
+    // Final scrubbing of whitespace.
+    code = code.replace(/^\s+\n/, '');
+    code = code.replace(/\n\s+$/, '\n');
+    code = code.replace(/[ \t]+\n/g, '\n');
+    return code;
+};
+
 Blockly.ST.finish = function (code) {
     if (code) {
         code = Blockly.ST.prefixLines(code, Blockly.ST.INDENT);
     }
+    // Clean up temporary data.
+    delete Blockly.ST.definitions_;
+    delete Blockly.ST.functionNames_;
+    //Blockly.getMainWorkspace().getVariableMap().clear();
     code = 'PROGRAM\n' + code + '\nEND_PROGRAM;';
+
+    var variables = Blockly.getMainWorkspace().getAllVariables();
+    if(variables.length > 0) {
+        var variablesCode = 'VAR\n\t';
+        for (var i = 0; i < variables.length; i++) {
+            variablesCode+= variables[i].name + ":" + variables[i].type+";\n";
+        }
+        variablesCode+="\nEND_VAR;\n";
+
+        code = variablesCode + code;
+    }
+
     return code;
 };
 

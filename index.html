@@ -5,6 +5,13 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
     <!-- Base Blockly-->
     <script src="lib/blockly/blockly_uncompressed.js"></script>
     <script src="lib/blockly/msg/js/en-gb.js"></script>
@@ -43,11 +50,73 @@
     <title>Document</title>
 </head>
 <body>
-<div>
-    <input type="button" id="generate" value="Variable TEST"/>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Blockly PLC</a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarProject" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Project
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">New</a>
+                    <a class="dropdown-item" href="#">Save</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="Editor.newVariable()" href="#">New variable</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarExport" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Export
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">As .st</a>
+                    <a class="dropdown-item" href="#">As PLCOpen XML</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div id="blocklyArea" style="width: 900px; height: 900px; display: inline-block;"></div>
+    <textarea id="output" style="height: 900px; width: 300px; border: solid 1px gray;"></textarea>
 </div>
-<div id="blocklyArea" style="width: 900px; height: 900px; display: inline-block;"></div>
-<textarea id="output" style="height: 900px; width: 300px; border: solid 1px gray;"></textarea>
+<!-- modals -->
+<div class="modal" tabindex="-1" role="dialog" id="variableDialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New variable</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newVariableForm">
+                    <div class="form-group">
+                        <label for="variableName">Name</label>
+                        <input name="name" required type="email" class="form-control" id="variableName" placeholder="Enter variable name">
+                    </div>
+                    <div class="form-group">
+                        <label for="variableType">Type</label>
+                        <select name="type" required class="form-control" id="variableType">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="variableInitValue">Initial value</label>
+                        <input name="value" type="email" class="form-control" id="variableInitValue" placeholder="Enter initial value or leave blank">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="Editor.createNewVariable()">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- toolbox -->
 <xml id="toolbox" style="display: none">
     <category name="Logic" colour="%{BKY_LOGIC_HUE}">
         <block type="controls_if"></block>
@@ -352,7 +421,8 @@
     <category name="Other" colour="%{BKY_LISTS_HUE}">
         <block type="bit_shift"></block>
         <block type="procedures_program"></block>
-        <block type="variable_declare"></block>
+        <block type="variables_local"></block>
+        <block type="variables_global"></block>
     </category>
     <category name="Conversions" colour="%{BKY_COLOUR_HUE}">
         <block type="conversion_general"></block>
@@ -360,7 +430,10 @@
     </category>
     <category name="Time and Date" colour="%{BKY_COLOUR_HUE}"></category>
     <sep></sep>
-    <category name="Variables" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>
+    <category name="Variables" colour="%{BKY_VARIABLES_HUE}">
+        <block type="variables_set"></block>
+        <block type="variables_get"></block>
+    </category>
     <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE"></category>
 </xml>
 </body>
