@@ -81,13 +81,15 @@ Editor.newVariable = () => {
 };
 
 Editor.createNewVariable = () => {
-    var values = $('#newVariableForm').serializeArray();
+    var form = $('#newVariableForm');
+    var values = form.serializeArray();
     Editor.createNewVariable_(values[0].value, values[1].value, values[2].value);
+    form[0].reset();
     $('#variableDialog').modal('hide');
 };
 
 Editor.createNewVariable_ = (name, type, opt_value) => {
-    Editor.workspace.createVariable(name, type);
+    Editor.workspace.createVariable(name, type, opt_value);
 };
 
 window.addEventListener('load', () => {

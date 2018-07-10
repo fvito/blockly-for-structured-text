@@ -125,16 +125,19 @@ Blockly.ST.finish = function (code) {
     code = 'PROGRAM\n' + code + '\nEND_PROGRAM;';
 
     var variables = Blockly.getMainWorkspace().getAllVariables();
-    if(variables.length > 0) {
-        var variablesCode = 'VAR\n\t';
-        for (var i = 0; i < variables.length; i++) {
-            variablesCode+= variables[i].name + ":" + variables[i].type+";\n";
-        }
-        variablesCode+="\nEND_VAR;\n";
+    if (variables.length > 0) {
+        var variablesCode = [];
+        variables.forEach((e) => {
+            var variable = e.name + " : " + e.type;
+            if (e.initValue !== '') {
+                variable += " := " + e.initValue;
+            }
+            variable += ";";
+            variablesCode.push(variable);
+        });
 
-        code = variablesCode + code;
+        code = "VAR\n\t"+variablesCode.join("\n\t")+"\nEND_VAR;\n"+code;
     }
-
     return code;
 };
 
