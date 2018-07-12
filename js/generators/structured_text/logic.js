@@ -12,7 +12,7 @@ Blockly.ST['controls_if'] = function (block) {
         conditionCode = Blockly.ST.valueToCode(block, 'IF' + n,
             Blockly.ST.ORDER_NONE) || 'FALSE';
         branchCode = Blockly.ST.statementToCode(block, 'DO' + n);
-        code += (n > 0 ? 'ELSE' : '') +
+        code += (n > 0 ? 'ELS' : '') +
             'IF ' + conditionCode + ' THEN\n\t' + branchCode + '\n';
 
         ++n;
@@ -22,14 +22,14 @@ Blockly.ST['controls_if'] = function (block) {
         branchCode = Blockly.ST.statementToCode(block, 'ELSE');
         code += "ELSE\n\t" + branchCode + "\n";
     }
-    return code + "END_IF";
+    return code + "END_IF;\n";
 };
 
 Blockly.ST['controls_ifelse'] = Blockly.ST['controls_if'];
 
 Blockly.ST['logic_compare'] = function (block) {
     var OPERATORS = {
-        'EQ': '==',
+        'EQ': '=',
         'NEQ': '!=',
         'LT': '<',
         'LTE': '<=',
@@ -92,7 +92,7 @@ Blockly.ST['logic_switch'] = function (block) {
         branchCode = Blockly.ST.statementToCode(block, 'DEFAULT');
         code += 'ELSE\n\t'+branchCode+"\n";
     }
-    code += "END_CASE;";
+    code += "END_CASE;\n";
     return code;
 };
 

@@ -122,7 +122,7 @@ Blockly.ST.finish = function (code) {
     delete Blockly.ST.definitions_;
     delete Blockly.ST.functionNames_;
     //Blockly.getMainWorkspace().getVariableMap().clear();
-    code = 'PROGRAM\n' + code + '\nEND_PROGRAM;';
+    code = 'PROGRAM MAIN_PRG\n' + code + '\nEND_PROGRAM;';
 
     var variables = Blockly.getMainWorkspace().getAllVariables();
     if (variables.length > 0) {
