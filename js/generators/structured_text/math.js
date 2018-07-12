@@ -133,5 +133,15 @@ Blockly.ST['math_modulo'] = function (block) {
     var code = dividend + ' MOD ' + divisor;
     return [code, Blockly.ST.ORDER_NONE];
 };
-
+Blockly.ST['math_mux'] = function (block) {
+    var input = Blockly.ST.valueToCode(block, "INPUT", Blockly.ST.ORDER_NONE);
+    var elements = [];
+    var i = 1;
+    while (block.getInput('IN'+i)){
+        elements.push(Blockly.ST.valueToCode(block, 'IN'+i, Blockly.ST.ORDER_NONE));
+        i++;
+    }
+    var code = 'MUX(K:'+ input + ", " + elements.join(', ') + ')';
+    return [code, Blockly.ST.ORDER_ATOMIC];
+};
 

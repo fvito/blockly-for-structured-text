@@ -29,8 +29,8 @@ Blockly.defineBlocksWithJsonArray([
                 "check": Blockly.ST.ANY_BIT_TYPE
             },
             {
-                "type":"field_dropdown",
-                "name":"TYPE",
+                "type": "field_dropdown",
+                "name": "TYPE",
                 "options": Blockly.ST.MAPPED_INT_TYPES
             }
         ],
@@ -92,7 +92,6 @@ Blockly.Blocks["conversion_general"] = {
     onchange: function () {
         var inputType = this.getFieldValue("IN_TYPE");
         var outputType = this.getFieldValue("OUT_TYPE");
-        console.log(inputType, outputType);
 
         if (inputType === outputType) {
             this.setWarningText("Input and output types are the same");

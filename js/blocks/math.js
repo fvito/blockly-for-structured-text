@@ -386,6 +386,21 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "mutator": "math_multiple_inputs_mutator",
         "tooltip": "Tool tip",
         "helpUrl": "Help url"
+    },
+    {
+        "type":"math_mux",
+        "message0":"Mux of %1",
+        "args0":[
+            {
+                "type":"input_value",
+                "name":"INPUT",
+                "check":Blockly.ST.ANY_INT_TYPE
+            }
+        ],
+        "output":Blockly.ST.ANY_ELEMENTARY_TYPE,
+        "mutator":"math_multiple_inputs_mutator",
+        "tooltip":"Tool tip",
+        "helpUrl":"Help url"
     }
 ]);  // END JSON EXTRACT (Do not delete this comment.)
 
