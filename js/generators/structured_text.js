@@ -126,8 +126,11 @@ Blockly.ST.finish = function (code) {
     delete Blockly.ST.definitions_;
     delete Blockly.ST.functionNames_;
     //Blockly.getMainWorkspace().getVariableMap().clear();
-    code = 'PROGRAM MAIN_PRG\n' + code + '\nEND_PROGRAM;';
+    return code;
+};
 
+Blockly.ST.fullOutput = function(workspace){
+    var code = this.workspaceToCode(workspace);
     var variables = Blockly.getMainWorkspace().getAllVariables();
     if (variables.length > 0) {
         var variablesCode = [];
@@ -139,9 +142,9 @@ Blockly.ST.finish = function (code) {
             variable += ";";
             variablesCode.push(variable);
         });
-
         code = "VAR\n\t"+variablesCode.join("\n\t")+"\nEND_VAR;\n"+code;
     }
+    code = 'PROGRAM MAIN_PRG\n' + code + '\nEND_PROGRAM';
     return code;
 };
 

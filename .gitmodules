@@ -1,3 +1,6 @@
 [submodule "lib/closure-library"]
 	path = lib/closure-library
 	url = https://github.com/google/closure-library.git
+[submodule "lib/XMLWriter"]
+	path = lib/XMLWriter
+	url = https://github.com/flesler/XMLWriter.git

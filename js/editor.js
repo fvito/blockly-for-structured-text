@@ -46,7 +46,7 @@ Editor.blocklyInit = () => {
             this.blockCreated(event);
         }
         */
-        var code = Blockly.ST.workspaceToCode(Editor.workspace);
+        var code = Blockly.ST.fullOutput(Editor.workspace);
         document.getElementById('output').value = code;
     });
 };
@@ -90,6 +90,10 @@ Editor.createNewVariable = () => {
 
 Editor.createNewVariable_ = (name, type, opt_value) => {
     Editor.workspace.createVariable(name, type, opt_value);
+};
+
+Editor.exportAsXml = function(){
+  XMLExporter.export(this.workspace);
 };
 
 window.addEventListener('load', () => {
