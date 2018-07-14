@@ -56,8 +56,8 @@ Blockly.ST.ANY_NUM_TYPE = [].concat(
     Blockly.ST.ANY_INT_TYPE,
     Blockly.ST.ANY_REAL_TYPE);
 
-Blockly.ST.MAPPED_TYPES = Blockly.ST.ANY_ELEMENTARY_TYPE.map(x => [x,x]);
-Blockly.ST.MAPPED_INT_TYPES = Blockly.ST.ANY_INT_TYPE.map(x => [x,x]);
+Blockly.ST.MAPPED_TYPES = Blockly.ST.ANY_ELEMENTARY_TYPE.map(x => [x, x]);
+Blockly.ST.MAPPED_INT_TYPES = Blockly.ST.ANY_INT_TYPE.map(x => [x, x]);
 
 
 Blockly.ST.init = function (workspace) {
@@ -129,7 +129,7 @@ Blockly.ST.finish = function (code) {
     return code;
 };
 
-Blockly.ST.fullOutput = function(workspace){
+Blockly.ST.fullOutput = function (workspace) {
     var code = this.workspaceToCode(workspace);
     var variables = Blockly.getMainWorkspace().getAllVariables();
     if (variables.length > 0) {
@@ -142,10 +142,24 @@ Blockly.ST.fullOutput = function(workspace){
             variable += ";";
             variablesCode.push(variable);
         });
-        code = "VAR\n\t"+variablesCode.join("\n\t")+"\nEND_VAR;\n"+code;
+        code = "VAR\n\t" + variablesCode.join("\n\t") + "\nEND_VAR;\n" + code;
     }
     code = 'PROGRAM MAIN_PRG\n' + code + '\nEND_PROGRAM';
+
+    code += this.generateConfiguration();
+
     return code;
+};
+
+Blockly.ST.generateConfiguration = function () {
+  var config = "\nCONFIGURATION Config0\n" +
+      "\tRESOURCE Res0 ON PLC\n" +
+      "\t\tTASK TaskMain(INTERVAL := T#50ms, PRIORITY := 0);\n" +
+      "\t\tPROGRAM Inst0 WITH TaskMain : MAIN_PRG;\n" +
+      "\tEND_RESOURCE\n" +
+      "END_CONFIGURATION";
+
+  return config;
 };
 
 Blockly.ST.scrubNakedValue = function (line) {

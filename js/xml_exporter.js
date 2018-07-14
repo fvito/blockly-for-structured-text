@@ -5,8 +5,9 @@ var XMLExporter = {};
 XMLExporter.writer = {};
 
 XMLExporter.export = function (workspace) {
+    //Header
     this.writer = new XMLWriter('UTF-8', '1.0');
-    this.writer.writeStartDocument(false);
+    this.writer.writeStartDocument();
     this.writer.writeStartElement("project");
 
     this.writer.writeAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
@@ -14,21 +15,37 @@ XMLExporter.export = function (workspace) {
     this.writer.writeAttributeString("xmlns:xhtml", "http://www.w3.org/1999/xhtml");
     this.writer.writeAttributeString("xsi:schemaLocation", "http://www.plcopen.org/xml/tc6.xsd");
 
+    //File Header
     this.writeFileHeader();
+    //End File Header
+    //Content Header
     this.writeContentHeader();
+    //End Content Header
 
+    //Start Types Element
     this.writer.writeStartElement("types");
+    //Start dataTypes Element
     this.writer.writeStartElement("dataTypes");
+    //End dataTypes Element
     this.writer.writeEndElement();
 
+    //Start POUS Element
     this.writer.writeStartElement("pous");
     this.writeProgram(workspace);
+    //End POUS Element
+    this.writer.writeEndElement();
+    //End Types Element
+    this.writer.writeEndElement();
     this.writer.writeEndElement();
 
+    //Instances Element
+    this.writeGenericInstance_();
+    //End Instances Element
+
+    //End Project Element
     this.writer.writeEndElement();
-
-    console.log(this.writer.flush());
-
+    this.writer.writeEndDocument();
+    return this.writer.flush();
 };
 
 XMLExporter.writeFileHeader = function () {
@@ -89,21 +106,36 @@ XMLExporter.writeVariables = function (variables) {
     this.writer.writeStartElement("localVars");
 
     variables.forEach((variable) => {
+        //Begin Variable Element
         this.writeElementWithAttributes_("variable", {name: variable.name});
         this.writer.writeStartElement("type");
-        this.writer.writeXML("<" + variable.type + "/>");
+        //TODO Handle String optinal Length attribute
+        this.writeClosedElement_(variable.type);
         this.writer.writeEndElement();
         if (variable.initValue !== '') {
             this.writer.writeStartElement("initialValue");
             this.writeElementWithAttributes_("simpleValue", {value: variable.initValue}, true);
             this.writer.writeEndElement();
         }
-        this.writer.writeEndElement();
+        //End Variable Element
         this.writer.writeEndElement();
     });
 
+    //End LocalVars Element
     this.writer.writeEndElement();
+    //End interface Element
     this.writer.writeEndElement();
+};
+
+XMLExporter.writeGenericInstance_ = function () {
+    this.writer.writeStartElement("instances")
+        .writeStartElement("configurations").writeAttributeString("name", "config0")
+        .writeStartElement("resource").writeAttributeString("name", "Res0");
+    this.writeElementWithAttributes_("task", {name: "TaskMain", interval: "T#50ms", priority: "0"});
+    this.writeElementWithAttributes_("pouInstance", {name: "Inst0", typeName: "MAIN_PRG"}, true);
+    this.writer.writeEndElement()
+        .writeEndElement()
+        .writeEndElement();
 };
 
 XMLExporter.writeElementWithAttributes_ = function (element, attrs, close = false) {
@@ -114,4 +146,13 @@ XMLExporter.writeElementWithAttributes_ = function (element, attrs, close = fals
     if (close) {
         this.writer.writeEndElement();
     }
+};
+
+XMLExporter.writeClosedElement_ = function (name, attrs) {
+    var string = "<" + name + " ";
+    for (var key in attrs) {
+        string += key + "=" + '"' + attrs[key] + '" ';
+    }
+    string += "/>";
+    this.writer.writeXML(string);
 };

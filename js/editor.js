@@ -13,7 +13,7 @@ Editor.init = function () {
     $('#variableDialog').on('show.bs.modal', () => {
         $('#variableType').empty();
         $.each(Blockly.ST.ANY_ELEMENTARY_TYPE, (i, p) => {
-           $('#variableType').append($('<option></option>').val(p).html(p));
+            $('#variableType').append($('<option></option>').val(p).html(p));
         });
     });
 
@@ -92,15 +92,51 @@ Editor.createNewVariable_ = (name, type, opt_value) => {
     Editor.workspace.createVariable(name, type, opt_value);
 };
 
-Editor.exportAsXml = function(){
-  XMLExporter.export(this.workspace);
+Editor.exportAsXml = function () {
+    var xml = XMLExporter.export(this.workspace);
+    var blob = new Blob([xml], {type: "application/xml"});
+    saveAs(blob, "output.xml");
+};
+
+Editor.exportAsSt = function () {
+    var code = Blockly.ST.fullOutput(Editor.workspace);
+    var blob = new Blob([code], {type:"text/plain"});
+    saveAs(blob, "project.st");
+};
+
+
+Editor.saveProject = function () {
+    var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
+    xml = Blockly.Xml.domToText(xml);
+    var blob = new Blob([xml], {type:"application/xml"});
+    saveAs(blob, "project.xml");
+};
+
+Editor.loadProject = function () {
+    console.log("load project?");
+    var openFileDialog = $("#openFile");
+    openFileDialog.on("change", (e)=> {
+        var fr = new FileReader();
+        fr.addEventListener('load', function (e) {
+            console.log("file reader loaded");
+            if (confirm('Are you sure you want to overwrite your current work?')) {
+                Blockly.mainWorkspace.clear();	// clear workspace
+
+                var xml = Blockly.Xml.textToDom(e.target.result);
+                Blockly.Xml.domToWorkspace(xml, Editor.workspace);	// fill workspace
+            }
+        });
+        console.log(e.target.files);
+        fr.readAsText(e.target.files[0]);
+    });
+    openFileDialog.trigger("click");
 };
 
 window.addEventListener('load', () => {
     Editor.init();
     //document.getElementById('generate').addEventListener('click', () => {
-        //Editor.workspace.createVariable('TEST', Blockly.ST.STRING_TYPE);
-        var code = Blockly.JavaScript.workspaceToCode(Editor.workspace);
+    //Editor.workspace.createVariable('TEST', Blockly.ST.STRING_TYPE);
+    var code = Blockly.JavaScript.workspaceToCode(Editor.workspace);
     //    document.getElementById('output').value = code;
     //});
 });

@@ -14,6 +14,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <script src="lib/XMLWriter/XMLWriter.js"></script>
     <script src="lib/moment/moment.min.js"></script>
+    <script src="lib/FileSaver/FileSaver.min.js"></script>
 
     <!-- Base Blockly-->
     <script src="lib/blockly/blockly_uncompressed.js"></script>
@@ -54,7 +55,7 @@
 
     <title>Document</title>
 </head>
-<body>
+<input type="file" style="display: none;" id="openFile"/>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">Blockly PLC</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -65,9 +66,17 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="#">New</a>
-                    <a class="dropdown-item" href="#">Save</a>
-                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#" onclick="Editor.loadProject()">Load</a>
+                    <a class="dropdown-item" href="#" onclick="Editor.saveProject()">Save</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarEdit" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Edit
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" onclick="Editor.newVariable()" href="#">New variable</a>
+                    <a class="dropdown-item" href="#">Settings</a>
                 </div>
             </li>
             <li class="nav-item dropdown">
@@ -75,7 +84,7 @@
                     Export
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">As .st</a>
+                    <a class="dropdown-item" href="#" onclick="Editor.exportAsSt()">As .st</a>
                     <a class="dropdown-item" href="#" onclick="Editor.exportAsXml()">As PLCOpen XML</a>
                 </div>
             </li>
