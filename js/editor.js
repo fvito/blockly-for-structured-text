@@ -46,8 +46,8 @@ Editor.blocklyInit = () => {
             this.blockCreated(event);
         }
         */
-        var code = Blockly.ST.fullOutput(Editor.workspace);
-        document.getElementById('output').value = code;
+        //var code = Blockly.ST.fullOutput(Editor.workspace);
+        //document.getElementById('output').value = code;
     });
 };
 
@@ -83,13 +83,13 @@ Editor.newVariable = () => {
 Editor.createNewVariable = () => {
     var form = $('#newVariableForm');
     var values = form.serializeArray();
-    Editor.createNewVariable_(values[0].value, values[1].value, values[2].value);
+    Editor.createNewVariable_(values[0].value, values[1].value, values[2].value, values[3].value);
     form[0].reset();
     $('#variableDialog').modal('hide');
 };
 
-Editor.createNewVariable_ = (name, type, opt_value) => {
-    Editor.workspace.createVariable(name, type, opt_value);
+Editor.createNewVariable_ = (name, type, opt_value, opt_address) => {
+    Editor.workspace.createVariable(name, type, opt_value, opt_address);
 };
 
 Editor.exportAsXml = function () {
@@ -130,6 +130,12 @@ Editor.loadProject = function () {
         fr.readAsText(e.target.files[0]);
     });
     openFileDialog.trigger("click");
+};
+
+Editor.devGenerateXml = function(){
+    var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
+    xml = Blockly.Xml.domToPrettyText(xml);
+    document.getElementById('output').value = xml;
 };
 
 window.addEventListener('load', () => {

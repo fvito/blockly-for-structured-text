@@ -135,7 +135,11 @@ Blockly.ST.fullOutput = function (workspace) {
     if (variables.length > 0) {
         var variablesCode = [];
         variables.forEach((e) => {
-            var variable = e.name + " : " + e.type;
+            var variable = e.name;
+            if(e.address !== ''){
+                variable+=" AT "+e.address;
+            }
+            variable+=" : "+e.type;
             if (e.initValue !== '') {
                 variable += " := " + e.initValue;
             }
