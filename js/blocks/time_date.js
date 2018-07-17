@@ -5,17 +5,6 @@ goog.require('Blockly');
 
 Blockly.defineBlocksWithJsonArray([
     {
-        "type": "time_test",
-        "message0": "Test %1",
-        "args0": [
-            {
-                "type": "field_date",
-                "name": "FIELDNAME",
-                "date": "2020-02-20"
-            }
-        ]
-    },
-    {
         "type": "time_value",
         "message0": "%1 unit %2",
         "args0": [

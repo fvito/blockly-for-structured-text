@@ -376,6 +376,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "message0": "Max of",
         "output": Blockly.ST.ANY_NUM_TYPE,
         "mutator": "math_multiple_inputs_mutator",
+        "colour":"%{BKY_MATH_HUE}",
         "tooltip": "Tool tip",
         "helpUrl": "Help url"
     },
@@ -384,6 +385,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "message0": "Min of",
         "output": Blockly.ST.ANY_NUM_TYPE,
         "mutator": "math_multiple_inputs_mutator",
+        "colour":"%{BKY_MATH_HUE}",
         "tooltip": "Tool tip",
         "helpUrl": "Help url"
     },
@@ -399,6 +401,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         ],
         "output":Blockly.ST.ANY_ELEMENTARY_TYPE,
         "mutator":"math_multiple_inputs_mutator",
+        "colour":"%{BKY_MATH_HUE}",
         "tooltip":"Tool tip",
         "helpUrl":"Help url"
     }
