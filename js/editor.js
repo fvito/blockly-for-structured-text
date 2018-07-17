@@ -46,8 +46,8 @@ Editor.blocklyInit = () => {
             this.blockCreated(event);
         }
         */
-        //var code = Blockly.ST.fullOutput(Editor.workspace);
-        //document.getElementById('output').value = code;
+        var code = Blockly.ST.fullOutput(Editor.workspace);
+        document.getElementById('output').value = code;
     });
 };
 

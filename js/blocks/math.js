@@ -584,7 +584,7 @@ Blockly.Constants.Math.IS_DIVISIBLEBY_MUTATOR_MIXIN = {
         if (divisorInput) {
             if (!inputExists) {
                 this.appendValueInput('DIVISOR')
-                    .setCheck('Number');
+                    .setCheck(Blockly.ST.ANY_NUM_TYPE);
             }
         } else if (inputExists) {
             this.removeInput('DIVISOR');

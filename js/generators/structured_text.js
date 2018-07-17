@@ -29,6 +29,8 @@ Blockly.ST.ORDER_NONE = 99; // ()
 
 /** Elementary types that language supports */
 Blockly.ST.TIME_TYPE = 'TIME';
+Blockly.ST.TIME_OF_DAY_TYPE = 'TIME_OF_DAY';
+Blockly.ST.BOOLEAN_TYPE = 'BOOL';
 Blockly.ST.STRING_TYPE = 'STRING';
 Blockly.ST.CHAR_TYPE = 'BYTE';
 Blockly.ST.ARRAY_TYPE = 'ARRAY';
