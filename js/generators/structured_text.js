@@ -133,7 +133,7 @@ Blockly.ST.finish = function (code) {
 
 Blockly.ST.fullOutput = function (workspace) {
     var code = this.workspaceToCode(workspace);
-    var variables = Blockly.getMainWorkspace().getAllVariables();
+    var variables = Blockly.Variables.allUsedVarModels(Blockly.mainWorkspace);
     if (variables.length > 0) {
         var variablesCode = [];
         variables.forEach((e) => {
