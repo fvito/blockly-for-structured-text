@@ -3,7 +3,17 @@
 goog.require('Blockly.Blocks');
 goog.require('Blockly');
 
-Blockly.Blocks['function_block_get'] = {};
+Blockly.Blocks['function_block_get'] = {
+    init: function () {
+        this.appendDummyInput('function_block')
+            .appendField('', 'NAME')
+            .appendField('get member')
+            .appendField(new Blockly.FieldFunctionBlockMember())
+    },
+};
+
+Blockly.Blocks['function_block_set'] = {};
+
 // TIMERS
 Blockly.Blocks['function_block_ton'] = {
     init: function () {
@@ -196,6 +206,10 @@ Blockly.Blocks['function_block_sr'] = {
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
+    },
+
+    getName: function(){
+      return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
@@ -509,6 +523,7 @@ Blockly.Blocks['function_block_rtc'] = {
         ];
     }
 };
+
 //TRIGGER
 Blockly.Blocks['function_block_f_trig'] = {
     init: function () {
@@ -554,7 +569,6 @@ Blockly.Blocks['function_block_f_trig'] = {
         ];
     }
 };
-
 Blockly.Blocks['function_block_r_trig'] = {
     init: function () {
         this.jsonInit({
