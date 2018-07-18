@@ -431,18 +431,22 @@
         <block type="time_of_day_value"></block>
         <block type="date_and_time_value"></block>
     </category>
-    <category name="Function Blocks">
-        <block type="function_block_ton"></block>
-        <block type="function_block_tof"></block>
-        <block type="function_block_tp"></block>
-        <block type="function_block_sr"></block>
-        <block type="function_block_rs"></block>
+    <category name="Function Blocks" colour="%{BKY_COLOUR_HUE}">
+        <category name="Bistable">
+            <block type="function_block_sr"></block>
+            <block type="function_block_rs"></block>
+        </category>
+        <category name="Timer">
+            <block type="function_block_ton"></block>
+            <block type="function_block_tof"></block>
+            <block type="function_block_tp"></block>
+        </category>
+        <category name="Counter"></category>
+        <category name="Trigger"></category>
+        <category name="Misc"></category>
     </category>
     <sep></sep>
-    <category name="Variables" colour="%{BKY_VARIABLES_HUE}">
-        <block type="variables_set"></block>
-        <block type="variables_get"></block>
-    </category>
+    <category name="Variables" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>
     <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE"></category>
 </xml>
 </body>

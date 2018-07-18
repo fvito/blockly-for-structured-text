@@ -120,7 +120,7 @@ Blockly.Blocks['function_block_tp'] = {
                 {
                     "type": "field_input",
                     "name": "NAME",
-                    "text": "tof0"
+                    "text": "tp0"
                 },
                 {
                     "type": "input_dummy"
