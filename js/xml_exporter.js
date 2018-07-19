@@ -109,7 +109,7 @@ XMLExporter.writeVariables = function (variables) {
         //Begin Variable Element
         this.writeElementWithAttributes_("variable", {name: variable.name});
         this.writer.writeStartElement("type");
-        //TODO Handle String optinal Length attribute
+        //TODO Handle String optional Length attribute
         this.writeClosedElement_(variable.type);
         this.writer.writeEndElement();
         if (variable.initValue !== '') {
