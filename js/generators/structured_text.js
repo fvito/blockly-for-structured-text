@@ -133,25 +133,43 @@ Blockly.ST.finish = function (code) {
     return code;
 };
 
-Blockly.ST.fullOutput = function (workspace) {
-    var code = this.workspaceToCode(workspace);
+Blockly.ST.variablesToCode = function (workspace) {
     var variables = Blockly.Variables.allUsedVarModels(Blockly.mainWorkspace);
+    var variablesCode = [];
     if (variables.length > 0) {
-        var variablesCode = [];
         variables.forEach((e) => {
             var variable = e.name;
-            if(e.address !== ''){
-                variable+=" AT "+e.address;
+            if (e.address !== '') {
+                variable += " AT " + e.address;
             }
-            variable+=" : "+e.type;
+            variable += " : " + e.type;
             if (e.initValue !== '') {
                 variable += " := " + e.initValue;
             }
             variable += ";";
             variablesCode.push(variable);
         });
-        code = "VAR\n\t" + variablesCode.join("\n\t") + "\nEND_VAR;\n" + code;
     }
+    return variablesCode.join("\n\t");
+};
+
+Blockly.ST.functionBlocksToCode = function (workspace) {
+    var code = [];
+    var functionBlocks = Blockly.FunctionBlocks.allFunctionBlocks(workspace);
+    console.log(functionBlocks);
+    functionBlocks.forEach((block) => {
+        code.push(block.name+" : "+block.type+";");
+    });
+    return code.join("\n\t");
+};
+
+Blockly.ST.fullOutput = function (workspace) {
+    var code = this.workspaceToCode(workspace);
+    var variables = this.variablesToCode(workspace);
+    var functionBlocks = this.functionBlocksToCode(workspace);
+
+    code = "VAR\n\t" + variables + "\n\t" + functionBlocks + "\nEND_VAR;\n" + code;
+
     code = 'PROGRAM MAIN_PRG\n' + code + '\nEND_PROGRAM';
 
     code += this.generateConfiguration();
@@ -160,14 +178,14 @@ Blockly.ST.fullOutput = function (workspace) {
 };
 
 Blockly.ST.generateConfiguration = function () {
-  var config = "\nCONFIGURATION Config0\n" +
-      "\tRESOURCE Res0 ON PLC\n" +
-      "\t\tTASK TaskMain(INTERVAL := T#50ms, PRIORITY := 0);\n" +
-      "\t\tPROGRAM Inst0 WITH TaskMain : MAIN_PRG;\n" +
-      "\tEND_RESOURCE\n" +
-      "END_CONFIGURATION";
+    var config = "\nCONFIGURATION Config0\n" +
+        "\tRESOURCE Res0 ON PLC\n" +
+        "\t\tTASK TaskMain(INTERVAL := T#50ms, PRIORITY := 0);\n" +
+        "\t\tPROGRAM Inst0 WITH TaskMain : MAIN_PRG;\n" +
+        "\tEND_RESOURCE\n" +
+        "END_CONFIGURATION";
 
-  return config;
+    return config;
 };
 
 Blockly.ST.scrubNakedValue = function (line) {
