@@ -86,10 +86,6 @@ Blockly.ST.init = function (workspace) {
     for (var i = 0; i < variables.length; i++) {
         defvars.push(Blockly.ST.variableDB_.getName(variables[i].getId(), Blockly.Names.PROCEDURE_CATEGORY_NAME));
     }
-
-    workspace.registerToolboxCategoryCallback(
-        'FUNCTION_BLOCK', Blockly.FunctionBlocks.flyoutCategory);
-
 };
 
 Blockly.ST.workspaceToCode = function (workspace) {

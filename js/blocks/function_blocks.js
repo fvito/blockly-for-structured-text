@@ -8,11 +8,69 @@ Blockly.Blocks['function_block_get'] = {
         this.appendDummyInput('function_block')
             .appendField('', 'NAME')
             .appendField('get member')
-            .appendField(new Blockly.FieldFunctionBlockMember())
+            .appendField(new Blockly.FieldFunctionBlockMember('name', this), 'MEM');
+        this.setOutput(true);
+        this.setTooltip("Tool tip");
     },
+
+    getName: function(){
+        return (this.getFieldValue('NAME'));
+    },
+
+    mutationToDom: function () {
+        var container = document.createElement('mutation');
+        container.setAttribute('name', this.getFieldValue('NAME'));
+        return container;
+    },
+
+    domToMutation: function (xmlElement) {
+      var name = xmlElement.getAttribute('name');
+      this.setFieldValue(name,'NAME');
+    },
+
+    renameProcedure: function (oldName, newName) {
+        if(Blockly.Names.equals(oldName, this.getName())){
+            this.setFieldValue(newName, 'NAME');
+        }
+    }
+
 };
 
-Blockly.Blocks['function_block_set'] = {};
+Blockly.Blocks['function_block_set'] = {
+    init: function () {
+        this.appendDummyInput('function_block')
+            .appendField('', 'NAME')
+            .appendField('change member')
+            .appendField(new Blockly.FieldFunctionBlockMember('name', this), 'MEM')
+            .appendField('to');
+        this.appendValueInput('VALUE');
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+        this.setTooltip('Tool tip');
+        this.setInputsInline(true)
+    },
+
+    getName: function(){
+        return (this.getFieldValue('NAME'));
+    },
+
+    renameProcedure: function (oldName, newName) {
+        if(Blockly.Names.equals(oldName, this.getName())){
+            this.setFieldValue(newName, 'NAME');
+        }
+    },
+
+    mutationToDom: function () {
+        var container = document.createElement('mutation');
+        container.setAttribute('name', this.getFieldValue('NAME'));
+        return container;
+    },
+
+    domToMutation: function (xmlElement) {
+        var name = xmlElement.getAttribute('name');
+        this.setFieldValue(name,'NAME');
+    }
+};
 
 // TIMERS
 Blockly.Blocks['function_block_ton'] = {
@@ -45,10 +103,20 @@ Blockly.Blocks['function_block_ton'] = {
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
+        this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
+    },
+
+    getName: function(){
+        return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
-        return ['fb', this.getFieldValue('NAME'), this.getType(), this.getMembers()];
+        return {
+            'block_type':'fb',
+            'name':this.getName(),
+            'type':this.getType(),
+            'members':this.getMembers()
+        };
     },
 
     getType: function(){
@@ -100,8 +168,17 @@ Blockly.Blocks['function_block_tof'] = {
         });
     },
 
+    getName: function(){
+        return this.getFieldValue('NAME');
+    },
+
     getFuncBlockDefine: function () {
-        return ['fb', this.getFieldValue('NAME'), this.getType(), this.getMembers()];
+        return {
+            'block_type':'fb',
+            'name':this.getName(),
+            'type':this.getType(),
+            'members':this.getMembers()
+        };
     },
 
     getType: function(){
@@ -153,8 +230,17 @@ Blockly.Blocks['function_block_tp'] = {
         });
     },
 
+    getName: function(){
+        return this.getFieldValue('NAME');
+    },
+
     getFuncBlockDefine: function () {
-        return ['fb', this.getFieldValue('NAME'), this.getType(), this.getMembers()];
+        return {
+            'block_type':'fb',
+            'name':this.getName(),
+            'type':this.getType(),
+            'members':this.getMembers()
+        };
     },
 
     getType: function(){
@@ -213,7 +299,12 @@ Blockly.Blocks['function_block_sr'] = {
     },
 
     getFuncBlockDefine: function () {
-        return ['fb', this.getFieldValue('NAME'), this.getType(), this.getMembers()];
+        return {
+            'block_type':'fb',
+            'name':this.getName(),
+            'type':this.getType(),
+            'members':this.getMembers()
+        };
     },
 
     getType: function(){
@@ -261,8 +352,17 @@ Blockly.Blocks['function_block_rs'] = {
         });
     },
 
+    getName: function(){
+        return this.getFieldValue('NAME');
+    },
+
     getFuncBlockDefine: function () {
-        return ['fb', this.getFieldValue('NAME'), this.getType(), this.getMembers()];
+        return {
+            'block_type':'fb',
+            'name':this.getName(),
+            'type':this.getType(),
+            'members':this.getMembers()
+        };
     },
 
     getType: function(){
@@ -317,8 +417,17 @@ Blockly.Blocks['function_block_ctd'] = {
         });
     },
 
+    getName: function(){
+        return this.getFieldValue('NAME');
+    },
+
     getFuncBlockDefine: function () {
-        return ['fb', this.getFieldValue('NAME'), this.getType(), this.getMembers()];
+        return {
+            'block_type':'fb',
+            'name':this.getName(),
+            'type':this.getType(),
+            'members':this.getMembers()
+        };
     },
 
     getType: function(){
@@ -375,8 +484,17 @@ Blockly.Blocks['function_block_ctu'] = {
         });
     },
 
+    getName: function(){
+        return this.getFieldValue('NAME');
+    },
+
     getFuncBlockDefine: function () {
-        return ['fb', this.getFieldValue('NAME'), this.getType(), this.getMembers()];
+        return {
+            'block_type':'fb',
+            'name':this.getName(),
+            'type':this.getType(),
+            'members':this.getMembers()
+        };
     },
 
     getType: function(){
@@ -443,8 +561,17 @@ Blockly.Blocks['function_block_ctud'] = {
         });
     },
 
+    getName: function(){
+        return this.getFieldValue('NAME');
+    },
+
     getFuncBlockDefine: function () {
-        return ['fb', this.getFieldValue('NAME'), this.getType(), this.getMembers()];
+        return {
+            'block_type':'fb',
+            'name':this.getName(),
+            'type':this.getType(),
+            'members':this.getMembers()
+        };
     },
 
     getType: function(){
@@ -502,8 +629,17 @@ Blockly.Blocks['function_block_rtc'] = {
         });
     },
 
+    getName: function(){
+        return this.getFieldValue('NAME');
+    },
+
     getFuncBlockDefine: function () {
-        return ['fb', this.getFieldValue('NAME'), this.getType(), this.getMembers()];
+        return {
+            'block_type':'fb',
+            'name':this.getName(),
+            'type':this.getType(),
+            'members':this.getMembers()
+        };
     },
 
     getType: function(){
@@ -552,8 +688,17 @@ Blockly.Blocks['function_block_f_trig'] = {
         });
     },
 
+    getName: function(){
+        return this.getFieldValue('NAME');
+    },
+
     getFuncBlockDefine: function () {
-        return ['fb', this.getFieldValue('NAME'), this.getType(), this.getMembers()];
+        return {
+            'block_type':'fb',
+            'name':this.getName(),
+            'type':this.getType(),
+            'members':this.getMembers()
+        };
     },
 
     getType: function(){
@@ -596,8 +741,17 @@ Blockly.Blocks['function_block_r_trig'] = {
         });
     },
 
+    getName: function(){
+        return this.getFieldValue('NAME');
+    },
+
     getFuncBlockDefine: function () {
-        return ['fb', this.getFieldValue('NAME'), this.getType(), this.getMembers()];
+        return {
+            'block_type':'fb',
+            'name':this.getName(),
+            'type':this.getType(),
+            'members':this.getMembers()
+        };
     },
 
     getType: function(){
