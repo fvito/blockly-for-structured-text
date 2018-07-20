@@ -120,6 +120,7 @@ Blockly.Blocks['variables_declare'] = {
     },
 
 };
+
 Blockly.Blocks['variables_get'] = {
     init: function () {
         this.appendDummyInput()

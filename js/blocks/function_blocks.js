@@ -81,7 +81,7 @@ Blockly.Blocks['function_block_ton'] = {
                 {
                     "type": "field_input",
                     "name": "NAME",
-                    "text": "t0"
+                    "text": Blockly.FunctionBlocks.findLegalName('t0', this)
                 },
                 {
                     "type": "input_dummy"
@@ -144,7 +144,7 @@ Blockly.Blocks['function_block_tof'] = {
                 {
                     "type": "field_input",
                     "name": "NAME",
-                    "text": "tof0"
+                    "text": Blockly.FunctionBlocks.findLegalName('tof0', this)
                 },
                 {
                     "type": "input_dummy"
@@ -166,6 +166,7 @@ Blockly.Blocks['function_block_tof'] = {
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
+        this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
     getName: function(){
@@ -206,7 +207,7 @@ Blockly.Blocks['function_block_tp'] = {
                 {
                     "type": "field_input",
                     "name": "NAME",
-                    "text": "tp0"
+                    "text": Blockly.FunctionBlocks.findLegalName('tp0', this)
                 },
                 {
                     "type": "input_dummy"
@@ -228,6 +229,7 @@ Blockly.Blocks['function_block_tp'] = {
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
+        this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
     getName: function(){
@@ -270,7 +272,7 @@ Blockly.Blocks['function_block_sr'] = {
                 {
                     "type": "field_input",
                     "name": "NAME",
-                    "text": "sr0"
+                    "text": Blockly.FunctionBlocks.findLegalName('sr0', this)
                 },
                 {
                     "type": "input_dummy"
@@ -292,6 +294,7 @@ Blockly.Blocks['function_block_sr'] = {
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
+        this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
     getName: function(){
@@ -328,7 +331,7 @@ Blockly.Blocks['function_block_rs'] = {
                 {
                     "type": "field_input",
                     "name": "NAME",
-                    "text": "rs0"
+                    "text": Blockly.FunctionBlocks.findLegalName('rs0', this)
                 },
                 {
                     "type": "input_dummy"
@@ -350,6 +353,7 @@ Blockly.Blocks['function_block_rs'] = {
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
+        this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
     getName: function(){
@@ -388,7 +392,7 @@ Blockly.Blocks['function_block_ctd'] = {
                 {
                     "type": "field_input",
                     "name": "NAME",
-                    "text": "ctd0"
+                    "text": Blockly.FunctionBlocks.findLegalName('ctd0', this)
                 },
                 {
                     "type": "input_dummy"
@@ -415,6 +419,7 @@ Blockly.Blocks['function_block_ctd'] = {
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
+        this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
     getName: function(){
@@ -455,7 +460,7 @@ Blockly.Blocks['function_block_ctu'] = {
                 {
                     "type": "field_input",
                     "name": "NAME",
-                    "text": "ctu0"
+                    "text": Blockly.FunctionBlocks.findLegalName('ctu0', this)
                 },
                 {
                     "type": "input_dummy"
@@ -482,6 +487,7 @@ Blockly.Blocks['function_block_ctu'] = {
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
+        this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
     getName: function(){
@@ -522,7 +528,7 @@ Blockly.Blocks['function_block_ctud'] = {
                 {
                     "type": "field_input",
                     "name": "NAME",
-                    "text": "ctud0"
+                    "text": Blockly.FunctionBlocks.findLegalName('ctud0', this)
                 },
                 {
                     "type": "input_dummy"
@@ -559,6 +565,7 @@ Blockly.Blocks['function_block_ctud'] = {
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
+        this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
     getName: function(){
@@ -605,7 +612,7 @@ Blockly.Blocks['function_block_rtc'] = {
                 {
                     "type": "field_input",
                     "name": "NAME",
-                    "text": "rtc0"
+                    "text": Blockly.FunctionBlocks.findLegalName('rtc0', this)
                 },
                 {
                     "type": "input_dummy"
@@ -627,6 +634,7 @@ Blockly.Blocks['function_block_rtc'] = {
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
+        this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
     getName: function(){
@@ -669,7 +677,7 @@ Blockly.Blocks['function_block_f_trig'] = {
                 {
                     "type": "field_input",
                     "name": "NAME",
-                    "text": "f_trig0"
+                    "text": Blockly.FunctionBlocks.findLegalName('f_trig0', this)
                 },
                 {
                     "type": "input_dummy"
@@ -686,6 +694,7 @@ Blockly.Blocks['function_block_f_trig'] = {
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
+        this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
     getName: function(){
@@ -722,7 +731,7 @@ Blockly.Blocks['function_block_r_trig'] = {
                 {
                     "type": "field_input",
                     "name": "NAME",
-                    "text": "r_trig0"
+                    "text": Blockly.FunctionBlocks.findLegalName('r_trig0', this)
                 },
                 {
                     "type": "input_dummy"
@@ -739,6 +748,7 @@ Blockly.Blocks['function_block_r_trig'] = {
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
+        this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
     getName: function(){
