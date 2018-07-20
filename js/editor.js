@@ -92,44 +92,71 @@ Editor.createNewVariable_ = (name, type, opt_value, opt_address) => {
     Editor.workspace.createVariable(name, type, opt_value, opt_address);
 };
 
-Editor.exportAsXml = function () {
-    var xml = XMLExporter.export(this.workspace);
+Editor.exportAsXml = function (fileName) {
+    var xml = XMLExporter.export(Editor.workspace);
     var blob = new Blob([xml], {type: "application/xml"});
-    saveAs(blob, "output.xml");
+    saveAs(blob, fileName+".xml");
 };
 
-Editor.exportAsSt = function () {
+Editor.exportAsSt = function (fileName) {
     var code = Blockly.ST.fullOutput(Editor.workspace);
     var blob = new Blob([code], {type:"text/plain"});
-    saveAs(blob, "project.st");
+    saveAs(blob, fileName+".st");
 };
 
 
-Editor.saveProject = function () {
+Editor.saveProject = function (fileName) {
+    //$('#saveDialog').modal('show');
     var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
     xml = Blockly.Xml.domToText(xml);
     var blob = new Blob([xml], {type:"application/xml"});
-    saveAs(blob, "project.xml");
+    saveAs(blob, fileName+".xml");
+};
+
+Editor.showSaveDialog = function(callback) {
+    bootbox.prompt({
+        title:"Save file",
+        inputType:"text",
+        value:'Project',
+        callback: function (result) {
+            if(result) {
+                callback(result);
+            }
+        }
+    });
 };
 
 Editor.loadProject = function () {
-    console.log("load project?");
-    var openFileDialog = $("#openFile");
-    openFileDialog.on("change", (e)=> {
-        var fr = new FileReader();
-        fr.addEventListener('load', function (e) {
-            console.log("file reader loaded");
-            if (confirm('Are you sure you want to overwrite your current work?')) {
-                Blockly.mainWorkspace.clear();	// clear workspace
+    bootbox.confirm({
+        message:"Are you sure you want to overwrite your current work?",
+        buttons: {
+            confirm: {
+                label:"Yes",
+                className: 'btn-success'
+            },
+            cancel: {
+                label:"No"
+            },
+        },
+        callback: function (result) {
+            if(result){
+                var openFileDialog = $("#openFile");
+                openFileDialog.on("change", (e)=> {
+                    var fr = new FileReader();
+                    fr.addEventListener('load', function (e) {
+                        console.log("file reader loaded");
+                            Blockly.mainWorkspace.clear();	// clear workspace
 
-                var xml = Blockly.Xml.textToDom(e.target.result);
-                Blockly.Xml.domToWorkspace(xml, Editor.workspace);	// fill workspace
+                            var xml = Blockly.Xml.textToDom(e.target.result);
+                            Blockly.Xml.domToWorkspace(xml, Editor.workspace);	// fill workspace
+                    });
+                    console.log(e.target.files);
+                    fr.readAsText(e.target.files[0]);
+                });
+                openFileDialog.trigger("click");
             }
-        });
-        console.log(e.target.files);
-        fr.readAsText(e.target.files[0]);
+        }
     });
-    openFileDialog.trigger("click");
 };
 
 Editor.devGenerateXml = function(){
