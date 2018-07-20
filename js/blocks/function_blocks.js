@@ -13,7 +13,7 @@ Blockly.Blocks['function_block_get'] = {
         this.setTooltip("Tool tip");
     },
 
-    getName: function(){
+    getName: function () {
         return (this.getFieldValue('NAME'));
     },
 
@@ -24,12 +24,12 @@ Blockly.Blocks['function_block_get'] = {
     },
 
     domToMutation: function (xmlElement) {
-      var name = xmlElement.getAttribute('name');
-      this.setFieldValue(name,'NAME');
+        var name = xmlElement.getAttribute('name');
+        this.setFieldValue(name, 'NAME');
     },
 
     renameProcedure: function (oldName, newName) {
-        if(Blockly.Names.equals(oldName, this.getName())){
+        if (Blockly.Names.equals(oldName, this.getName())) {
             this.setFieldValue(newName, 'NAME');
         }
     }
@@ -41,7 +41,7 @@ Blockly.Blocks['function_block_set'] = {
         this.appendDummyInput('function_block')
             .appendField('', 'NAME')
             .appendField('change member')
-            .appendField(new Blockly.FieldFunctionBlockMember('name', this), 'MEM')
+            .appendField(new Blockly.FieldFunctionBlockMember('name', this, 'input'), 'MEM')
             .appendField('to');
         this.appendValueInput('VALUE');
         this.setPreviousStatement(true);
@@ -50,12 +50,12 @@ Blockly.Blocks['function_block_set'] = {
         this.setInputsInline(true)
     },
 
-    getName: function(){
+    getName: function () {
         return (this.getFieldValue('NAME'));
     },
 
     renameProcedure: function (oldName, newName) {
-        if(Blockly.Names.equals(oldName, this.getName())){
+        if (Blockly.Names.equals(oldName, this.getName())) {
             this.setFieldValue(newName, 'NAME');
         }
     },
@@ -68,7 +68,7 @@ Blockly.Blocks['function_block_set'] = {
 
     domToMutation: function (xmlElement) {
         var name = xmlElement.getAttribute('name');
-        this.setFieldValue(name,'NAME');
+        this.setFieldValue(name, 'NAME');
     }
 };
 
@@ -106,32 +106,44 @@ Blockly.Blocks['function_block_ton'] = {
         this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
-    getName: function(){
+    getName: function () {
         return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
         return {
-            'block_type':'fb',
-            'name':this.getName(),
-            'type':this.getType(),
-            'members':this.getMembers()
+            'block_type': 'fb',
+            'name': this.getName(),
+            'type': this.getType(),
+            'members': this.getMembers()
         };
     },
 
-    getType: function(){
-      return "TON";
+    getType: function () {
+        return "TON";
     },
 
     getMembers: function () {
         return [
             {
-                "name":"Q",
-                "check":Blockly.ST.BOOLEAN_TYPE
+                "name": "IN",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
             },
             {
-                "name":"ET",
-                "check":Blockly.ST.TIME_TYPE
+                "name": "IN",
+                "check": Blockly.ST.TIME_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "Q",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "output"
+            },
+            {
+                "name": "ET",
+                "check": Blockly.ST.TIME_TYPE,
+                "type": "output"
             }
         ];
     }
@@ -169,32 +181,44 @@ Blockly.Blocks['function_block_tof'] = {
         this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
-    getName: function(){
+    getName: function () {
         return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
         return {
-            'block_type':'fb',
-            'name':this.getName(),
-            'type':this.getType(),
-            'members':this.getMembers()
+            'block_type': 'fb',
+            'name': this.getName(),
+            'type': this.getType(),
+            'members': this.getMembers()
         };
     },
 
-    getType: function(){
+    getType: function () {
         return "TOF";
     },
 
     getMembers: function () {
         return [
             {
-                "name":"Q",
-                "check":Blockly.ST.BOOLEAN_TYPE
+                "name": "IN",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
             },
             {
-                "name":"ET",
-                "check":Blockly.ST.TIME_TYPE
+                "name": "IN",
+                "check": Blockly.ST.TIME_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "Q",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "output"
+            },
+            {
+                "name": "ET",
+                "check": Blockly.ST.TIME_TYPE,
+                "type": "output"
             }
         ];
     }
@@ -232,32 +256,44 @@ Blockly.Blocks['function_block_tp'] = {
         this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
-    getName: function(){
+    getName: function () {
         return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
         return {
-            'block_type':'fb',
-            'name':this.getName(),
-            'type':this.getType(),
-            'members':this.getMembers()
+            'block_type': 'fb',
+            'name': this.getName(),
+            'type': this.getType(),
+            'members': this.getMembers()
         };
     },
 
-    getType: function(){
+    getType: function () {
         return "TP";
     },
 
     getMembers: function () {
         return [
             {
-                "name":"Q",
-                "check":Blockly.ST.BOOLEAN_TYPE
+                "name": "IN",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
             },
             {
-                "name":"ET",
-                "check":Blockly.ST.TIME_TYPE
+                "name": "IN",
+                "check": Blockly.ST.TIME_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "Q",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "output"
+            },
+            {
+                "name": "ET",
+                "check": Blockly.ST.TIME_TYPE,
+                "type": "output"
             }
         ];
     }
@@ -297,28 +333,39 @@ Blockly.Blocks['function_block_sr'] = {
         this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
-    getName: function(){
-      return this.getFieldValue('NAME');
+    getName: function () {
+        return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
         return {
-            'block_type':'fb',
-            'name':this.getName(),
-            'type':this.getType(),
-            'members':this.getMembers()
+            'block_type': 'fb',
+            'name': this.getName(),
+            'type': this.getType(),
+            'members': this.getMembers()
         };
     },
 
-    getType: function(){
+    getType: function () {
         return "SR";
     },
 
     getMembers: function () {
         return [
             {
-                "name":"Q",
-                "check":Blockly.ST.BOOLEAN_TYPE
+                "name": "S1",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "R",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "Q",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "output"
             },
         ];
     }
@@ -356,28 +403,39 @@ Blockly.Blocks['function_block_rs'] = {
         this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
-    getName: function(){
+    getName: function () {
         return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
         return {
-            'block_type':'fb',
-            'name':this.getName(),
-            'type':this.getType(),
-            'members':this.getMembers()
+            'block_type': 'fb',
+            'name': this.getName(),
+            'type': this.getType(),
+            'members': this.getMembers()
         };
     },
 
-    getType: function(){
+    getType: function () {
         return "RS";
     },
 
     getMembers: function () {
         return [
             {
-                "name":"Q",
-                "check":Blockly.ST.BOOLEAN_TYPE
+                "name": "S",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "R1",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "Q",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "output"
             },
         ];
     }
@@ -408,9 +466,9 @@ Blockly.Blocks['function_block_ctd'] = {
                     "check": Blockly.ST.TIME_TYPE
                 },
                 {
-                    "type":"input_value",
-                    "name":"PV",
-                    "check":Blockly.ST.WORD_TYPE
+                    "type": "input_value",
+                    "name": "PV",
+                    "check": Blockly.ST.WORD_TYPE
                 }
             ],
             "previousStatement": null,
@@ -422,32 +480,49 @@ Blockly.Blocks['function_block_ctd'] = {
         this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
-    getName: function(){
+    getName: function () {
         return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
         return {
-            'block_type':'fb',
-            'name':this.getName(),
-            'type':this.getType(),
-            'members':this.getMembers()
+            'block_type': 'fb',
+            'name': this.getName(),
+            'type': this.getType(),
+            'members': this.getMembers()
         };
     },
 
-    getType: function(){
+    getType: function () {
         return "CTD";
     },
 
     getMembers: function () {
         return [
             {
-                "name":"Q",
-                "check":Blockly.ST.BOOLEAN_TYPE
+                "name": "CD",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
             },
             {
-                "name":"CV",
-                "check":Blockly.ST.WORD_TYPE
+                "name": "LOAD",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "PV",
+                "check": Blockly.ST.TIME_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "Q",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "output"
+            },
+            {
+                "name": "CV",
+                "check": Blockly.ST.WORD_TYPE,
+                "type": "output"
             }
         ];
     }
@@ -476,9 +551,9 @@ Blockly.Blocks['function_block_ctu'] = {
                     "check": Blockly.ST.BOOLEAN_TYPE
                 },
                 {
-                    "type":"input_value",
-                    "name":"PV",
-                    "check":Blockly.ST.WORD_TYPE
+                    "type": "input_value",
+                    "name": "PV",
+                    "check": Blockly.ST.WORD_TYPE
                 }
             ],
             "previousStatement": null,
@@ -490,32 +565,49 @@ Blockly.Blocks['function_block_ctu'] = {
         this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
-    getName: function(){
+    getName: function () {
         return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
         return {
-            'block_type':'fb',
-            'name':this.getName(),
-            'type':this.getType(),
-            'members':this.getMembers()
+            'block_type': 'fb',
+            'name': this.getName(),
+            'type': this.getType(),
+            'members': this.getMembers()
         };
     },
 
-    getType: function(){
+    getType: function () {
         return "CTU";
     },
 
     getMembers: function () {
         return [
             {
-                "name":"Q",
-                "check":Blockly.ST.BOOLEAN_TYPE
+                "name": "CU",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
             },
             {
-                "name":"CV",
-                "check":Blockly.ST.WORD_TYPE
+                "name": "RESET",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "PV",
+                "check": Blockly.ST.TIME_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "Q",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "output"
+            },
+            {
+                "name": "CV",
+                "check": Blockly.ST.WORD_TYPE,
+                "type": "output"
             }
         ];
     }
@@ -568,36 +660,64 @@ Blockly.Blocks['function_block_ctud'] = {
         this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
-    getName: function(){
+    getName: function () {
         return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
         return {
-            'block_type':'fb',
-            'name':this.getName(),
-            'type':this.getType(),
-            'members':this.getMembers()
+            'block_type': 'fb',
+            'name': this.getName(),
+            'type': this.getType(),
+            'members': this.getMembers()
         };
     },
 
-    getType: function(){
+    getType: function () {
         return "CTUD";
     },
 
     getMembers: function () {
         return [
             {
-                "name":"QU",
-                "check":Blockly.ST.BOOLEAN_TYPE
+                "name": "CD",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
             },
             {
-                "name":"QD",
-                "check":Blockly.ST.BOOLEAN_TYPE
+                "name": "CU",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
             },
             {
-                "name":"CV",
-                "check":Blockly.ST.WORD_TYPE
+                "name": "RESET",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "LOAD",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "PV",
+                "check": Blockly.ST.TIME_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "QU",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "output"
+            },
+            {
+                "name": "QD",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "output"
+            },
+            {
+                "name": "CV",
+                "check": Blockly.ST.WORD_TYPE,
+                "type": "output"
             }
         ];
     }
@@ -637,32 +757,44 @@ Blockly.Blocks['function_block_rtc'] = {
         this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
-    getName: function(){
+    getName: function () {
         return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
         return {
-            'block_type':'fb',
-            'name':this.getName(),
-            'type':this.getType(),
-            'members':this.getMembers()
+            'block_type': 'fb',
+            'name': this.getName(),
+            'type': this.getType(),
+            'members': this.getMembers()
         };
     },
 
-    getType: function(){
+    getType: function () {
         return "RTC";
     },
 
     getMembers: function () {
         return [
             {
-                "name":"Q",
-                "check":Blockly.ST.BOOLEAN_TYPE
+              "name":"EN",
+              "check":Blockly.ST.BOOLEAN_TYPE,
+              "type":"input"
             },
             {
-                "name":"CDT",
-                "check":Blockly.ST.DATE_AND_TIME_TYPE
+                "name":"PDT",
+                "check":Blockly.ST.TIME_OF_DAY_TYPE,
+                "type":"input"
+            },
+            {
+                "name": "Q",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "output"
+            },
+            {
+                "name": "CDT",
+                "check": Blockly.ST.DATE_AND_TIME_TYPE,
+                "type": "output"
             }
         ];
     }
@@ -697,28 +829,34 @@ Blockly.Blocks['function_block_f_trig'] = {
         this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
-    getName: function(){
+    getName: function () {
         return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
         return {
-            'block_type':'fb',
-            'name':this.getName(),
-            'type':this.getType(),
-            'members':this.getMembers()
+            'block_type': 'fb',
+            'name': this.getName(),
+            'type': this.getType(),
+            'members': this.getMembers()
         };
     },
 
-    getType: function(){
+    getType: function () {
         return "F_TRIG";
     },
 
     getMembers: function () {
         return [
             {
-                "name":"Q",
-                "check":Blockly.ST.BOOLEAN_TYPE
+              "name":"CLK",
+              "check":Blockly.ST.BOOLEAN_TYPE,
+              "type":"input"
+            },
+            {
+                "name": "Q",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "output"
             },
         ];
     }
@@ -751,28 +889,34 @@ Blockly.Blocks['function_block_r_trig'] = {
         this.getField('NAME').setValidator(Blockly.FunctionBlocks.rename);
     },
 
-    getName: function(){
+    getName: function () {
         return this.getFieldValue('NAME');
     },
 
     getFuncBlockDefine: function () {
         return {
-            'block_type':'fb',
-            'name':this.getName(),
-            'type':this.getType(),
-            'members':this.getMembers()
+            'block_type': 'fb',
+            'name': this.getName(),
+            'type': this.getType(),
+            'members': this.getMembers()
         };
     },
 
-    getType: function(){
+    getType: function () {
         return "R_TRIG";
     },
 
     getMembers: function () {
         return [
             {
-                "name":"Q",
-                "check":Blockly.ST.BOOLEAN_TYPE
+                "name": "CLK",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "input"
+            },
+            {
+                "name": "Q",
+                "check": Blockly.ST.BOOLEAN_TYPE,
+                "type": "output"
             },
         ];
     }
