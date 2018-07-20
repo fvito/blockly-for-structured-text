@@ -87,7 +87,7 @@ XMLExporter.writeCoordinateInfo = function (fbdSize, ldSize, sfcSize) {
 
 XMLExporter.writeProgram = function (workspace) {
     this.writeElementWithAttributes_("pou", {name: "MAIN_PRG", pouType: "program"});
-    this.writeVariables(workspace.getAllVariables());
+    this.writeVariables(workspace.getAllVariables(), Blockly.FunctionBlocks.allFunctionBlocks(workspace));
 
     this.writer.writeStartElement("body");
     this.writer.writeStartElement("ST");
@@ -101,7 +101,7 @@ XMLExporter.writeProgram = function (workspace) {
 
 };
 
-XMLExporter.writeVariables = function (variables) {
+XMLExporter.writeVariables = function (variables, functionBlocks) {
     this.writer.writeStartElement("interface");
     this.writer.writeStartElement("localVars");
 
@@ -117,6 +117,15 @@ XMLExporter.writeVariables = function (variables) {
             this.writeElementWithAttributes_("simpleValue", {value: variable.initValue}, true);
             this.writer.writeEndElement();
         }
+        //End Variable Element
+        this.writer.writeEndElement();
+    });
+
+    functionBlocks.forEach((functionBlock) => {
+        this.writeElementWithAttributes_("variable", {name: functionBlock.name});
+        this.writer.writeStartElement("type");
+        this.writeClosedElement_("derived", {name: functionBlock.type});
+        this.writer.writeEndElement();
         //End Variable Element
         this.writer.writeEndElement();
     });

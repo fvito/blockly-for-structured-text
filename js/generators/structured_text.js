@@ -156,7 +156,6 @@ Blockly.ST.variablesToCode = function (workspace) {
 Blockly.ST.functionBlocksToCode = function (workspace) {
     var code = [];
     var functionBlocks = Blockly.FunctionBlocks.allFunctionBlocks(workspace);
-    console.log(functionBlocks);
     functionBlocks.forEach((block) => {
         code.push(block.name+" : "+block.type+";");
     });
