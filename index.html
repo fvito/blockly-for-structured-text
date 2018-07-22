@@ -37,7 +37,6 @@
     <script src="js/blocks/variables.js"></script>
     <script src="js/blocks/variables_dynamic.js"></script>
     <script src="js/blocks/conversions.js"></script>
-    <script src="js/blocks/bit.js"></script>
     <script src="js/blocks/time_date.js"></script>
     <script src="js/blocks/function_blocks.js"></script>
 
@@ -45,7 +44,6 @@
     <script src="js/generators/structured_text/logic.js"></script>
     <script src="js/generators/structured_text/loops.js"></script>
     <script src="js/generators/structured_text/math.js"></script>
-    <script src="js/generators/structured_text/bit.js"></script>
     <script src="js/generators/structured_text/variables.js"></script>
     <script src="js/generators/structured_text/text.js"></script>
     <script src="js/generators/structured_text/procedures.js"></script>
@@ -155,6 +153,7 @@
             <mutation matches="1" default="1"></mutation>
         </block>
         <block type="logic_ternary"></block>
+        <block type="logic_bit_shift"></block>
     </category>
     <category name="Loops" colour="%{BKY_LOOPS_HUE}">
         <block type="controls_repeat_ext">
@@ -416,24 +415,23 @@
         <block type="lists_sort"></block>
     </category>
     <category name="Other" colour="%{BKY_LISTS_HUE}">
-        <block type="bit_shift"></block>
         <block type="procedures_program"></block>
         <block type="variables_local"></block>
         <block type="variables_global"></block>
     </category>
-    <category name="Conversions" colour="%{BKY_COLOUR_HUE}">
+    <category name="Conversions" colour="60">
         <block type="conversion_general"></block>
         <block type="conversion_trunc"></block>
         <block type="conversion_to_bcd"></block>
         <block type="conversion_from_bcd"></block>
     </category>
-    <category name="Time and Date" colour="%{BKY_COLOUR_HUE}">
+    <category name="Time and Date" colour="180">
         <block type="time_value"></block>
         <block type="date_value"></block>
         <block type="time_of_day_value"></block>
         <block type="date_and_time_value"></block>
     </category>
-    <category name="Function Blocks" colour="%{BKY_COLOUR_HUE}">
+    <category name="Function Blocks" colour="270">
         <category name="Used blocks" custom="FUNCTION_BLOCK"></category>
         <category name="Bistable">
             <block type="function_block_sr"></block>

@@ -254,6 +254,50 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "previousStatement": null,
         "nextStatement": null,
         "mutator": "controls_switch_mutator"
+    },
+    {
+        "type": "logic_bit_shift",
+        "message0": "%1 %2 by %3",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "DIR",
+                "options": [
+                    [
+                        "Left Shift",
+                        "LEFT"
+                    ],
+                    [
+                        "Right Shift",
+                        "RIGHT"
+                    ],
+                    [
+                        "Rot. Right",
+                        "ROT_RIGHT"
+                    ],
+                    [
+                        "Rot. Left",
+                        "ROT_LEFT"
+                    ]
+                ]
+            },
+            {
+                "type": "input_value",
+                "name": "IN",
+                "check": Blockly.ST.ANY_BIT_TYPE
+            },
+            {
+                "type": "input_value",
+                "name": "BITS",
+                "check": Blockly.ST.ANY_INT_TYPE
+
+            }
+        ],
+        "inputsInline": true,
+        "output": Blockly.ST.ANY_BIT_TYPE,
+        "colour": "%{BKY_LOGIC_HUE}",
+        "tooltip": "Bit shift",
+        "helpUrl": ""
     }
 ]);  // END JSON EXTRACT (Do not delete this comment.)
 

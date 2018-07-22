@@ -10,6 +10,7 @@ Blockly.Blocks['function_block_get'] = {
             .appendField('get member')
             .appendField(new Blockly.FieldFunctionBlockMember('name', this), 'MEM');
         this.setOutput(true);
+        this.setColour(270);
         this.setTooltip("Tool tip");
     },
 
@@ -47,6 +48,7 @@ Blockly.Blocks['function_block_set'] = {
         this.setPreviousStatement(true);
         this.setNextStatement(true);
         this.setTooltip('Tool tip');
+        this.setColour(270);
         this.setInputsInline(true)
     },
 
@@ -76,7 +78,7 @@ Blockly.Blocks['function_block_set'] = {
 Blockly.Blocks['function_block_ton'] = {
     init: function () {
         this.jsonInit({
-            "message0": "TON %1 %2 IN %3 PT %4",
+            "message0": "Timer On %1 %2 IN %3 PT %4",
             "args0": [
                 {
                     "type": "field_input",
@@ -99,7 +101,7 @@ Blockly.Blocks['function_block_ton'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": 270,
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
@@ -131,7 +133,7 @@ Blockly.Blocks['function_block_ton'] = {
                 "type": "input"
             },
             {
-                "name": "IN",
+                "name": "PT",
                 "check": Blockly.ST.TIME_TYPE,
                 "type": "input"
             },
@@ -151,7 +153,7 @@ Blockly.Blocks['function_block_ton'] = {
 Blockly.Blocks['function_block_tof'] = {
     init: function () {
         this.jsonInit({
-            "message0": "TOF %1 %2 IN %3 PT %4",
+            "message0": "Timer Off %1 %2 IN %3 PT %4",
             "args0": [
                 {
                     "type": "field_input",
@@ -174,7 +176,7 @@ Blockly.Blocks['function_block_tof'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": 270,
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
@@ -206,7 +208,7 @@ Blockly.Blocks['function_block_tof'] = {
                 "type": "input"
             },
             {
-                "name": "IN",
+                "name": "PT",
                 "check": Blockly.ST.TIME_TYPE,
                 "type": "input"
             },
@@ -226,7 +228,7 @@ Blockly.Blocks['function_block_tof'] = {
 Blockly.Blocks['function_block_tp'] = {
     init: function () {
         this.jsonInit({
-            "message0": "TP %1 %2 IN %3 PT %4",
+            "message0": "Timer Pulse %1 %2 IN %3 PT %4",
             "args0": [
                 {
                     "type": "field_input",
@@ -249,7 +251,7 @@ Blockly.Blocks['function_block_tp'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": 270,
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
@@ -303,7 +305,7 @@ Blockly.Blocks['function_block_tp'] = {
 Blockly.Blocks['function_block_sr'] = {
     init: function () {
         this.jsonInit({
-            "message0": "SR %1 %2 S1 %3 R %4",
+            "message0": "SR Bistable %1 %2 S1 %3 R %4",
             "args0": [
                 {
                     "type": "field_input",
@@ -326,7 +328,7 @@ Blockly.Blocks['function_block_sr'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": 270,
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
@@ -373,7 +375,7 @@ Blockly.Blocks['function_block_sr'] = {
 Blockly.Blocks['function_block_rs'] = {
     init: function () {
         this.jsonInit({
-            "message0": "RS %1 %2 S %3 R1 %4",
+            "message0": "RS Bistable %1 %2 S %3 R1 %4",
             "args0": [
                 {
                     "type": "field_input",
@@ -396,7 +398,7 @@ Blockly.Blocks['function_block_rs'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": 270,
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
@@ -445,7 +447,7 @@ Blockly.Blocks['function_block_rs'] = {
 Blockly.Blocks['function_block_ctd'] = {
     init: function () {
         this.jsonInit({
-            "message0": "CTD %1 %2 CD %3 LOAD %4 PV %5",
+            "message0": "Counter Down %1 %2 CD %3 LOAD %4 PV %5",
             "args0": [
                 {
                     "type": "field_input",
@@ -473,7 +475,7 @@ Blockly.Blocks['function_block_ctd'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": 270,
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
@@ -530,7 +532,7 @@ Blockly.Blocks['function_block_ctd'] = {
 Blockly.Blocks['function_block_ctu'] = {
     init: function () {
         this.jsonInit({
-            "message0": "CTU %1 %2 CU %3 RESET %4 PV %5",
+            "message0": "Counter Up %1 %2 CU %3 RESET %4 PV %5",
             "args0": [
                 {
                     "type": "field_input",
@@ -558,7 +560,7 @@ Blockly.Blocks['function_block_ctu'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": 270,
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
@@ -615,7 +617,7 @@ Blockly.Blocks['function_block_ctu'] = {
 Blockly.Blocks['function_block_ctud'] = {
     init: function () {
         this.jsonInit({
-            "message0": "CTUD %1 %2 CU %3 CD %4 RESET %5 LOAD %6 PV %7",
+            "message0": "Counter Up-Down %1 %2 CU %3 CD %4 RESET %5 LOAD %6 PV %7",
             "args0": [
                 {
                     "type": "field_input",
@@ -653,7 +655,7 @@ Blockly.Blocks['function_block_ctud'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": 270,
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
@@ -727,7 +729,7 @@ Blockly.Blocks['function_block_ctud'] = {
 Blockly.Blocks['function_block_rtc'] = {
     init: function () {
         this.jsonInit({
-            "message0": "RTC %1 %2 EN %3 PDT %4",
+            "message0": "Real Time Clock %1 %2 EN %3 PDT %4",
             "args0": [
                 {
                     "type": "field_input",
@@ -750,7 +752,7 @@ Blockly.Blocks['function_block_rtc'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": 270,
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
@@ -804,7 +806,7 @@ Blockly.Blocks['function_block_rtc'] = {
 Blockly.Blocks['function_block_f_trig'] = {
     init: function () {
         this.jsonInit({
-            "message0": "F-Trig %1 %2 CLK %3",
+            "message0": "Falling Trigger %1 %2 CLK %3",
             "args0": [
                 {
                     "type": "field_input",
@@ -822,7 +824,7 @@ Blockly.Blocks['function_block_f_trig'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": 270,
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });
@@ -864,7 +866,7 @@ Blockly.Blocks['function_block_f_trig'] = {
 Blockly.Blocks['function_block_r_trig'] = {
     init: function () {
         this.jsonInit({
-            "message0": "R-Trig %1 %2 CLK %3",
+            "message0": "Rising Trigger %1 %2 CLK %3",
             "args0": [
                 {
                     "type": "field_input",
@@ -882,7 +884,7 @@ Blockly.Blocks['function_block_r_trig'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": 270,
             "tooltip": "Tool tip",
             "helpUrl": "Help url"
         });

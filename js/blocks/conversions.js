@@ -1,7 +1,11 @@
 'use strict';
 
+goog.provide('Blockly.Constants.Conversions');
+
 goog.require('Blockly.Blocks');
 goog.require('Blockly');
+
+
 
 Blockly.defineBlocksWithJsonArray([
     {
@@ -15,7 +19,7 @@ Blockly.defineBlocksWithJsonArray([
             }
         ],
         "output": Blockly.ST.ANY_INT_TYPE,
-        "colour": 330,
+        "colour": 60,
         "tooltip": "Tooltip",
         "helpUrl": "Help url"
     },
@@ -35,7 +39,7 @@ Blockly.defineBlocksWithJsonArray([
             }
         ],
         "output": Blockly.ST.ANY_BIT_TYPE,
-        "colour": 330,
+        "colour": 60,
         "tooltip": "Tool tip",
         "helpUrl": "Help url"
     },
@@ -55,7 +59,7 @@ Blockly.defineBlocksWithJsonArray([
             }
         ],
         "output": Blockly.ST.ANY_INT_TYPE,
-        "colour": 330,
+        "colour": 60,
         "tooltip": "Tool tip",
         "helpUrl": "Help url"
     },
@@ -83,7 +87,7 @@ Blockly.Blocks["conversion_general"] = {
                 }
             ],
             "output": Blockly.ST.ANY_NUM_TYPE,
-            "colour": 330,
+            "colour": 60,
             "tooltip": "tooltip",
             "helpUrl": "help url"
         });

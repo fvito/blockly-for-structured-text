@@ -41,7 +41,7 @@ Blockly.defineBlocksWithJsonArray([
             }
         ],
         "output": Blockly.ST.TIME_TYPE,
-        "colour": 230,
+        "colour": 180,
         "tooltip": "Tool tip",
         "helpUrl": "Help url"
     },
@@ -55,7 +55,7 @@ Blockly.defineBlocksWithJsonArray([
             },
         ],
         "output": Blockly.ST.TIME_TYPE,
-        "colour": 230,
+        "colour": 180,
         "tooltip": "Tool tip",
         "helpUrl": "Help url"
     },
@@ -86,7 +86,7 @@ Blockly.defineBlocksWithJsonArray([
             }
         ],
         "output": Blockly.ST.TIME_OF_DAY_TYPE,
-        "colour": 230,
+        "colour": 180,
         "tooltip": "Tooltip",
         "helpUrl": "Help url"
     },
@@ -121,7 +121,7 @@ Blockly.defineBlocksWithJsonArray([
             }
         ],
         "output": Blockly.ST.TIME_OF_DAY_TYPE,
-        "colour": 230,
+        "colour": 180,
         "tooltip": "Tooltip",
         "helpUrl": "Help url"
     }

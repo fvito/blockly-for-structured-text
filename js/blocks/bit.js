@@ -13,7 +13,7 @@ Blockly.Constants.Math.HUE = 230;
 Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     // Block for numeric value.
     {
-        "type": "bit_shift",
+        "type": "logic_bit_shift",
         "message0": "%1 %2 by %3",
         "args0": [
             {
