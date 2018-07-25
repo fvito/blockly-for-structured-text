@@ -107,7 +107,11 @@ XMLExporter.writeVariables = function (variables, functionBlocks) {
 
     variables.forEach((variable) => {
         //Begin Variable Element
-        this.writeElementWithAttributes_("variable", {name: variable.name});
+        if(variable.address !== '') {
+            this.writeElementWithAttributes_("variable", {name: variable.name, address:variable.address});
+        }else{
+            this.writeElementWithAttributes_("variable", {name: variable.name});
+        }
         this.writer.writeStartElement("type");
         //TODO Handle String optional Length attribute
         this.writeClosedElement_(variable.type);
