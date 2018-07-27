@@ -365,7 +365,7 @@ Blockly.Blocks['function_block_sr'] = {
                 "type": "input"
             },
             {
-                "name": "Q",
+                "name": "Q1",
                 "check": Blockly.ST.BOOLEAN_TYPE,
                 "type": "output"
             },
@@ -435,7 +435,7 @@ Blockly.Blocks['function_block_rs'] = {
                 "type": "input"
             },
             {
-                "name": "Q",
+                "name": "Q1",
                 "check": Blockly.ST.BOOLEAN_TYPE,
                 "type": "output"
             },
