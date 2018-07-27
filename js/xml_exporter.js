@@ -69,17 +69,17 @@ XMLExporter.writeCoordinateInfo = function (fbdSize, ldSize, sfcSize) {
     this.writer.writeStartElement("coordinateInfo");
     //FBD sizes
     this.writer.writeStartElement("fbd");
-    this.writeElementWithAttributes_("spacing", {x: fbdSize[0], y: fbdSize[1]}, true);
+    this.writeElementWithAttributes_("scaling", {x: fbdSize[0], y: fbdSize[1]}, true);
     this.writer.writeEndElement();
 
     //LD sizes
     this.writer.writeStartElement("ld");
-    this.writeElementWithAttributes_("spacing", {x: ldSize[0], y: ldSize[1]}, true);
+    this.writeElementWithAttributes_("scaling", {x: ldSize[0], y: ldSize[1]}, true);
     this.writer.writeEndElement();
 
     //SFC sizes
     this.writer.writeStartElement("sfc");
-    this.writeElementWithAttributes_("spacing", {x: sfcSize[0], y: sfcSize[1]}, true);
+    this.writeElementWithAttributes_("scaling", {x: sfcSize[0], y: sfcSize[1]}, true);
     this.writer.writeEndElement();
 
     this.writer.writeEndElement();
@@ -142,11 +142,13 @@ XMLExporter.writeVariables = function (variables, functionBlocks) {
 
 XMLExporter.writeGenericInstance_ = function () {
     this.writer.writeStartElement("instances")
-        .writeStartElement("configurations").writeAttributeString("name", "config0")
+        .writeStartElement("configurations")
+        .writeStartElement("configuration").writeAttributeString("name", "config0")
         .writeStartElement("resource").writeAttributeString("name", "Res0");
     this.writeElementWithAttributes_("task", {name: "TaskMain", interval: "T#50ms", priority: "0"});
     this.writeElementWithAttributes_("pouInstance", {name: "Inst0", typeName: "MAIN_PRG"}, true);
     this.writer.writeEndElement()
+        .writeEndElement()
         .writeEndElement()
         .writeEndElement();
 };
