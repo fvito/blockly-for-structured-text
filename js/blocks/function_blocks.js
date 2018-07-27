@@ -555,7 +555,7 @@ Blockly.Blocks['function_block_ctu'] = {
                 {
                     "type": "input_value",
                     "name": "PV",
-                    "check": Blockly.ST.WORD_TYPE
+                    "check": Blockly.ST.ANY_NUM_TYPE
                 }
             ],
             "previousStatement": null,

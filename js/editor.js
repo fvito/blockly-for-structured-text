@@ -11,10 +11,28 @@ Editor.init = function () {
     Editor.blocklyInit();
 
     $('#variableDialog').on('show.bs.modal', () => {
+        $('#newVariableType').empty();
+        $.each(Blockly.ST.ANY_ELEMENTARY_TYPE, (i, p) => {
+            $('#newVariableType').append($('<option></option>').val(p).html(p));
+        });
+    });
+    $('#editVariableDialog').on('show.bs.modal', () => {
+        $('#variableSelect').empty();
+        $.each(Editor.workspace.getAllVariables(), (i, variable) => {
+            $('#variableSelect').append($('<option></option>').val(variable.getId()).html(variable.name));
+        });
+
         $('#variableType').empty();
         $.each(Blockly.ST.ANY_ELEMENTARY_TYPE, (i, p) => {
             $('#variableType').append($('<option></option>').val(p).html(p));
         });
+
+    });
+
+    $('#variableSelect').change(function(){
+       console.log($(this).val());
+       var variable = Editor.workspace.getVariableById($(this).val());
+       Editor.populateForm('#editVariableForm',variable);
     });
 
 };
@@ -76,6 +94,14 @@ Editor.variableChangeEvent = (block, event) => {
 
 };
 
+Editor.editVariable = () => {
+    var form = $('#editVariableForm');
+    var values = form.serializeArray();
+    Editor.changeVariable_(form.data('variableId'), values[0].value, values[1].value, values[2].value, values[3].value);
+    form[0].reset();
+    $('#editVariableDialog').modal('hide');
+};
+
 Editor.newVariable = () => {
     $('#variableDialog').modal('show');
 };
@@ -90,6 +116,23 @@ Editor.createNewVariable = () => {
 
 Editor.createNewVariable_ = (name, type, opt_value, opt_address) => {
     Editor.workspace.createVariable(name, type, opt_value, opt_address);
+};
+
+Editor.changeVariable_ = (id, name, type, opt_value, opt_address) => {
+    //Editor.workspace.changeVariable(id, name, type, opt_value, opt_address);
+    //Blockly.Variables.editVariable(id, name, type, opt_value, opt_address);
+    Editor.workspace.variableMap_.editVariable(id, name, opt_value, opt_address);
+    //console.log(id, name, type, opt_value, opt_address);
+};
+
+Editor.populateForm = (form_name, variable) => {
+    var form = $(form_name);
+    form.data('variableId', variable.getId());
+    form = form[0];
+    form[0].value = variable.name;
+    form[1].value = variable.type;
+    form[2].value = variable.initValue;
+    form[3].value = variable.address;
 };
 
 Editor.exportAsXml = function (fileName) {

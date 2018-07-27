@@ -115,6 +115,48 @@
             <div class="modal-body">
                 <form id="newVariableForm">
                     <div class="form-group">
+                        <label for="newVariableName">Name</label>
+                        <input name="name" required type="email" class="form-control" id="newVariableName" placeholder="Enter variable name">
+                    </div>
+                    <div class="form-group">
+                        <label for="newVariableType">Type</label>
+                        <select name="type" required class="form-control" id="newVariableType">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newVariableInitValue">Initial value</label>
+                        <input name="value" type="email" class="form-control" id="newVariableInitValue" placeholder="Enter initial value or leave blank">
+                    </div>
+                    <div class="form-group">
+                        <label for="newVariableAddress">Address</label>
+                        <input name="value" type="email" class="form-control" id="newVariableAddress" placeholder="Enter the input/output address">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="Editor.createNewVariable()">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="editVariableDialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit variable</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="variableSelect">Select variable</label><select name="variable" class="form-control" id="variableSelect"></select>
+                </div>
+                <hr>
+                <form id="editVariableForm">
+                    <div class="form-group">
                         <label for="variableName">Name</label>
                         <input name="name" required type="email" class="form-control" id="variableName" placeholder="Enter variable name">
                     </div>
@@ -135,7 +177,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="Editor.createNewVariable()">Create</button>
+                <button type="button" class="btn btn-primary" onclick="Editor.editVariable()">Change</button>
             </div>
         </div>
     </div>
