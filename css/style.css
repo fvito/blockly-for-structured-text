@@ -13,3 +13,7 @@
 
 .blocklyFlyoutBackground {
     fill: #343a40 !important; }
+
+.navbar-icon {
+    margin-right: 15px;
+}

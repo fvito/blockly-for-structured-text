@@ -23,7 +23,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarProject" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-file" style="margin-right: 15px"></i>
+                    <i class="fas fa-file navbar-icon"></i>
                     Project
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -34,7 +34,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarEdit" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-toolbox" style="margin-right: 15px"></i>Edit
+                    <i class="fas fa-toolbox navbar-icon"></i>Edit
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" onclick="Editor.newVariable()" href="#">New variable</a>
@@ -46,7 +46,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarExport" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-file-export" style="margin-right: 15px"></i>Export
+                    <i class="fas fa-file-export navbar-icon"></i>Export
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="#" onclick="Editor.showSaveDialog(Editor.exportAsSt)">As .st</a>
@@ -66,34 +66,34 @@
 </div>
 <!-- modals -->
 <div id="modals">
-    <div class="modal" tabindex="-1" role="dialog" id="variableDialog">
+    <div class="modal " tabindex="-1" role="dialog" id="variableDialog">
         <div class="modal-dialog" role="document">
-            <div class="modal-content">
+            <div class="modal-content bg-dark">
                 <div class="modal-header">
-                    <h5 class="modal-title">New variable</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                    <h5 class="modal-title text-light">New variable</h5>
+                    <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <form id="newVariableForm">
                         <div class="form-group">
-                            <label for="newVariableName">Name</label>
+                            <label for="newVariableName" class="text-light">Name</label>
                             <input name="name" required type="email" class="form-control" id="newVariableName"
                                    placeholder="Enter variable name">
                         </div>
                         <div class="form-group">
-                            <label for="newVariableType">Type</label>
+                            <label for="newVariableType" class="text-light">Type</label>
                             <select name="type" required class="form-control" id="newVariableType">
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="newVariableInitValue">Initial value</label>
+                            <label for="newVariableInitValue" class="text-light">Initial value</label>
                             <input name="value" type="email" class="form-control" id="newVariableInitValue"
                                    placeholder="Enter initial value or leave blank">
                         </div>
                         <div class="form-group">
-                            <label for="newVariableAddress">Address</label>
+                            <label for="newVariableAddress" class="text-light">Address</label>
                             <input name="value" type="email" class="form-control" id="newVariableAddress"
                                    placeholder="Enter the input/output address">
                         </div>
@@ -109,37 +109,37 @@
 
     <div class="modal" tabindex="-1" role="dialog" id="editVariableDialog">
         <div class="modal-dialog" role="document">
-            <div class="modal-content">
+            <div class="modal-content bg-dark">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit variable</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                    <h5 class="modal-title text-light">Edit variable</h5>
+                    <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="variableSelect">Select variable</label><select name="variable" class="form-control"
+                        <label for="variableSelect" class="text-light">Select variable</label><select name="variable" class="form-control"
                                                                                    id="variableSelect"></select>
                     </div>
                     <hr>
                     <form id="editVariableForm">
                         <div class="form-group">
-                            <label for="variableName">Name</label>
+                            <label for="variableName" class="text-light">Name</label>
                             <input name="name" required type="email" class="form-control" id="variableName"
                                    placeholder="Enter variable name">
                         </div>
                         <div class="form-group">
-                            <label for="variableType">Type</label>
+                            <label for="variableType" class="text-light">Type</label>
                             <select name="type" required disabled class="form-control" id="variableType">
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="variableInitValue">Initial value</label>
+                            <label for="variableInitValue" class="text-light">Initial value</label>
                             <input name="value" type="email" class="form-control" id="variableInitValue"
                                    placeholder="Enter initial value or leave blank">
                         </div>
                         <div class="form-group">
-                            <label for="variableAddress">Address</label>
+                            <label for="variableAddress" class="text-light">Address</label>
                             <input name="value" type="email" class="form-control" id="variableAddress"
                                    placeholder="Enter the input/output address">
                         </div>
