@@ -1,0 +1,15 @@
+.blocklyWidgetDiv {
+    max-height: 300px !important; }
+
+.blocklySvg {
+    background-color: #343a40 !important; }
+
+.blocklyToolboxDiv {
+    color: white;
+    background-color: #343a40 !important; }
+
+.blocklyTreeRow:not(.blocklyTreeSelected):hover {
+    background-color: #343a40 !important; }
+
+.blocklyFlyoutBackground {
+    fill: #343a40 !important; }
