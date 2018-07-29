@@ -27,10 +27,12 @@ Editor.init = function () {
             $('#variableType').append($('<option></option>').val(p).html(p));
         });
 
+        var variable = Editor.workspace.getAllVariables()[0];
+        Editor.populateForm('#editVariableForm',variable);
+
     });
 
     $('#variableSelect').change(function(){
-       console.log($(this).val());
        var variable = Editor.workspace.getVariableById($(this).val());
        Editor.populateForm('#editVariableForm',variable);
     });
@@ -94,12 +96,39 @@ Editor.variableChangeEvent = (block, event) => {
 
 };
 
+Editor.showEditVariable = function(){
+    $('#editVariableDialog').modal('show');
+};
+
 Editor.editVariable = () => {
     var form = $('#editVariableForm');
     var values = form.serializeArray();
     Editor.changeVariable_(form.data('variableId'), values[0].value, values[1].value, values[2].value, values[3].value);
     form[0].reset();
     $('#editVariableDialog').modal('hide');
+};
+
+Editor.deleteVariable = function() {
+    bootbox.confirm({
+        message:"Are you sure you want to delete this variable?",
+        buttons: {
+            confirm: {
+                label:"Yes",
+                className: 'btn-success'
+            },
+            cancel: {
+                label:"No"
+            },
+        },
+        callback: function (result) {
+            if(result) {
+                var form = $('#editVariableForm');
+                var varId = form.data('variableId');
+                Editor.workspace.deleteVariableById(varId);
+                $('#editVariableDialog').modal('hide');
+            }
+        }
+    });
 };
 
 Editor.newVariable = () => {
@@ -124,6 +153,7 @@ Editor.changeVariable_ = (id, name, type, opt_value, opt_address) => {
     Editor.workspace.variableMap_.editVariable(id, name, opt_value, opt_address);
     //console.log(id, name, type, opt_value, opt_address);
 };
+
 
 Editor.populateForm = (form_name, variable) => {
     var form = $(form_name);
