@@ -33,6 +33,16 @@ Blockly.Blocks['function_block_get'] = {
         if (Blockly.Names.equals(oldName, this.getName())) {
             this.setFieldValue(newName, 'NAME');
         }
+    },
+
+    onchange: function () {
+        var blockName = this.getFieldValue('NAME');
+        var memberName = this.getFieldValue('MEM');
+        var member = Blockly.FunctionBlocks.getMemberOfBlock(blockName, memberName);
+        if(member){
+            this.setOutput(true, member.check);
+        }
+        console.log(member);
     }
 
 };
@@ -71,6 +81,15 @@ Blockly.Blocks['function_block_set'] = {
     domToMutation: function (xmlElement) {
         var name = xmlElement.getAttribute('name');
         this.setFieldValue(name, 'NAME');
+    },
+    onchange: function () {
+        var blockName = this.getFieldValue('NAME');
+        var memberName = this.getFieldValue('MEM');
+        var member = Blockly.FunctionBlocks.getMemberOfBlock(blockName, memberName);
+        if(member){
+            this.getInput('VALUE').setCheck(member.check);
+        }
+        console.log(member);
     }
 };
 
@@ -923,5 +942,8 @@ Blockly.Blocks['function_block_r_trig'] = {
         ];
     }
 };
+
+
+
 
 
