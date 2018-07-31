@@ -28,18 +28,18 @@ Editor.init = function () {
         });
 
         var variable = Editor.workspace.getAllVariables()[0];
-        Editor.populateForm('#editVariableForm',variable);
+        Editor.populateForm('#editVariableForm', variable);
 
     });
 
-    $('#variableSelect').change(function(){
-       var variable = Editor.workspace.getVariableById($(this).val());
-       Editor.populateForm('#editVariableForm',variable);
+    $('#variableSelect').change(function () {
+        var variable = Editor.workspace.getVariableById($(this).val());
+        Editor.populateForm('#editVariableForm', variable);
     });
 
 };
 
-Editor.blocklyInit = () => {
+Editor.blocklyInit = function () {
     Editor.workspace = Blockly.inject("blocklyArea",
         {
             grid:
@@ -71,21 +71,21 @@ Editor.blocklyInit = () => {
     });
 };
 
-Editor.blockCreated = (event) => {
+Editor.blockCreated = function (event) {
     var block = Editor.workspace.getBlockById(event.blockId);
     if (block.type === 'variables_declare') {
 
     }
 };
 
-Editor.blockChanged = (event) => {
+Editor.blockChanged = function (event) {
     var block = Editor.workspace.getBlockById(event.blockId);
     if (block.type === 'variables_declare') {
         Editor.variableChangeEvent(block, event);
     }
 };
 
-Editor.variableChangeEvent = (block, event) => {
+Editor.variableChangeEvent = function (block, event) {
     var ws = Editor.workspace;
     if (event.name === 'NAME') {
 
@@ -96,11 +96,11 @@ Editor.variableChangeEvent = (block, event) => {
 
 };
 
-Editor.showEditVariable = function(){
+Editor.showEditVariable = function () {
     $('#editVariableDialog').modal('show');
 };
 
-Editor.editVariable = () => {
+Editor.editVariable = function () {
     var form = $('#editVariableForm');
     var values = form.serializeArray();
     Editor.changeVariable_(form.data('variableId'), values[0].value, values[1].value, values[2].value, values[3].value);
@@ -108,20 +108,20 @@ Editor.editVariable = () => {
     $('#editVariableDialog').modal('hide');
 };
 
-Editor.deleteVariable = function() {
+Editor.deleteVariable = function () {
     bootbox.confirm({
-        message:"Are you sure you want to delete this variable?",
+        message: "Are you sure you want to delete this variable?",
         buttons: {
             confirm: {
-                label:"Yes",
+                label: "Yes",
                 className: 'btn-success'
             },
             cancel: {
-                label:"No"
+                label: "No"
             },
         },
         callback: function (result) {
-            if(result) {
+            if (result) {
                 var form = $('#editVariableForm');
                 var varId = form.data('variableId');
                 Editor.workspace.deleteVariableById(varId);
@@ -131,11 +131,11 @@ Editor.deleteVariable = function() {
     });
 };
 
-Editor.newVariable = () => {
+Editor.newVariable = function () {
     $('#variableDialog').modal('show');
 };
 
-Editor.createNewVariable = () => {
+Editor.createNewVariable = function () {
     var form = $('#newVariableForm');
     var values = form.serializeArray();
     Editor.createNewVariable_(values[0].value, values[1].value, values[2].value, values[3].value);
@@ -143,19 +143,16 @@ Editor.createNewVariable = () => {
     $('#variableDialog').modal('hide');
 };
 
-Editor.createNewVariable_ = (name, type, opt_value, opt_address) => {
+Editor.createNewVariable_ = function (name, type, opt_value, opt_address) {
     Editor.workspace.createVariable(name, type, opt_value, opt_address);
 };
 
-Editor.changeVariable_ = (id, name, type, opt_value, opt_address) => {
-    //Editor.workspace.changeVariable(id, name, type, opt_value, opt_address);
-    //Blockly.Variables.editVariable(id, name, type, opt_value, opt_address);
-    Editor.workspace.variableMap_.editVariable(id, name, opt_value, opt_address);
-    //console.log(id, name, type, opt_value, opt_address);
+Editor.changeVariable_ = function (id, name, type, opt_value, opt_address) {
+    Editor.workspace.changeVariable(id, name, opt_value, opt_address);
 };
 
 
-Editor.populateForm = (form_name, variable) => {
+Editor.populateForm = function (form_name, variable) {
     var form = $(form_name);
     form.data('variableId', variable.getId());
     form = form[0];
@@ -168,13 +165,13 @@ Editor.populateForm = (form_name, variable) => {
 Editor.exportAsXml = function (fileName) {
     var xml = XMLExporter.export(Editor.workspace);
     var blob = new Blob([xml], {type: "application/xml"});
-    saveAs(blob, fileName+".xml");
+    saveAs(blob, fileName + ".xml");
 };
 
 Editor.exportAsSt = function (fileName) {
     var code = Blockly.ST.fullOutput(Editor.workspace);
-    var blob = new Blob([code], {type:"text/plain"});
-    saveAs(blob, fileName+".st");
+    var blob = new Blob([code], {type: "text/plain"});
+    saveAs(blob, fileName + ".st");
 };
 
 
@@ -182,17 +179,17 @@ Editor.saveProject = function (fileName) {
     //$('#saveDialog').modal('show');
     var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
     xml = Blockly.Xml.domToText(xml);
-    var blob = new Blob([xml], {type:"application/xml"});
-    saveAs(blob, fileName+".xml");
+    var blob = new Blob([xml], {type: "application/xml"});
+    saveAs(blob, fileName + ".xml");
 };
 
-Editor.showSaveDialog = function(callback) {
+Editor.showSaveDialog = function (callback) {
     bootbox.prompt({
-        title:"Save file",
-        inputType:"text",
-        value:'Project',
+        title: "Save file",
+        inputType: "text",
+        value: 'Project',
         callback: function (result) {
-            if(result) {
+            if (result) {
                 callback(result);
             }
         }
@@ -201,27 +198,27 @@ Editor.showSaveDialog = function(callback) {
 
 Editor.loadProject = function () {
     bootbox.confirm({
-        message:"Are you sure you want to overwrite your current work?",
+        message: "Are you sure you want to overwrite your current work?",
         buttons: {
             confirm: {
-                label:"Yes",
+                label: "Yes",
                 className: 'btn-success'
             },
             cancel: {
-                label:"No"
+                label: "No"
             },
         },
         callback: function (result) {
-            if(result){
+            if (result) {
                 var openFileDialog = $("#openFile");
-                openFileDialog.on("change", (e)=> {
+                openFileDialog.on("change", (e) => {
                     var fr = new FileReader();
                     fr.addEventListener('load', function (e) {
                         console.log("file reader loaded");
-                            Blockly.mainWorkspace.clear();	// clear workspace
+                        Blockly.mainWorkspace.clear();	// clear workspace
 
-                            var xml = Blockly.Xml.textToDom(e.target.result);
-                            Blockly.Xml.domToWorkspace(xml, Editor.workspace);	// fill workspace
+                        var xml = Blockly.Xml.textToDom(e.target.result);
+                        Blockly.Xml.domToWorkspace(xml, Editor.workspace);	// fill workspace
                     });
                     console.log(e.target.files);
                     fr.readAsText(e.target.files[0]);
@@ -232,7 +229,7 @@ Editor.loadProject = function () {
     });
 };
 
-Editor.devGenerateXml = function(){
+Editor.devGenerateXml = function () {
     var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
     xml = Blockly.Xml.domToPrettyText(xml);
     document.getElementById('output').value = xml;

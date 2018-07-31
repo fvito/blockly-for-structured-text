@@ -16,6 +16,7 @@
     <title>Document</title>
 </head>
 <input type="file" style="display: none;" id="openFile"/>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
     <a class="navbar-brand" href="#">Blockly PLC</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -89,13 +90,13 @@
                         </div>
                         <div class="form-group">
                             <label for="newVariableInitValue" class="text-light">Initial value</label>
-                            <input name="value" type="email" class="form-control" id="newVariableInitValue"
+                            <input name="value" class="form-control" id="newVariableInitValue"
                                    placeholder="Enter initial value or leave blank">
                         </div>
                         <div class="form-group">
                             <label for="newVariableAddress" class="text-light">Address</label>
-                            <input name="value" type="email" class="form-control" id="newVariableAddress"
-                                   placeholder="Enter the input/output address">
+                            <input name="address" class="form-control" id="newVariableAddress"
+                                   placeholder="Enter the input/output address eg. %IX2.2 or %QX2.7">
                         </div>
                     </form>
                 </div>
@@ -106,7 +107,6 @@
             </div>
         </div>
     </div>
-
     <div class="modal" tabindex="-1" role="dialog" id="editVariableDialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content bg-dark">
@@ -130,18 +130,18 @@
                         </div>
                         <div class="form-group">
                             <label for="variableType" class="text-light">Type</label>
-                            <select name="type" required disabled class="form-control" id="variableType">
+                            <select name="type" required class="form-control" id="variableType">
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="variableInitValue" class="text-light">Initial value</label>
-                            <input name="value" type="email" class="form-control" id="variableInitValue"
+                            <input name="value" class="form-control" id="variableInitValue"
                                    placeholder="Enter initial value or leave blank">
                         </div>
                         <div class="form-group">
                             <label for="variableAddress" class="text-light">Address</label>
-                            <input name="value" type="email" class="form-control" id="variableAddress"
-                                   placeholder="Enter the input/output address">
+                            <input name="address" class="form-control" id="variableAddress"
+                                   placeholder="Enter the input/output address eg. %IX2.2 or %QX2.7">
                         </div>
                     </form>
                 </div>
