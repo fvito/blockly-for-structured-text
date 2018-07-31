@@ -46,12 +46,21 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     // Block for repeat n times (external number).
     {
         "type": "controls_repeat_ext",
-        "message0": "%{BKY_CONTROLS_REPEAT_TITLE}",
-        "args0": [{
-            "type": "input_value",
-            "name": "TIMES",
-            "check": Blockly.ST.ANY_NUM_TYPE
-        }],
+        "message0": "repeat %1 times with %2",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "TIMES",
+                "check": Blockly.ST.ANY_NUM_TYPE
+            },
+            {
+                "type": "field_variable",
+                "name": "VAR",
+                "variable": "count",
+                "defaultType": Blockly.ST.INT_TYPE,
+                "variableTypes": Blockly.ST.ANY_INT_TYPE
+            },
+        ],
         "message1": "%{BKY_CONTROLS_REPEAT_INPUT_DO} %1",
         "args1": [{
             "type": "input_statement",
@@ -160,7 +169,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
                 "name": "VAR",
                 "variable": null,
                 "defaultType": Blockly.ST.INT_TYPE,
-                "variableTypes" : Blockly.ST.ANY_INT_TYPE
+                "variableTypes": Blockly.ST.ANY_INT_TYPE
             },
             {
                 "type": "input_value",

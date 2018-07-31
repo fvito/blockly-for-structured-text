@@ -16,8 +16,9 @@ Blockly.ST['controls_repeat_ext'] = function (block) {
     var branch = Blockly.ST.statementToCode(block, 'DO');
     branch = Blockly.ST.addLoopTrap(branch, block.id);
     var code = '';
-    var loopVar = Blockly.ST.variableDB_.getDistinctName(
-        'COUNT', Blockly.Variables.NAME_TYPE);
+    var loopVar = block.getField('VAR').getText();
+    console.log(block);
+    //var loopVar = Blockly.Variables.getOrCreateVariablePackage(block.workspace, null, 'count', 'INT');
     var endVar = repeats;
     if (!String(repeats).match(/^\w+$/) && !Blockly.isNumber(repeats)) {
         var endVar = Blockly.ST.variableDB_.getDistinctName(
