@@ -118,8 +118,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="variableSelect" class="text-light">Select variable</label><select name="variable" class="form-control"
-                                                                                   id="variableSelect"></select>
+                        <label for="variableSelect" class="text-light">Select variable</label><select name="variable"
+                                                                                                      class="form-control"
+                                                                                                      id="variableSelect"></select>
                     </div>
                     <hr>
                     <form id="editVariableForm">
@@ -522,10 +523,18 @@
 <script src="js/generators/structured_text/time_date.js"></script>
 <script src="js/generators/structured_text/function_blocks.js"></script>
 
+<script type="application/javascript">
+    goog.addDependency("../../../../js/configuration.js", ['Editor.Configuration'], []);
+    //goog.addDependency("../../../../js/project.js",['Editor.Project'],['Editor.Configuration']);
+
+    //goog.require("Editor.Configuration");
+    //goog.require("Editor.Project");
+
+</script>
 
 <!-- Editor logic -->
 <script src="js/xml_exporter.js"></script>
-<script src="js/editor.js"></script>
+<script src="js/editor/base.js"></script>
 
 
 </body>

@@ -1,11 +1,9 @@
 'use strict';
 
-/**
- * Create a namespace for the application.
- */
-var Editor = {};
+goog.provide('Editor');
 
 Editor.workspace = null;
+Editor.project = null;
 
 Editor.init = function () {
     Editor.blocklyInit();
@@ -36,6 +34,8 @@ Editor.init = function () {
         var variable = Editor.workspace.getVariableById($(this).val());
         Editor.populateForm('#editVariableForm', variable);
     });
+
+    Editor.project = new Editor.Project("test");
 
 };
 
