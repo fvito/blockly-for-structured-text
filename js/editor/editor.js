@@ -35,8 +35,74 @@ Editor.init = function () {
         Editor.populateForm('#editVariableForm', variable);
     });
 
-    Editor.project = new Editor.Project("test");
+    var tree = [
+        {
+            text: "Project - {{name}}",
+            selectable: false,
+            nodes: [
+                {
+                    text: "Functions",
+                    selectable: false,
+                    nodes: [
+                        {
+                            text: "Function A"
+                        },
+                        {
+                            text: "Function B"
+                        }
+                    ]
+                },
+                {
+                    text: "Programs",
+                    selectable: false,
+                    nodes: [
+                        {
+                            text: "MAIN_PRG"
+                        }
+                    ]
+                },
+                {
+                    text: "Function blocks",
+                    selectable: false,
+                    nodes: [
+                        {
+                            text: "myFunctionBlock"
+                        }
+                    ]
+                },
+                {
+                    text: "Configuration"
+                }
+            ]
+        }
+    ];
 
+    Editor.project = new Editor.Project("test");
+    Editor.project.addProgram(new Editor.Program("MAIN_PRG"));
+    Editor.project.addProgram(new Editor.Program("MAIN_PRG_2"));
+
+    $('#tree').treeview({
+        color: "#FFFFFF",
+        level: 1,
+        backColor: "#343a40",
+        onhoverColor: "#4a645a",
+        selectedBackColor: "#343a40",
+        selectedColor: "#007bff",
+        showBorder: false,
+        collapseIcon: 'fas fa-minus',
+        expandIcon: 'fas fa-folder-open',
+        data: Editor.project.getAsTree(),
+        onNodeSelected: function (event, data) {
+            console.log("Selected");
+            console.log(data);
+            Editor.loadWorkspace(data);
+        },
+        onNodeUnselected: function (event, data) {
+            console.log("Unselected");
+            console.log(data);
+            Editor.saveWorkspace(data);
+        },
+    });
 };
 
 Editor.blocklyInit = function () {
@@ -50,6 +116,8 @@ Editor.blocklyInit = function () {
                     snap: true
                 },
             media: 'lib/blockly/media/',
+            //horizontalLayout: true,
+            toolboxPosition: 'end',
             toolbox: document.getElementById("toolbox"),
             zoom:
                 {
@@ -76,6 +144,10 @@ Editor.blockCreated = function (event) {
     if (block.type === 'variables_declare') {
 
     }
+};
+
+Editor.swapWorkspace = function (source) {
+    Blockly.Xml.clearWorkspaceAndLoadFromXml(source, Editor.workspace);
 };
 
 Editor.blockChanged = function (event) {
@@ -235,11 +307,43 @@ Editor.devGenerateXml = function () {
     document.getElementById('output').value = xml;
 };
 
-window.addEventListener('load', () => {
-    Editor.init();
-    //document.getElementById('generate').addEventListener('click', () => {
-    //Editor.workspace.createVariable('TEST', Blockly.ST.STRING_TYPE);
-    var code = Blockly.JavaScript.workspaceToCode(Editor.workspace);
-    //    document.getElementById('output').value = code;
-    //});
-});
+Editor.saveWorkspace = function (data) {
+    var target = null;
+    if (data.type === Editor.Project.PROGRAM_TYPE) {
+        target = Editor.project.getProgramById(data.id);
+    } else if (data.type === Editor.Project.FUNCTION_TYPE) {
+        target = Editor.project.getFunctionById(data.id);
+    } else if (data.type === Editor.Project.FUNCTION_BLOCK_TYPE) {
+        target = Editor.project.getFunctionBlockById(data.id);
+    }
+    if(target !== null){
+        target.updateWorkspace(Editor.workspace);
+    }else{
+        console.error("Unabled to find the target to save workspace to, target id: "+data.id);
+    }
+};
+
+Editor.loadWorkspace = function (data) {
+    var target = null;
+    if (data.type === 'PROGRAM') {
+        target = Editor.project.getProgramById(data.id);
+    } else if (data.type === 'FUNCTION') {
+        target = Editor.project.getFunctionById(data.id);
+    } else if (data.type === 'FUNCTION_BLOCK') {
+        target = Editor.project.getFunctionBlockById(data.id);
+    }
+    if(target !== null){
+        Editor.swapWorkspace(target.getWorkspaceDom())
+    }else{
+        console.error("Unabled to find the target to save workspace to, target id: "+data.id);
+    }
+};
+
+    window.addEventListener('load', () => {
+        Editor.init();
+        //document.getElementById('generate').addEventListener('click', () => {
+        //Editor.workspace.createVariable('TEST', Blockly.ST.STRING_TYPE);
+        var code = Blockly.JavaScript.workspaceToCode(Editor.workspace);
+        //    document.getElementById('output').value = code;
+        //});
+    });

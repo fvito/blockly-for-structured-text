@@ -493,7 +493,9 @@ Blockly.Blocks['procedures_mutatorarg'] = {
 
     this.appendDummyInput()
         .appendField(Blockly.Msg.PROCEDURES_MUTATORARG_TITLE)
-        .appendField(field, 'NAME');
+        .appendField(field, 'NAME')
+        .appendField("of type")
+        .appendField(new Blockly.FieldDropdown(Blockly.ST.MAPPED_TYPES), 'TYPE');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.setColour(Blockly.Msg.PROCEDURES_HUE);
