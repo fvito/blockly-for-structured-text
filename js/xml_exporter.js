@@ -219,6 +219,8 @@ XMLExporter.writeVariables = function (variables, functionBlocks) {
 };
 
 XMLExporter.writeFunctionVariables = function (workspace, func) {
+    var variables = workspace.getAllVariables();
+    console.log(variables);
     this.writer.writeStartElement("inputVars");
     func.args.forEach((arg) => {
         this.writeElementWithAttributes_("variable", {name: arg.name});
@@ -231,9 +233,13 @@ XMLExporter.writeFunctionVariables = function (workspace, func) {
     this.writer.writeEndElement();
 
     this.writer.writeStartElement("localVars");
-
-    workspace.getAllVariables().forEach((variable) => {
-       if(!func.args.includes(variable)){
+    let localVars = [];
+    for(let variable of workspace.getAllVariables()){
+        if(func.args.findIndex(i => i.id_ === variable.id_) === -1){
+            localVars.push(variable);
+        }
+    }
+    localVars.forEach((variable) => {
            this.writeElementWithAttributes_("variable", {name: variable.name});
            this.writer.writeStartElement("type");
            //TODO Handle String optional Length attribute
@@ -245,7 +251,6 @@ XMLExporter.writeFunctionVariables = function (workspace, func) {
                this.writer.writeEndElement();
            }
            this.writer.writeEndElement();
-       }
     });
     this.writer.writeEndElement();
 
@@ -275,7 +280,10 @@ XMLExporter.writeElementWithAttributes_ = function (element, attrs, close = fals
 };
 
 XMLExporter.writeClosedElement_ = function (name, attrs) {
-    var string = "<" + name + " ";
+    var string = "<" + name;
+    if(attrs){
+        string += " ";
+    }
     for (var key in attrs) {
         string += key + "=" + '"' + attrs[key] + '" ';
     }

@@ -47,6 +47,7 @@ Editor.init = function () {
 
     Editor.project = new Editor.Project("test");
     Editor.project.addProgram(new Editor.Program("MAIN_PRG"));
+    Editor.project.addFunction(new Editor.Function("test","BOOL"));
 
     $('#tree').treeview({
         color: "#FFFFFF",
@@ -379,7 +380,7 @@ Editor.saveWorkspace = function (data) {
     if(data instanceof Array){
         data = data[0];
     }
-    console.log('save',data);
+    //console.log('save',data);
     var target = Editor.getTargetFromProject(data.type, data.id);
 
     if (target !== null) {
@@ -393,10 +394,11 @@ Editor.loadWorkspace = function (data) {
     if(data instanceof Array){
         data = data[0];
     }
-    console.log('load', data);
+    //console.log('load', data);
     var target = Editor.getTargetFromProject(data.type, data.id);
     if (target !== null) {
         Blockly.Xml.clearWorkspaceAndLoadFromXml(target.getWorkspaceDom(), Editor.workspace);
+        Editor.workspace.scrollCenter();
     } else {
         console.error("Unabled to find the target to load workspace from, target id: " + data.id);
     }

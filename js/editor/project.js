@@ -88,7 +88,7 @@ Editor.Project.prototype.getAllFunctions = function (opt_workspace) {
         }
 
     }
-    console.log(functions);
+    //console.log(functions);
     return functions;
 };
 

@@ -5,9 +5,10 @@ goog.provide('Blockly.ST.procedures');
 goog.require('Blockly.ST');
 
 Blockly.ST['procedures_program'] = function (block) {
-  var name = block.getFieldValue("NAME");
+  //var name = block.getFieldValue("NAME");
   var statements = Blockly.ST.statementToCode(block, 'STATEMENTS');
-  return "PROGRAM " + name + '\n' + statements + '\nEND_PROGRAM;';
+  //return "PROGRAM " + name + '\n' + statements + '\nEND_PROGRAM;';
+    return statements;
 };
 
 
@@ -46,7 +47,8 @@ Blockly.ST['procedures_program'] = function (block) {
 
 
 Blockly.ST['procedures_defreturn'] = function(block){
-    return null;
+    var branch = Blockly.ST.statementToCode(block, 'STACK');
+    return branch;
 };
 
 Blockly.ST['procedures_defnoreturn'] =

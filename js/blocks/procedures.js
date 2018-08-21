@@ -529,7 +529,7 @@ Blockly.Blocks['procedures_mutatorarg'] = {
      * @this Blockly.FieldTextInput
      */
     validator_: function (varName) {
-        console.log('validator', varName);
+        //console.log('validator', varName);
         var outerWs = Blockly.Mutator.findParentWs(this.sourceBlock_.workspace);
         varName = varName.replace(/[\s\xa0]+/g, ' ').replace(/^ | $/g, '');
         if (!varName) {
