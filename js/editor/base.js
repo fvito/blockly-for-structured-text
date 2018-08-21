@@ -33,11 +33,16 @@ this.EDITOR_BOOT = function (root) {
     goog.addDependency('../../../../js/' + dir + '/project.js', ['Editor.Project'], ['Blockly.utils']);
     goog.addDependency('../../../../js/' + dir + '/configuration.js', ['Editor.Configuration'], ['Blockly.utils']);
     goog.addDependency('../../../../js/' + dir + '/program.js', ['Editor.Program'], ['Blockly.utils']);
+    goog.addDependency('../../../../js/' + dir + '/function.js', ['Editor.Function'], ['Blockly.utils']);
+    goog.addDependency('../../../../js/' + dir + '/function_block.js', ['Editor.FunctionBlock'], ['Blockly.utils']);
+
     // Load Editor.
     goog.require('Editor');
     goog.require('Editor.Project');
     goog.require('Editor.Configuration');
     goog.require('Editor.Program');
+    goog.require('Editor.Function');
+    goog.require('Editor.FunctionBlock');
 
     delete root.EDITOR_DIR;
     delete root.EDITOR_BOOT;

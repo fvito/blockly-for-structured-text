@@ -11,7 +11,7 @@ Blockly.ST['procedures_program'] = function (block) {
 };
 
 
-Blockly.ST['procedures_defreturn'] = function(block) {
+/*Blockly.ST['procedures_defreturn'] = function(block) {
     // Define a procedure with a return value.
     var funcName = Blockly.ST.variableDB_.getName(
         block.getFieldValue('NAME'), Blockly.Procedures.NAME_TYPE);
@@ -41,6 +41,11 @@ Blockly.ST['procedures_defreturn'] = function(block) {
     code = Blockly.ST.scrub_(block, code);
     // Add % so as not to collide with helper functions in definitions list.
     Blockly.ST.definitions_['%' + funcName] = code;
+    return null;
+};*/
+
+
+Blockly.ST['procedures_defreturn'] = function(block){
     return null;
 };
 

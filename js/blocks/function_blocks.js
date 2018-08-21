@@ -42,7 +42,7 @@ Blockly.Blocks['function_block_get'] = {
         if(member){
             this.setOutput(true, member.check);
         }
-        console.log(member);
+        //console.log(member);
     }
 
 };
@@ -89,7 +89,7 @@ Blockly.Blocks['function_block_set'] = {
         if(member){
             this.getInput('VALUE').setCheck(member.check);
         }
-        console.log(member);
+        //console.log(member);
     }
 };
 

@@ -17,3 +17,6 @@
 .navbar-icon {
     margin-right: 15px;
 }
+.blocklyFlyoutLabelText {
+    fill: #ffffff;
+}

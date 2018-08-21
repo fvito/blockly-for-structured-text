@@ -4,6 +4,7 @@ goog.provide('Editor');
 
 Editor.workspace = null;
 Editor.project = null;
+Editor.tree = null;
 
 Editor.init = function () {
     Editor.blocklyInit();
@@ -14,6 +15,7 @@ Editor.init = function () {
             $('#newVariableType').append($('<option></option>').val(p).html(p));
         });
     });
+
     $('#editVariableDialog').on('show.bs.modal', () => {
         $('#variableSelect').empty();
         $.each(Editor.workspace.getAllVariables(), (i, variable) => {
@@ -35,51 +37,16 @@ Editor.init = function () {
         Editor.populateForm('#editVariableForm', variable);
     });
 
-    var tree = [
-        {
-            text: "Project - {{name}}",
-            selectable: false,
-            nodes: [
-                {
-                    text: "Functions",
-                    selectable: false,
-                    nodes: [
-                        {
-                            text: "Function A"
-                        },
-                        {
-                            text: "Function B"
-                        }
-                    ]
-                },
-                {
-                    text: "Programs",
-                    selectable: false,
-                    nodes: [
-                        {
-                            text: "MAIN_PRG"
-                        }
-                    ]
-                },
-                {
-                    text: "Function blocks",
-                    selectable: false,
-                    nodes: [
-                        {
-                            text: "myFunctionBlock"
-                        }
-                    ]
-                },
-                {
-                    text: "Configuration"
-                }
-            ]
-        }
-    ];
+    $('#functionDialog').on('show.bs.modal', () => {
+        $('#newFunctionReturnType').empty();
+        $('#newFunctionReturnType').append($('<option value="NONE">NONE</option>'));
+        $.each(Blockly.ST.ANY_ELEMENTARY_TYPE, (i, p) => {
+            $('#newFunctionReturnType').append($('<option></option>').val(p).html(p));
+        });
+    });
 
     Editor.project = new Editor.Project("test");
     Editor.project.addProgram(new Editor.Program("MAIN_PRG"));
-    Editor.project.addProgram(new Editor.Program("MAIN_PRG_2"));
 
     $('#tree').treeview({
         color: "#FFFFFF",
@@ -93,16 +60,18 @@ Editor.init = function () {
         expandIcon: 'fas fa-folder-open',
         data: Editor.project.getAsTree(),
         onNodeSelected: function (event, data) {
-            console.log("Selected");
-            console.log(data);
-            Editor.loadWorkspace(data);
+            Editor.loadWorkspace(data.dataAttr);
         },
         onNodeUnselected: function (event, data) {
-            console.log("Unselected");
-            console.log(data);
-            Editor.saveWorkspace(data);
+            Editor.saveWorkspace(data.dataAttr);
         },
     });
+
+    Editor.tree = $('#tree').treeview(true);
+    //let programNode = Editor.tree.findNodes('MAIN_PRG', 'text');
+    //Editor.tree.selectNode(programNode);
+
+
 };
 
 Editor.blocklyInit = function () {
@@ -136,7 +105,41 @@ Editor.blocklyInit = function () {
         */
         var code = Blockly.ST.fullOutput(Editor.workspace);
         document.getElementById('output').value = code;
+        //console.log(Editor.tree.getSelected()[0].dataAttr);
+        Editor.saveWorkspace(Editor.tree.getSelected()[0].dataAttr);
     });
+
+    Editor.workspace.registerToolboxCategoryCallback('TEST_FUNCTIONS', Editor.functionsFlyoutCallback)
+};
+
+Editor.functionsFlyoutCallback = function (workspace) {
+    var xmlList = [];
+    var button = goog.dom.createDom('button');
+    button.setAttribute('text', 'New Function');
+    button.setAttribute('callbackKey', 'CREATE_FUNCTION');
+
+    workspace.registerButtonCallback('CREATE_FUNCTION', function (button) {
+        //Blockly.Variables.createVariableButtonHandler(button.getTargetWorkspace());
+        $('#functionDialog').modal('show');
+    });
+    xmlList.push(button);
+
+    for(var func of Editor.project.getAllFunctions()){
+        var block = goog.dom.createDom('block');
+        block.setAttribute('type', func.return_type === 'NONE' ? 'procedures_callnoreturn' : 'procedures_callreturn');
+        block.setAttribute('gap', 16);
+        var mutation = goog.dom.createDom('mutation');
+        mutation.setAttribute('name', func.name);
+        block.appendChild(mutation);
+        for (var j = 0; j < func.args.length; j++) {
+            var arg = goog.dom.createDom('arg');
+            arg.setAttribute('name', func.args[j].name);
+            mutation.appendChild(arg);
+        }
+        xmlList.push(block);
+    }
+
+    return xmlList;
 };
 
 Editor.blockCreated = function (event) {
@@ -147,7 +150,6 @@ Editor.blockCreated = function (event) {
 };
 
 Editor.swapWorkspace = function (source) {
-    Blockly.Xml.clearWorkspaceAndLoadFromXml(source, Editor.workspace);
 };
 
 Editor.blockChanged = function (event) {
@@ -223,6 +225,61 @@ Editor.changeVariable_ = function (id, name, type, opt_value, opt_address) {
     Editor.workspace.changeVariable(id, name, opt_value, opt_address);
 };
 
+Editor.newProgram = function () {
+    bootbox.prompt({
+        title: "New program",
+        inputType: "text",
+        placeholder: 'Program name',
+        callback: function (result) {
+            if (result) {
+                console.log(result);
+                var program = new Editor.Program(result);
+                Editor.project.addProgram(program);
+                var parent = Editor.tree.findNodes('Programs', 'text');
+                Editor.tree.addNode({
+                    text: program.name,
+                    dataAttr: [{id: program.getId(), type: 'PROGRAM'}],
+                    icon: 'fas fa-file'
+                }, parent);
+            }
+        }
+    });
+};
+
+Editor.newFunction = function () {
+    $('#functionDialog').modal('show');
+};
+
+Editor.createNewFunction = function () {
+
+    var form = $('#newFunctionForm');
+    var values = form.serializeArray();
+    form[0].reset();
+    $('#functionDialog').modal('hide');
+    let funcName = values[0].value;
+    let returnType = values[1].value;
+    Editor.createNewFunction_(funcName, returnType);
+};
+
+Editor.createNewFunction_ = function (name, type) {
+    var func = new Editor.Function(name, type);
+    Editor.project.addFunction(func);
+    var parent = Editor.tree.findNodes('Functions', 'text');
+    Editor.tree.addNode({
+        text: func.name,
+        dataAttr: [{id: func.getId(), type: 'FUNCTION'}],
+        icon: 'fas fa-file'
+    }, parent);
+};
+
+Editor.newFunctionBlock = function () {
+    /*var program = new Editor.FunctionBlock("new program");
+    Editor.project.addProgram(program);
+    var parent = Editor.tree.findNodes('Programs','text');
+    Editor.tree.addNode({text: program.name, id: program.getId(), type: Editor.Project.PROGRAM_TYPE}, parent);
+    */
+};
+
 
 Editor.populateForm = function (form_name, variable) {
     var form = $(form_name);
@@ -235,7 +292,7 @@ Editor.populateForm = function (form_name, variable) {
 };
 
 Editor.exportAsXml = function (fileName) {
-    var xml = XMLExporter.export(Editor.workspace);
+    var xml = XMLExporter.exportProject(Editor.project);
     var blob = new Blob([xml], {type: "application/xml"});
     saveAs(blob, fileName + ".xml");
 };
@@ -259,7 +316,7 @@ Editor.showSaveDialog = function (callback) {
     bootbox.prompt({
         title: "Save file",
         inputType: "text",
-        value: 'Project',
+        placeholder: 'File name',
         callback: function (result) {
             if (result) {
                 callback(result);
@@ -307,43 +364,54 @@ Editor.devGenerateXml = function () {
     document.getElementById('output').value = xml;
 };
 
-Editor.saveWorkspace = function (data) {
-    var target = null;
-    if (data.type === Editor.Project.PROGRAM_TYPE) {
-        target = Editor.project.getProgramById(data.id);
-    } else if (data.type === Editor.Project.FUNCTION_TYPE) {
-        target = Editor.project.getFunctionById(data.id);
-    } else if (data.type === Editor.Project.FUNCTION_BLOCK_TYPE) {
-        target = Editor.project.getFunctionBlockById(data.id);
+Editor.getTargetFromProject = function (type, id) {
+    if (type === 'PROGRAM') {
+        return Editor.project.getProgramById(id);
+    } else if (type === 'FUNCTION') {
+        return Editor.project.getFunctionById(id);
+    } else if (type === 'FUNCTION_BLOCK') {
+        return Editor.project.getFunctionBlockById(id);
     }
-    if(target !== null){
+    return null;
+};
+
+Editor.saveWorkspace = function (data) {
+    if(data instanceof Array){
+        data = data[0];
+    }
+    console.log('save',data);
+    var target = Editor.getTargetFromProject(data.type, data.id);
+
+    if (target !== null) {
         target.updateWorkspace(Editor.workspace);
-    }else{
-        console.error("Unabled to find the target to save workspace to, target id: "+data.id);
+    } else {
+        console.error("Unabled to find the target to save workspace to, target id: " + data.id);
     }
 };
 
 Editor.loadWorkspace = function (data) {
-    var target = null;
-    if (data.type === 'PROGRAM') {
-        target = Editor.project.getProgramById(data.id);
-    } else if (data.type === 'FUNCTION') {
-        target = Editor.project.getFunctionById(data.id);
-    } else if (data.type === 'FUNCTION_BLOCK') {
-        target = Editor.project.getFunctionBlockById(data.id);
+    if(data instanceof Array){
+        data = data[0];
     }
-    if(target !== null){
-        Editor.swapWorkspace(target.getWorkspaceDom())
-    }else{
-        console.error("Unabled to find the target to save workspace to, target id: "+data.id);
+    console.log('load', data);
+    var target = Editor.getTargetFromProject(data.type, data.id);
+    if (target !== null) {
+        Blockly.Xml.clearWorkspaceAndLoadFromXml(target.getWorkspaceDom(), Editor.workspace);
+    } else {
+        console.error("Unabled to find the target to load workspace from, target id: " + data.id);
     }
 };
 
-    window.addEventListener('load', () => {
-        Editor.init();
-        //document.getElementById('generate').addEventListener('click', () => {
-        //Editor.workspace.createVariable('TEST', Blockly.ST.STRING_TYPE);
-        var code = Blockly.JavaScript.workspaceToCode(Editor.workspace);
-        //    document.getElementById('output').value = code;
-        //});
-    });
+Editor.debug = function () {
+    var xml = XMLExporter.exportProject(Editor.project);
+    document.getElementById('output').value = xml;
+};
+
+window.addEventListener('load', () => {
+    Editor.init();
+    //document.getElementById('generate').addEventListener('click', () => {
+    //Editor.workspace.createVariable('TEST', Blockly.ST.STRING_TYPE);
+    var code = Blockly.JavaScript.workspaceToCode(Editor.workspace);
+    //    document.getElementById('output').value = code;
+    //});
+});

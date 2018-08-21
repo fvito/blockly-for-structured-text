@@ -163,6 +163,26 @@ Blockly.ST.functionBlocksToCode = function (workspace) {
     return code.join("\n\t");
 };
 
+Blockly.ST.projectToCode = function(project) {
+
+};
+
+Blockly.ST.programToCode = function(program) {
+
+};
+
+Blockly.ST.functionToCode = function(func) {
+
+};
+
+Blockly.ST.functionBlockToCode = function (funcBlock) {
+
+};
+
+Blockly.ST.configurationToCode = function(configuration ){
+
+};
+
 Blockly.ST.fullOutput = function (workspace) {
     var code = this.workspaceToCode(workspace);
     var variables = this.variablesToCode(workspace);

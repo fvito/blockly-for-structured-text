@@ -48,6 +48,63 @@ XMLExporter.export = function (workspace) {
     return this.writer.flush();
 };
 
+XMLExporter.exportProject = function (project) {
+    let workspace = new Blockly.Workspace();
+    this.writer = new XMLWriter('UTF-8', '1.0');
+    this.writer.writeStartDocument();
+    this.writer.writeStartElement("project");
+
+    this.writer.writeAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+    this.writer.writeAttributeString("xmlns", "http://www.plcopen.org/xml/tc6.xsd");
+    this.writer.writeAttributeString("xmlns:xhtml", "http://www.w3.org/1999/xhtml");
+    this.writer.writeAttributeString("xsi:schemaLocation", "http://www.plcopen.org/xml/tc6.xsd");
+
+    //File Header
+    this.writeFileHeader();
+    //End File Header
+    //Content Header
+    this.writeContentHeader();
+    //End Content Header
+
+    //Start Types Element
+    this.writer.writeStartElement("types");
+    //Start dataTypes Element
+    this.writer.writeStartElement("dataTypes");
+    //End dataTypes Element
+    this.writer.writeEndElement();
+
+    //Start POUS Element
+    this.writer.writeStartElement("pous");
+
+    //Output all programs
+    for (var program of project.programs_) {
+        workspace.clear();
+        Blockly.Xml.domToWorkspace(program.getWorkspaceDom(), workspace);
+        this.writeProgram(workspace, program);
+    }
+    //Output all functions
+    for (var func of project.getAllFunctions(true)) {
+        workspace.clear();
+        Blockly.Xml.domToWorkspace(func.workspace, workspace);
+        this.writeFunction(workspace, func);
+    }
+
+    //End POUS Element
+    this.writer.writeEndElement();
+    //End Types Element
+    this.writer.writeEndElement();
+    this.writer.writeEndElement();
+
+    //Instances Element
+    this.writeGenericInstance_();
+    //End Instances Element
+
+    //End Project Element
+    this.writer.writeEndElement();
+    this.writer.writeEndDocument();
+    return this.writer.flush();
+};
+
 XMLExporter.writeFileHeader = function () {
     this.writer.writeStartElement("fileHeader");
     this.writer.writeAttributeString("companyName", "Blank");
@@ -85,8 +142,8 @@ XMLExporter.writeCoordinateInfo = function (fbdSize, ldSize, sfcSize) {
     this.writer.writeEndElement();
 };
 
-XMLExporter.writeProgram = function (workspace) {
-    this.writeElementWithAttributes_("pou", {name: "MAIN_PRG", pouType: "program"});
+XMLExporter.writeProgram = function (workspace, program) {
+    this.writeElementWithAttributes_("pou", {name: program.name, pouType: "program"});
     this.writeVariables(workspace.getAllVariables(), Blockly.FunctionBlocks.allFunctionBlocks(workspace));
 
     this.writer.writeStartElement("body");
@@ -98,7 +155,28 @@ XMLExporter.writeProgram = function (workspace) {
 
     this.writer.writeEndElement();
     this.writer.writeEndElement();
+    this.writer.writeEndElement();
 
+};
+
+XMLExporter.writeFunction = function (workspace, func) {
+    this.writeElementWithAttributes_("pou", {name: func.name, pouType: "function"});
+    this.writer.writeStartElement("interface");
+    this.writer.writeElementString("returnType", `<${func.return_type}/>`);
+    this.writeFunctionVariables(workspace, func);
+
+    this.writer.writeEndElement();
+
+    this.writer.writeStartElement("body");
+    this.writer.writeStartElement("ST");
+
+    this.writeElementWithAttributes_("xhtml", {xmlns: "http://www.w3.org/1999/xhtml"}, false);
+    this.writer.writeString(Blockly.ST.functionToCode(func));
+    this.writer.writeEndElement();
+
+    this.writer.writeEndElement();
+    this.writer.writeEndElement();
+    this.writer.writeEndElement();
 };
 
 XMLExporter.writeVariables = function (variables, functionBlocks) {
@@ -107,9 +185,9 @@ XMLExporter.writeVariables = function (variables, functionBlocks) {
 
     variables.forEach((variable) => {
         //Begin Variable Element
-        if(variable.address !== '') {
-            this.writeElementWithAttributes_("variable", {name: variable.name, address:variable.address});
-        }else{
+        if (variable.address !== '') {
+            this.writeElementWithAttributes_("variable", {name: variable.name, address: variable.address});
+        } else {
             this.writeElementWithAttributes_("variable", {name: variable.name});
         }
         this.writer.writeStartElement("type");
@@ -138,6 +216,39 @@ XMLExporter.writeVariables = function (variables, functionBlocks) {
     this.writer.writeEndElement();
     //End interface Element
     this.writer.writeEndElement();
+};
+
+XMLExporter.writeFunctionVariables = function (workspace, func) {
+    this.writer.writeStartElement("inputVars");
+    func.args.forEach((arg) => {
+        this.writeElementWithAttributes_("variable", {name: arg.name});
+        this.writer.writeStartElement("type");
+        //TODO Handle String optional Length attribute
+        this.writeClosedElement_(arg.type);
+        this.writer.writeEndElement();
+        this.writer.writeEndElement();
+    });
+    this.writer.writeEndElement();
+
+    this.writer.writeStartElement("localVars");
+
+    workspace.getAllVariables().forEach((variable) => {
+       if(!func.args.includes(variable)){
+           this.writeElementWithAttributes_("variable", {name: variable.name});
+           this.writer.writeStartElement("type");
+           //TODO Handle String optional Length attribute
+           this.writeClosedElement_(variable.type);
+           this.writer.writeEndElement();
+           if (variable.initValue !== '') {
+               this.writer.writeStartElement("initialValue");
+               this.writeElementWithAttributes_("simpleValue", {value: variable.initValue}, true);
+               this.writer.writeEndElement();
+           }
+           this.writer.writeEndElement();
+       }
+    });
+    this.writer.writeEndElement();
+
 };
 
 XMLExporter.writeGenericInstance_ = function () {
