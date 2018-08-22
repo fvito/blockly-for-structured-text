@@ -104,7 +104,7 @@ Editor.blocklyInit = function () {
             this.blockCreated(event);
         }
         */
-        var code = Blockly.ST.fullOutput(Editor.workspace);
+        var code = Blockly.ST.workspaceToCode(Editor.workspace);
         document.getElementById('output').value = code;
         //console.log(Editor.tree.getSelected()[0].dataAttr);
         Editor.saveWorkspace(Editor.tree.getSelected()[0].dataAttr);

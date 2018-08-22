@@ -96,7 +96,7 @@ XMLExporter.exportProject = function (project) {
     this.writer.writeEndElement();
 
     //Instances Element
-    this.writeGenericInstance_();
+    this.writeGenericInstance_(project);
     //End Instances Element
 
     //End Project Element
@@ -171,7 +171,7 @@ XMLExporter.writeFunction = function (workspace, func) {
     this.writer.writeStartElement("ST");
 
     this.writeElementWithAttributes_("xhtml", {xmlns: "http://www.w3.org/1999/xhtml"}, false);
-    this.writer.writeString(Blockly.ST.functionToCode(func));
+    this.writer.writeString(Blockly.ST.workspaceToCode(workspace));
     this.writer.writeEndElement();
 
     this.writer.writeEndElement();
@@ -234,35 +234,42 @@ XMLExporter.writeFunctionVariables = function (workspace, func) {
 
     this.writer.writeStartElement("localVars");
     let localVars = [];
-    for(let variable of workspace.getAllVariables()){
-        if(func.args.findIndex(i => i.id_ === variable.id_) === -1){
+    for (let variable of workspace.getAllVariables()) {
+        if (func.args.findIndex(i => i.id_ === variable.id_) === -1) {
             localVars.push(variable);
         }
     }
     localVars.forEach((variable) => {
-           this.writeElementWithAttributes_("variable", {name: variable.name});
-           this.writer.writeStartElement("type");
-           //TODO Handle String optional Length attribute
-           this.writeClosedElement_(variable.type);
-           this.writer.writeEndElement();
-           if (variable.initValue !== '') {
-               this.writer.writeStartElement("initialValue");
-               this.writeElementWithAttributes_("simpleValue", {value: variable.initValue}, true);
-               this.writer.writeEndElement();
-           }
-           this.writer.writeEndElement();
+        this.writeElementWithAttributes_("variable", {name: variable.name});
+        this.writer.writeStartElement("type");
+        //TODO Handle String optional Length attribute
+        this.writeClosedElement_(variable.type);
+        this.writer.writeEndElement();
+        if (variable.initValue !== '') {
+            this.writer.writeStartElement("initialValue");
+            this.writeElementWithAttributes_("simpleValue", {value: variable.initValue}, true);
+            this.writer.writeEndElement();
+        }
+        this.writer.writeEndElement();
     });
     this.writer.writeEndElement();
 
 };
 
-XMLExporter.writeGenericInstance_ = function () {
+XMLExporter.writeGenericInstance_ = function (opt_project) {
     this.writer.writeStartElement("instances")
         .writeStartElement("configurations")
         .writeStartElement("configuration").writeAttributeString("name", "config0")
         .writeStartElement("resource").writeAttributeString("name", "Res0");
     this.writeElementWithAttributes_("task", {name: "TaskMain", interval: "T#50ms", priority: "0"});
-    this.writeElementWithAttributes_("pouInstance", {name: "Inst0", typeName: "MAIN_PRG"}, true);
+    if (opt_project) {
+        let i = 0;
+        for (const program of opt_project.programs_) {
+            this.writeElementWithAttributes_("pouInstance", {name: `Inst${i++}`, typeName: program.name}, true);
+        }
+    } else {
+        this.writeElementWithAttributes_("pouInstance", {name: "Inst0", typeName: "MAIN_PRG"}, true);
+    }
     this.writer.writeEndElement()
         .writeEndElement()
         .writeEndElement()
@@ -281,7 +288,7 @@ XMLExporter.writeElementWithAttributes_ = function (element, attrs, close = fals
 
 XMLExporter.writeClosedElement_ = function (name, attrs) {
     var string = "<" + name;
-    if(attrs){
+    if (attrs) {
         string += " ";
     }
     for (var key in attrs) {

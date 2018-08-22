@@ -147,6 +147,7 @@ Blockly.Blocks['procedures_defnoreturn'] = {
             var argModel = this.argumentVarModels_[i];
             parameter.setAttribute('name', argModel.name);
             parameter.setAttribute('varId', argModel.getId());
+            parameter.setAttribute('type', argModel.type);
             if (opt_paramIds && this.paramIds_) {
                 parameter.setAttribute('paramId', this.paramIds_[i]);
             }
@@ -170,10 +171,11 @@ Blockly.Blocks['procedures_defnoreturn'] = {
         for (var i = 0, childNode; childNode = xmlElement.childNodes[i]; i++) {
             if (childNode.nodeName.toLowerCase() == 'arg') {
                 var varName = childNode.getAttribute('name');
+                var varType = childNode.getAttribute('type');
                 var varId = childNode.getAttribute('varId');
                 this.arguments_.push(varName);
                 var variable = Blockly.Variables.getOrCreateVariablePackage(
-                    this.workspace, varId, varName, '');
+                    this.workspace, varId, varName, varType);
                 this.argumentVarModels_.push(variable);
             }
         }
@@ -229,8 +231,11 @@ Blockly.Blocks['procedures_defnoreturn'] = {
         var paramBlock = containerBlock.getInputTargetBlock('STACK');
         while (paramBlock) {
             var varName = paramBlock.getFieldValue('NAME');
+            var varType = paramBlock.getFieldValue('TYPE');
+            console.log(`name: ${varName}, type:${varType}`);
             this.arguments_.push(varName);
-            var variable = this.workspace.getVariable(varName, '');
+            var variable = this.workspace.getVariable(varName, varType);
+            console.log(variable);
             this.argumentVarModels_.push(variable);
             this.paramIds_.push(paramBlock.id);
             paramBlock = paramBlock.nextConnection &&
@@ -494,11 +499,13 @@ Blockly.Blocks['procedures_mutatorarg'] = {
         };
         field.showEditor_ = newShowEditorFn;
 
+        var typeField = new Blockly.FieldDropdown(Blockly.ST.MAPPED_TYPES, this.typeValidator_);
+
         this.appendDummyInput()
             .appendField(Blockly.Msg.PROCEDURES_MUTATORARG_TITLE)
             .appendField(field, 'NAME')
             .appendField("of type")
-            .appendField(new Blockly.FieldDropdown(Blockly.ST.MAPPED_TYPES), 'TYPE');
+            .appendField(typeField, 'TYPE');
         this.setPreviousStatement(true);
         this.setNextStatement(true);
         this.setColour(Blockly.Msg.PROCEDURES_HUE);
@@ -514,8 +521,22 @@ Blockly.Blocks['procedures_mutatorarg'] = {
         field.onFinishEditing_('x');
     },
 
-    onchange: function(){
+    onchange: function () {
 
+    },
+
+    typeValidator_: function (newType) {
+        var oldType = this.sourceBlock_.getFieldValue('TYPE');
+        var outerWs = Blockly.Mutator.findParentWs(this.sourceBlock_.workspace);
+        console.log('outerws', outerWs);
+        var varName = this.sourceBlock_.getFieldValue('NAME');
+        console.log('newType', newType);
+        var model = outerWs.getVariable(varName, oldType);
+        if(!model){
+            return null;
+        }
+        outerWs.changeVariableType(model.getId(), newType);
+        return newType;
     },
 
     /**
@@ -535,13 +556,13 @@ Blockly.Blocks['procedures_mutatorarg'] = {
         if (!varName) {
             return null;
         }
-        var model = outerWs.getVariable(varName, '');
+        var model = outerWs.getVariable(varName, this.sourceBlock_.getFieldValue('TYPE'));
         if (model && model.name != varName) {
             // Rename the variable (case change)
             outerWs.renameVarById(model.getId(), varName);
         }
         if (!model) {
-            model = outerWs.createVariable(varName, '');
+            model = outerWs.createVariable(varName, this.sourceBlock_.getFieldValue('TYPE'));
             if (model && this.createdVariables_) {
                 this.createdVariables_.push(model);
             }
