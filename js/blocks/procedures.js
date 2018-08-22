@@ -706,11 +706,14 @@ Blockly.Blocks['procedures_callnoreturn'] = {
         this.arguments_ = [].concat(paramNames);
         // And rebuild the argument model list.
         this.argumentVarModels_ = [];
-        for (var i = 0; i < this.arguments_.length; i++) {
+
+        // We don't need function variables in this workspace/scope
+        /*for (var i = 0; i < this.arguments_.length; i++) {
             var variable = Blockly.Variables.getOrCreateVariablePackage(
                 this.workspace, null, this.arguments_[i], '');
             this.argumentVarModels_.push(variable);
         }
+        */
 
         this.updateShape_();
         this.quarkIds_ = paramIds;
@@ -819,7 +822,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
      * @this Blockly.Block
      */
     getVarModels: function () {
-        return this.argumentVarModels_;
+        return [];//this.argumentVarModels_;
     },
     /**
      * Procedure calls cannot exist without the corresponding procedure
