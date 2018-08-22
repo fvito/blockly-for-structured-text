@@ -5,9 +5,9 @@ goog.provide('Blockly.ST.procedures');
 goog.require('Blockly.ST');
 
 Blockly.ST['procedures_program'] = function (block) {
-  //var name = block.getFieldValue("NAME");
-  var statements = Blockly.ST.statementToCode(block, 'STATEMENTS');
-  //return "PROGRAM " + name + '\n' + statements + '\nEND_PROGRAM;';
+    //var name = block.getFieldValue("NAME");
+    var statements = Blockly.ST.statementToCode(block, 'STATEMENTS');
+    //return "PROGRAM " + name + '\n' + statements + '\nEND_PROGRAM;';
     return statements;
 };
 
@@ -46,10 +46,32 @@ Blockly.ST['procedures_program'] = function (block) {
 };*/
 
 
-Blockly.ST['procedures_defreturn'] = function(block){
+Blockly.ST['procedures_defreturn'] = function (block) {
     var branch = Blockly.ST.statementToCode(block, 'STACK');
     return branch;
 };
 
 Blockly.ST['procedures_defnoreturn'] =
     Blockly.ST['procedures_defreturn'];
+
+Blockly.ST['procedures_callreturn'] = function (block) {
+    var funcName = block.getFieldValue('NAME');
+    var args = [];
+    for (var i = 0; i < block.arguments_.length; i++) {
+        args[i] = Blockly.ST.valueToCode(block, 'ARG' + i,
+            Blockly.ST.ORDER_ATOMIC) || 'null';
+    }
+    var code = funcName + '(' + args.join(', ') + ')';
+    return [code, Blockly.ST.ORDER_FUNCTION_CALL];
+};
+
+Blockly.ST['procedures_callnoreturn'] = function (block) {
+    var funcName = block.getFieldValue('NAME');
+    var args = [];
+    for (var i = 0; i < block.arguments_.length; i++) {
+        args[i] = Blockly.ST.valueToCode(block, 'ARG' + i,
+            Blockly.ST.ORDER_ATOMIC) || 'null';
+    }
+    var code = funcName + '(' + args.join(', ') + ')';
+    return code;
+};

@@ -844,8 +844,8 @@ Blockly.Blocks['procedures_callnoreturn'] = {
                 // The signatures don't match.
                 def = null;
             }
-            if (!def) {
-                Blockly.Events.setGroup(event.group);
+            //if (!def) {
+                //Blockly.Events.setGroup(event.group);
                 /**
                  * Create matching definition block.
                  * <xml>
@@ -857,7 +857,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
                  *   </block>
                  * </xml>
                  */
-                var xml = goog.dom.createDom('xml');
+                /*var xml = goog.dom.createDom('xml');
                 var block = goog.dom.createDom('block');
                 block.setAttribute('type', this.defType_);
                 var xy = this.getRelativeToSurfaceXY();
@@ -875,6 +875,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
                 Blockly.Xml.domToWorkspace(xml, this.workspace);
                 Blockly.Events.setGroup(false);
             }
+            */
         } else if (event.type == Blockly.Events.BLOCK_DELETE) {
             // Look for the case where a procedure definition has been deleted,
             // leaving this block (a procedure call) orphaned.  In this case, delete

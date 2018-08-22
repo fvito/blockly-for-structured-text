@@ -4,6 +4,7 @@ var XMLExporter = {};
 
 XMLExporter.writer = {};
 
+
 XMLExporter.export = function (workspace) {
     //Header
     this.writer = new XMLWriter('UTF-8', '1.0');
@@ -63,7 +64,7 @@ XMLExporter.exportProject = function (project) {
     this.writeFileHeader();
     //End File Header
     //Content Header
-    this.writeContentHeader();
+    this.writeContentHeader(project.name);
     //End Content Header
 
     //Start Types Element
@@ -114,9 +115,9 @@ XMLExporter.writeFileHeader = function () {
     this.writer.writeEndElement();
 };
 
-XMLExporter.writeContentHeader = function () {
+XMLExporter.writeContentHeader = function (opt_name) {
     this.writer.writeStartElement("contentHeader");
-    this.writer.writeAttributeString("name", "Blank Project");
+    this.writer.writeAttributeString("name", opt_name == null ? "Blank Project" : opt_name);
     this.writer.writeAttributeString("modificationDateTime", moment().format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS));
     this.writeCoordinateInfo([1, 1], [1, 1], [1, 1]);
     this.writer.writeEndElement();
@@ -262,6 +263,7 @@ XMLExporter.writeGenericInstance_ = function (opt_project) {
         .writeStartElement("configuration").writeAttributeString("name", "config0")
         .writeStartElement("resource").writeAttributeString("name", "Res0");
     this.writeElementWithAttributes_("task", {name: "TaskMain", interval: "T#50ms", priority: "0"});
+
     if (opt_project) {
         let i = 0;
         for (const program of opt_project.programs_) {
@@ -270,6 +272,7 @@ XMLExporter.writeGenericInstance_ = function (opt_project) {
     } else {
         this.writeElementWithAttributes_("pouInstance", {name: "Inst0", typeName: "MAIN_PRG"}, true);
     }
+
     this.writer.writeEndElement()
         .writeEndElement()
         .writeEndElement()
