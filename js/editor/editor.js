@@ -107,7 +107,9 @@ Editor.blocklyInit = function () {
         var code = Blockly.ST.workspaceToCode(Editor.workspace);
         document.getElementById('output').value = code;
         //console.log(Editor.tree.getSelected()[0].dataAttr);
-        Editor.saveWorkspace(Editor.tree.getSelected()[0].dataAttr);
+        if(Editor.tree.getSelected()[0]) {
+            Editor.saveWorkspace(Editor.tree.getSelected()[0].dataAttr);
+        }
     });
 
     Editor.workspace.registerToolboxCategoryCallback('TEST_FUNCTIONS', Editor.functionsFlyoutCallback)

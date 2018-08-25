@@ -144,10 +144,11 @@ Blockly.Blocks['procedures_defnoreturn'] = {
         }
         for (var i = 0; i < this.argumentVarModels_.length; i++) {
             var parameter = document.createElement('arg');
-            var argModel = this.argumentVarModels_[i];
+            var argModel = this.argumentVarModels_[i].variable;
             parameter.setAttribute('name', argModel.name);
             parameter.setAttribute('varId', argModel.getId());
             parameter.setAttribute('type', argModel.type);
+            parameter.setAttribute("reference", this.argumentVarModels_[i].is_reference);
             if (opt_paramIds && this.paramIds_) {
                 parameter.setAttribute('paramId', this.paramIds_[i]);
             }
@@ -173,10 +174,11 @@ Blockly.Blocks['procedures_defnoreturn'] = {
                 var varName = childNode.getAttribute('name');
                 var varType = childNode.getAttribute('type');
                 var varId = childNode.getAttribute('varId');
+                var isReference = childNode.getAttribute('reference');
                 this.arguments_.push(varName);
                 var variable = Blockly.Variables.getOrCreateVariablePackage(
                     this.workspace, varId, varName, varType);
-                this.argumentVarModels_.push(variable);
+                this.argumentVarModels_.push({"variable": variable, "is_reference": isReference});
             }
         }
         this.updateParams_();
@@ -235,8 +237,8 @@ Blockly.Blocks['procedures_defnoreturn'] = {
             console.log(`name: ${varName}, type:${varType}`);
             this.arguments_.push(varName);
             var variable = this.workspace.getVariable(varName, varType);
-            console.log(variable);
-            this.argumentVarModels_.push(variable);
+            //console.log(variable);
+            this.argumentVarModels_.push({"variable": variable, "is_reference": paramBlock.getFieldValue('REF')});
             this.paramIds_.push(paramBlock.id);
             paramBlock = paramBlock.nextConnection &&
                 paramBlock.nextConnection.targetBlock();
@@ -293,7 +295,7 @@ Blockly.Blocks['procedures_defnoreturn'] = {
      * @this Blockly.Block
      */
     getVarModels: function () {
-        return this.argumentVarModels_;
+        return this.argumentVarModels_.map(i => i.variable);
     },
     /**
      * Notification that a variable is renaming.
@@ -315,9 +317,9 @@ Blockly.Blocks['procedures_defnoreturn'] = {
 
         var change = false;
         for (var i = 0; i < this.argumentVarModels_.length; i++) {
-            if (this.argumentVarModels_[i].getId() == oldId) {
+            if (this.argumentVarModels_[i].variable.getId() === oldId) {
                 this.arguments_[i] = newVar.name;
-                this.argumentVarModels_[i] = newVar;
+                this.argumentVarModels_[i].variable = newVar;
                 change = true;
             }
         }
@@ -335,7 +337,7 @@ Blockly.Blocks['procedures_defnoreturn'] = {
         var newName = variable.name;
         var change = false;
         for (var i = 0; i < this.argumentVarModels_.length; i++) {
-            if (this.argumentVarModels_[i].getId() == variable.getId()) {
+            if (this.argumentVarModels_[i].variable.getId() === variable.getId()) {
                 var oldName = this.arguments_[i];
                 this.arguments_[i] = newName;
                 change = true;
@@ -393,7 +395,7 @@ Blockly.Blocks['procedures_defnoreturn'] = {
         if (!this.isCollapsed()) {
             for (var i = 0; i < this.argumentVarModels_.length; i++) {
                 var option = {enabled: true};
-                var argVar = this.argumentVarModels_[i];
+                var argVar = this.argumentVarModels_[i].variable;
                 var name = argVar.name;
                 option.text = Blockly.Msg.VARIABLES_SET_CREATE_GET.replace('%1', name);
 
@@ -505,7 +507,9 @@ Blockly.Blocks['procedures_mutatorarg'] = {
             .appendField(Blockly.Msg.PROCEDURES_MUTATORARG_TITLE)
             .appendField(field, 'NAME')
             .appendField("of type")
-            .appendField(typeField, 'TYPE');
+            .appendField(typeField, 'TYPE')
+            .appendField('is reference')
+            .appendField(new Blockly.FieldCheckbox('FALSE'), 'REF');
         this.setPreviousStatement(true);
         this.setNextStatement(true);
         this.setColour(Blockly.Msg.PROCEDURES_HUE);
@@ -532,7 +536,7 @@ Blockly.Blocks['procedures_mutatorarg'] = {
         var varName = this.sourceBlock_.getFieldValue('NAME');
         console.log('newType', newType);
         var model = outerWs.getVariable(varName, oldType);
-        if(!model){
+        if (!model) {
             return null;
         }
         outerWs.changeVariableType(model.getId(), newType);
@@ -848,37 +852,37 @@ Blockly.Blocks['procedures_callnoreturn'] = {
                 def = null;
             }
             //if (!def) {
-                //Blockly.Events.setGroup(event.group);
-                /**
-                 * Create matching definition block.
-                 * <xml>
-                 *   <block type="procedures_defreturn" x="10" y="20">
-                 *     <mutation name="test">
-                 *       <arg name="x"></arg>
-                 *     </mutation>
-                 *     <field name="NAME">test</field>
-                 *   </block>
-                 * </xml>
-                 */
-                /*var xml = goog.dom.createDom('xml');
-                var block = goog.dom.createDom('block');
-                block.setAttribute('type', this.defType_);
-                var xy = this.getRelativeToSurfaceXY();
-                var x = xy.x + Blockly.SNAP_RADIUS * (this.RTL ? -1 : 1);
-                var y = xy.y + Blockly.SNAP_RADIUS * 2;
-                block.setAttribute('x', x);
-                block.setAttribute('y', y);
-                var mutation = this.mutationToDom();
-                block.appendChild(mutation);
-                var field = goog.dom.createDom('field');
-                field.setAttribute('name', 'NAME');
-                field.appendChild(document.createTextNode(this.getProcedureCall()));
-                block.appendChild(field);
-                xml.appendChild(block);
-                Blockly.Xml.domToWorkspace(xml, this.workspace);
-                Blockly.Events.setGroup(false);
-            }
-            */
+            //Blockly.Events.setGroup(event.group);
+            /**
+             * Create matching definition block.
+             * <xml>
+             *   <block type="procedures_defreturn" x="10" y="20">
+             *     <mutation name="test">
+             *       <arg name="x"></arg>
+             *     </mutation>
+             *     <field name="NAME">test</field>
+             *   </block>
+             * </xml>
+             */
+            /*var xml = goog.dom.createDom('xml');
+            var block = goog.dom.createDom('block');
+            block.setAttribute('type', this.defType_);
+            var xy = this.getRelativeToSurfaceXY();
+            var x = xy.x + Blockly.SNAP_RADIUS * (this.RTL ? -1 : 1);
+            var y = xy.y + Blockly.SNAP_RADIUS * 2;
+            block.setAttribute('x', x);
+            block.setAttribute('y', y);
+            var mutation = this.mutationToDom();
+            block.appendChild(mutation);
+            var field = goog.dom.createDom('field');
+            field.setAttribute('name', 'NAME');
+            field.appendChild(document.createTextNode(this.getProcedureCall()));
+            block.appendChild(field);
+            xml.appendChild(block);
+            Blockly.Xml.domToWorkspace(xml, this.workspace);
+            Blockly.Events.setGroup(false);
+        }
+        */
         } else if (event.type == Blockly.Events.BLOCK_DELETE) {
             // Look for the case where a procedure definition has been deleted,
             // leaving this block (a procedure call) orphaned.  In this case, delete

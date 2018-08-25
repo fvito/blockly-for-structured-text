@@ -150,9 +150,7 @@ XMLExporter.writeProgram = function (workspace, program) {
     this.writer.writeStartElement("body");
     this.writer.writeStartElement("ST");
 
-    this.writeElementWithAttributes_("xhtml", {xmlns: "http://www.w3.org/1999/xhtml"}, false);
-    this.writer.writeString(Blockly.ST.workspaceToCode(workspace));
-    this.writer.writeEndElement();
+    this.writeWorkspace(workspace);
 
     this.writer.writeEndElement();
     this.writer.writeEndElement();
@@ -171,9 +169,7 @@ XMLExporter.writeFunction = function (workspace, func) {
     this.writer.writeStartElement("body");
     this.writer.writeStartElement("ST");
 
-    this.writeElementWithAttributes_("xhtml", {xmlns: "http://www.w3.org/1999/xhtml"}, false);
-    this.writer.writeString(Blockly.ST.workspaceToCode(workspace));
-    this.writer.writeEndElement();
+    this.writeWorkspace(workspace);
 
     this.writer.writeEndElement();
     this.writer.writeEndElement();
@@ -222,24 +218,39 @@ XMLExporter.writeVariables = function (variables, functionBlocks) {
 XMLExporter.writeFunctionVariables = function (workspace, func) {
     var variables = workspace.getAllVariables();
     console.log(variables);
+    //Input variables
     this.writer.writeStartElement("inputVars");
-    func.args.forEach((arg) => {
-        this.writeElementWithAttributes_("variable", {name: arg.name});
+    func.args.filter(arg => arg.is_reference !== 'TRUE').forEach((arg) => {
+        this.writeElementWithAttributes_("variable", {name: arg.variable.name});
         this.writer.writeStartElement("type");
         //TODO Handle String optional Length attribute
-        this.writeClosedElement_(arg.type);
+        this.writeClosedElement_(arg.variable.type);
         this.writer.writeEndElement();
         this.writer.writeEndElement();
     });
     this.writer.writeEndElement();
 
+    //InOut variables
+    this.writer.writeStartElement("inOutVars");
+    func.args.filter(arg => arg.is_reference === 'TRUE').forEach((arg) => {
+        this.writeElementWithAttributes_("variable", {name: arg.variable.name});
+        this.writer.writeStartElement("type");
+        //TODO Handle String optional Length attribute
+        this.writeClosedElement_(arg.variable.type);
+        this.writer.writeEndElement();
+        this.writer.writeEndElement();
+    });
+    this.writer.writeEndElement();
+
+    //Filter local input variables from local variables
     this.writer.writeStartElement("localVars");
     let localVars = [];
     for (let variable of workspace.getAllVariables()) {
-        if (func.args.findIndex(i => i.id_ === variable.id_) === -1) {
+        if (func.args.findIndex(i => i.variable.id_ === variable.id_) === -1) {
             localVars.push(variable);
         }
     }
+    //Local variables
     localVars.forEach((variable) => {
         this.writeElementWithAttributes_("variable", {name: variable.name});
         this.writer.writeStartElement("type");
@@ -255,6 +266,12 @@ XMLExporter.writeFunctionVariables = function (workspace, func) {
     });
     this.writer.writeEndElement();
 
+};
+
+XMLExporter.writeWorkspace = function (workspace) {
+    this.writeElementWithAttributes_("xhtml:p", false);
+    this.writer.writeCDATA(Blockly.ST.workspaceToCode(workspace));
+    this.writer.writeEndElement();
 };
 
 XMLExporter.writeGenericInstance_ = function (opt_project) {
