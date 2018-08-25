@@ -48,11 +48,16 @@ Blockly.ST['procedures_program'] = function (block) {
 
 Blockly.ST['procedures_defreturn'] = function (block) {
     var branch = Blockly.ST.statementToCode(block, 'STACK');
-    return branch;
+    var value =  Blockly.ST.valueToCode(block, 'RETURN', Blockly.ST.ORDER_ATOMIC);
+    var name = block.getFieldValue('NAME');
+    console.log(value);
+    return branch + "\n" + name + ":=" +value;
 };
 
-Blockly.ST['procedures_defnoreturn'] =
-    Blockly.ST['procedures_defreturn'];
+Blockly.ST['procedures_defnoreturn'] = function (block) {
+    var branch = Blockly.ST.statementToCode(block, 'STACK');
+    return branch;
+};
 
 Blockly.ST['procedures_callreturn'] = function (block) {
     var funcName = block.getFieldValue('NAME');

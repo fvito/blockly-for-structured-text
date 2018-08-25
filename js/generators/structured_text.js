@@ -230,7 +230,7 @@ Blockly.ST.scrub_ = function (block, code) {
         comment = Blockly.utils.wrap(comment, Blockly.ST.COMMENT_WRAP - 3);
         if (comment) {
             commentCode += Blockly.ST.prefixLines(comment, '(* ');
-            commentCode = commentCode+' *)';
+            commentCode = commentCode+' *)\n';
             /*if (block.getProcedureDef) {
                 // Use documentation comment for function comments.
                 commentCode += Blockly.ST.prefixLines(comment, '{ ');

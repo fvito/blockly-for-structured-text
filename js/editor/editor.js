@@ -136,7 +136,7 @@ Editor.functionsFlyoutCallback = function (workspace) {
         block.appendChild(mutation);
         for (var j = 0; j < func.args.length; j++) {
             var arg = goog.dom.createDom('arg');
-            arg.setAttribute('name', func.args[j].name);
+            arg.setAttribute('name', func.args[j].variable.name);
             mutation.appendChild(arg);
         }
         xmlList.push(block);
