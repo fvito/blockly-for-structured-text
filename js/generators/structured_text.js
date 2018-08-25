@@ -229,13 +229,19 @@ Blockly.ST.scrub_ = function (block, code) {
         var comment = block.getCommentText();
         comment = Blockly.utils.wrap(comment, Blockly.ST.COMMENT_WRAP - 3);
         if (comment) {
-            if (block.getProcedureDef) {
+            commentCode += Blockly.ST.prefixLines(comment, '(* ');
+            commentCode = commentCode+' *)';
+            /*if (block.getProcedureDef) {
                 // Use documentation comment for function comments.
-                commentCode += Blockly.ST.prefixLines(comment + '\n', '/// ');
+                commentCode += Blockly.ST.prefixLines(comment, '{ ');
+                commentCode = commentCode+' }';
             } else {
-                commentCode += Blockly.ST.prefixLines(comment + '\n', '// ');
+                commentCode += Blockly.ST.prefixLines(comment, '(* ');
+                commentCode = commentCode + ' *)';
             }
+            */
         }
+
         // Collect comments for all value arguments.
         // Don't collect comments for nested statements.
         for (var i = 0; i < block.inputList.length; i++) {
