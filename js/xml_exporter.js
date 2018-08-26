@@ -215,6 +215,7 @@ XMLExporter.writeVariables = function (variables, functionBlocks) {
     this.writer.writeEndElement();
 };
 
+//TODO Refactor to use writeVariables function
 XMLExporter.writeFunctionVariables = function (workspace, func) {
     var variables = workspace.getAllVariables();
     console.log(variables);
@@ -264,6 +265,17 @@ XMLExporter.writeFunctionVariables = function (workspace, func) {
         }
         this.writer.writeEndElement();
     });
+
+    let functionBlocks = Blockly.FunctionBlocks.allFunctionBlocks(workspace);
+    functionBlocks.forEach((functionBlock) => {
+        this.writeElementWithAttributes_("variable", {name: functionBlock.name});
+        this.writer.writeStartElement("type");
+        this.writeClosedElement_("derived", {name: functionBlock.type});
+        this.writer.writeEndElement();
+        //End Variable Element
+        this.writer.writeEndElement();
+    });
+
     this.writer.writeEndElement();
 
 };

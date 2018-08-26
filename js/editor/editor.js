@@ -47,7 +47,8 @@ Editor.init = function () {
 
     Editor.project = new Editor.Project("test");
     Editor.project.addProgram(new Editor.Program("MAIN_PRG"));
-    Editor.project.addFunction(new Editor.Function("test","BOOL"));
+    Editor.project.addFunction(new Editor.Function("F_Test","BOOL"));
+    Editor.project.addFunctionBlock(new Editor.FunctionBlock('FB_Test'));
 
     $('#tree').treeview({
         color: "#FFFFFF",
@@ -150,9 +151,6 @@ Editor.blockCreated = function (event) {
     if (block.type === 'variables_declare') {
 
     }
-};
-
-Editor.swapWorkspace = function (source) {
 };
 
 Editor.blockChanged = function (event) {
@@ -276,13 +274,24 @@ Editor.createNewFunction_ = function (name, type) {
 };
 
 Editor.newFunctionBlock = function () {
-    /*var program = new Editor.FunctionBlock("new program");
-    Editor.project.addProgram(program);
-    var parent = Editor.tree.findNodes('Programs','text');
-    Editor.tree.addNode({text: program.name, id: program.getId(), type: Editor.Project.PROGRAM_TYPE}, parent);
-    */
+    bootbox.prompt({
+        title: "New function block",
+        inputType: "text",
+        placeholder: 'Function block name',
+        callback: function (result) {
+            if (result) {
+                var functionBlock = new Editor.FunctionBlock(result);
+                Editor.project.addFunctionBlock(functionBlock);
+                var parent = Editor.tree.findNodes('Function Blocks', 'text');
+                Editor.tree.addNode({
+                    text: functionBlock.name,
+                    dataAttr: [{id: functionBlock.getId(), type: 'FUNCTION_BLOCK'}],
+                    icon: 'fas fa-file'
+                }, parent);
+            }
+        }
+    });
 };
-
 
 Editor.populateForm = function (form_name, variable) {
     var form = $(form_name);

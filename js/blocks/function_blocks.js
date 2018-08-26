@@ -943,7 +943,33 @@ Blockly.Blocks['function_block_r_trig'] = {
     }
 };
 
-
+Blockly.Blocks['function_block_def'] = {
+    init: function () {
+        var nameField = new Blockly.FieldTextInput('',
+            Blockly.Procedures.rename);
+        nameField.setSpellcheck(false);
+        this.appendDummyInput()
+            .appendField(Blockly.Msg.PROCEDURES_DEFRETURN_TITLE)
+            .appendField(nameField, 'NAME')
+            .appendField('', 'PARAMS');
+        this.appendValueInput('RETURN')
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .appendField(Blockly.Msg.PROCEDURES_DEFRETURN_RETURN);
+        if ((this.workspace.options.comments ||
+            (this.workspace.options.parentWorkspace &&
+                this.workspace.options.parentWorkspace.options.comments)) &&
+            Blockly.Msg.PROCEDURES_DEFRETURN_COMMENT) {
+            this.setCommentText(Blockly.Msg.PROCEDURES_DEFRETURN_COMMENT);
+        }
+        this.setColour(Blockly.Msg.PROCEDURES_HUE);
+        this.setTooltip(Blockly.Msg.PROCEDURES_DEFRETURN_TOOLTIP);
+        this.setHelpUrl(Blockly.Msg.PROCEDURES_DEFRETURN_HELPURL);
+        this.arguments_ = [];
+        this.argumentVarModels_ = [];
+        //this.setStatements_(true);
+        this.statementConnection_ = null;
+    },
+};
 
 
 
