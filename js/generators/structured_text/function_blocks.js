@@ -87,5 +87,12 @@ Blockly.ST['function_block_def'] = function (block) {
 };
 
 Blockly.ST['function_block_call'] = function (block) {
-    return 'fb_call';
+    var name = block.getFieldValue('NAME');
+    var args = [];
+    for (var i = 0; i < block.arguments_.length; i++) {
+        var argument = block.arguments_[i].name + ":=" + Blockly.ST.valueToCode(block, 'ARG' + i, Blockly.ST.ORDER_ATOMIC) || 'null';
+        args.push(argument);
+    }
+    var code = name + "(" + args.join(" ,") + ");\n";
+    return code;
 };
