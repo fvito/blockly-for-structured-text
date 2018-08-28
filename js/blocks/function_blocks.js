@@ -968,16 +968,8 @@ Blockly.Blocks['function_block_call'] = {
     setFunctionBlockParameters_: function (inputs, inputIds, outputs, outputIds) {
         this.arguments_ = inputs;
         this.outputs_ = outputs;
-        this.members_ = [];
+        this.members_ = inputs.concat(outputs);
         this.updateShape_();
-
-        for (var input of inputs) {
-            this.members_.push({"name": input, "check": "", "type": "input"});
-        }
-
-        for (var output of outputs) {
-            this.members_.push({"name": output, "check": "", "type": "output"});
-        }
     },
 
     /**
@@ -991,14 +983,15 @@ Blockly.Blocks['function_block_call'] = {
             if (field) {
                 Blockly.Events.disable();
                 try {
-                    field.setValue(this.arguments_[i]);
+                    field.setValue(this.arguments_[i].name);
                 } finally {
                     Blockly.Events.enable();
                 }
             } else {
-                field = new Blockly.FieldLabel(this.arguments_[i]);
+                field = new Blockly.FieldLabel(this.arguments_[i].name);
                 var input = this.appendValueInput('ARG' + i)
                     .setAlign(Blockly.ALIGN_RIGHT)
+                    .setCheck(this.arguments_[i].check)
                     .appendField(field, 'ARGNAME' + i);
                 input.init();
             }
@@ -1020,13 +1013,15 @@ Blockly.Blocks['function_block_call'] = {
         container.setAttribute('name', this.getFieldValue('NAME'));
         for (var i = 0; i < this.arguments_.length; i++) {
             var input = document.createElement('inArg');
-            input.setAttribute('name', this.arguments_[i]);
+            input.setAttribute('name', this.arguments_[i].name);
+            input.setAttribute('type', this.arguments_[i].check);
             container.appendChild(input);
         }
 
         for (var i = 0; i < this.outputs_.length; i++) {
             var output = document.createElement('outArg');
-            output.setAttribute('name', this.outputs_[i]);
+            output.setAttribute('name', this.outputs_[i].name);
+            output.setAttribute('type', this.outputs_[i].check);
             container.appendChild(output);
         }
 
@@ -1048,10 +1043,17 @@ Blockly.Blocks['function_block_call'] = {
         var outputIds = [];
 
         for (var i = 0, childNode; childNode = xmlElement.childNodes[i]; i++) {
+            var name = childNode.getAttribute('name');
+            var type = childNode.getAttribute('type');
+            var arg = {'name': name, 'check': type};
+
+
             if (childNode.nodeName.toLowerCase() === 'inarg') {
-                inputs.push(childNode.getAttribute('name'));
+                arg['type'] = 'input';
+                inputs.push(arg);
             } else if (childNode.nodeName.toLowerCase() === 'outarg') {
-                outputs.push(childNode.getAttribute('name'));
+                arg['type'] = 'output';
+                outputs.push(arg);
             }
         }
         this.setFunctionBlockParameters_(inputs, inputIds, outputs, outputIds);
@@ -1236,10 +1238,13 @@ Blockly.Blocks['function_block_def'] = {
 
         // Parameter list.
         var connection = containerBlock.getInput('INPUTS').connection;
-        for (var i = 0; i < this.arguments_.length; i++) {
+        for (var i = 0; i < this.argumentVarModels_.length; i++) {
+            var model = this.argumentVarModels_[i];
             var paramBlock = workspace.newBlock('function_blocks_mutatorarg');
             paramBlock.initSvg();
-            paramBlock.setFieldValue(this.arguments_[i], 'NAME');
+            paramBlock.setFieldValue(model.variable.name, 'NAME');
+            paramBlock.setFieldValue(model.variable.type, 'TYPE');
+            paramBlock.setFieldValue(model.is_reference, 'REF');
             // Store the old location.
             paramBlock.oldLocation = i;
             connection.connect(paramBlock.previousConnection);
@@ -1247,10 +1252,12 @@ Blockly.Blocks['function_block_def'] = {
         }
 
         var connection = containerBlock.getInput('OUTPUTS').connection;
-        for (var i = 0; i < this.outputs_.length; i++) {
+        for (var i = 0; i < this.outputsVarModels_.length; i++) {
+            var model = this.outputsVarModels_[i];
             var paramBlock = workspace.newBlock('function_blocks_mutatorarg');
             paramBlock.initSvg();
-            paramBlock.setFieldValue(this.outputs_[i], 'NAME');
+            paramBlock.setFieldValue(model.name, 'NAME');
+            paramBlock.setFieldValue(model.type, 'TYPE');
             // Store the old location.
             paramBlock.oldLocation = i;
             connection.connect(paramBlock.previousConnection);
