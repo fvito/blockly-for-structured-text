@@ -113,7 +113,8 @@ Editor.blocklyInit = function () {
         }
     });
 
-    Editor.workspace.registerToolboxCategoryCallback('TEST_FUNCTIONS', Editor.functionsFlyoutCallback)
+    Editor.workspace.registerToolboxCategoryCallback('FUNCTIONS', Editor.functionsFlyoutCallback);
+    Editor.workspace.registerToolboxCategoryCallback('CUSTOM_FUNCTION_BLOCKS', Editor.functionBlocksFlyoutCallback);
 };
 
 Editor.functionsFlyoutCallback = function (workspace) {
@@ -138,11 +139,48 @@ Editor.functionsFlyoutCallback = function (workspace) {
         for (var j = 0; j < func.args.length; j++) {
             var arg = goog.dom.createDom('arg');
             arg.setAttribute('name', func.args[j].variable.name);
+            arg.setAttribute('type', func.args[j].variable.type);
             mutation.appendChild(arg);
         }
         xmlList.push(block);
     }
 
+    return xmlList;
+};
+
+Editor.functionBlocksFlyoutCallback = function (workspace) {
+    var xmlList = [];
+    var button = goog.dom.createDom('button');
+    button.setAttribute('text', 'New Function Block');
+    button.setAttribute('callbackKey', 'CREATE_FUNCTION_BLOCK');
+
+    workspace.registerButtonCallback('CREATE_FUNCTION_BLOCK', function (button) {
+        Editor.newFunctionBlock();
+    });
+    xmlList.push(button);
+    for (var funcBlock of Editor.project.getAllFunctionBlocks()) {
+        var block = goog.dom.createDom('block');
+        block.setAttribute('type', 'function_block_call');
+        block.setAttribute('gap', 16);
+        var mutation = goog.dom.createDom('mutation');
+        mutation.setAttribute('name', funcBlock.name);
+        block.appendChild(mutation);
+
+        for (var input of funcBlock.inputs) {
+            var inArg = goog.dom.createDom('inArg');
+            inArg.setAttribute('name', input.variable.name);
+            inArg.setAttribute('type', input.variable.type);
+            mutation.appendChild(inArg);
+        }
+
+        for (var output of funcBlock.outputs) {
+            var outArg = goog.dom.createDom('outArg');
+            outArg.setAttribute('name', output.name);
+            outArg.setAttribute('type', output.type);
+            mutation.appendChild(outArg);
+        }
+        xmlList.push(block);
+    }
     return xmlList;
 };
 

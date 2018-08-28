@@ -80,3 +80,12 @@ Blockly.ST['function_block_set'] = function (block) {
 
     return name+"."+member+":="+value;
 };
+
+Blockly.ST['function_block_def'] = function (block) {
+    var branch = Blockly.ST.statementToCode(block, 'STACK');
+    return branch;
+};
+
+Blockly.ST['function_block_call'] = function (block) {
+    return 'fb_call';
+};

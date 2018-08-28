@@ -66,7 +66,7 @@ Editor.Project.prototype.getFunctionBlockById = function (id) {
     return null;
 };
 
-Editor.Project.prototype.getAllFunctions = function (opt_workspace) {
+Editor.Project.prototype.getAllFunctions = function (opt_inc_workspace) {
     var functions = [];
     let tmpWs = new Blockly.Workspace();
     for(var func of this.functions_){
@@ -79,7 +79,7 @@ Editor.Project.prototype.getAllFunctions = function (opt_workspace) {
                 'return_type':func.returnType,
                 'args':topBlock.argumentVarModels_
             };
-            if(opt_workspace) {
+            if (opt_inc_workspace) {
                 def["workspace"] = func.getWorkspaceDom();
             }
             functions.push(def);
@@ -90,6 +90,30 @@ Editor.Project.prototype.getAllFunctions = function (opt_workspace) {
     }
     //console.log(functions);
     return functions;
+};
+
+Editor.Project.prototype.getAllFunctionBlocks = function (opt_inc_workspace) {
+    var functionBlocks = [];
+    let tmpWs = new Blockly.Workspace();
+    for (var block of this.functionBlocks_) {
+        tmpWs.clear();
+        Blockly.Xml.domToWorkspace(block.getWorkspaceDom(), tmpWs);
+        let topBlock = tmpWs.getTopBlocks(true)[0];
+        if (topBlock.callType_ === 'function_blocks_call') {
+            var def = {
+                'name': block.name,
+                'inputs': topBlock.argumentVarModels_,
+                'outputs': topBlock.outputsVarModels_
+            };
+            if (opt_inc_workspace) {
+                def['workspace'] = block.getWorkspaceDom();
+            }
+            functionBlocks.push(def);
+        } else {
+            console.error(`Top block in function(id:${block.id}) workspace was not a function blocks define block`);
+        }
+    }
+    return functionBlocks;
 };
 
 Editor.Project.prototype.getAsTree = function () {

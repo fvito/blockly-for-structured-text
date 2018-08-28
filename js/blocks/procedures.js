@@ -207,10 +207,13 @@ Blockly.Blocks['procedures_defnoreturn'] = {
 
         // Parameter list.
         var connection = containerBlock.getInput('STACK').connection;
-        for (var i = 0; i < this.arguments_.length; i++) {
+        for (var i = 0; i < this.argumentVarModels_.length; i++) {
             var paramBlock = workspace.newBlock('procedures_mutatorarg');
             paramBlock.initSvg();
-            paramBlock.setFieldValue(this.arguments_[i], 'NAME');
+            var model = this.argumentVarModels_[i];
+            paramBlock.setFieldValue(model.variable.name, 'NAME');
+            paramBlock.setFieldValue(model.variable.type, 'TYPE');
+            paramBlock.setFieldValue(model.is_reference, 'REF');
             // Store the old location.
             paramBlock.oldLocation = i;
             connection.connect(paramBlock.previousConnection);
