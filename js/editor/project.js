@@ -145,6 +145,7 @@ Editor.Project.prototype.getAsTree = function () {
         funcBlocks.nodes.push({
             text: block.name,
             dataAttr: [{id: block.getId(), type: 'FUNCTION_BLOCK'}],
+            icon: 'fas fa-file'
         });
     }
     root.nodes.push(funcBlocks);

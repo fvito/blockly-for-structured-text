@@ -90,7 +90,7 @@ XMLExporter.exportProject = function (project) {
         this.writeFunction(workspace, func);
     }
 
-    for(var block of project.getAllFunctionBlocks(true)){
+    for (var block of project.getAllFunctionBlocks(true)) {
         workspace.clear();
         Blockly.Xml.domToWorkspace(block.workspace, workspace);
         this.writeFunctionBlock(workspace, block);
@@ -182,8 +182,8 @@ XMLExporter.writeFunction = function (workspace, func) {
     this.writer.writeEndElement();
 };
 
-XMLExporter.writeFunctionBlock = function(workspace, funcBlock) {
-    this.writeElementWithAttributes_('pou', {name:funcBlock.name, pouType:"functionBlock"});
+XMLExporter.writeFunctionBlock = function (workspace, funcBlock) {
+    this.writeElementWithAttributes_('pou', {name: funcBlock.name, pouType: "functionBlock"});
     this.writer.writeStartElement("interface");
     this.writeFunctionBlockVariables(workspace, funcBlock);
     this.writer.writeEndElement();
@@ -222,9 +222,9 @@ XMLExporter.writeVariables = function (variables, functionBlocks) {
     this.writer.writeEndElement();
 };
 
-XMLExporter.writeVariables_ = function(type, variables) {
+XMLExporter.writeVariables_ = function (type, variables) {
     this.writer.writeStartElement(type);
-    for(var variable of variables){
+    for (var variable of variables) {
         this.writeVariable(variable);
     }
     this.writer.writeEndElement();
@@ -244,7 +244,7 @@ XMLExporter.writeFunctionVariables = function (workspace, func) {
     //InOut variables
     this.writer.writeStartElement("inOutVars");
     func.args.filter(arg => arg.is_reference === 'TRUE').forEach((arg) => {
-       this.writeVariable(arg.variable);
+        this.writeVariable(arg.variable);
     });
     this.writer.writeEndElement();
 
@@ -275,7 +275,7 @@ XMLExporter.writeFunctionVariables = function (workspace, func) {
 
 };
 
-XMLExporter.writeFunctionBlockVariables = function(workspace, funcBlock) {
+XMLExporter.writeFunctionBlockVariables = function (workspace, funcBlock) {
     //Input variables
     this.writer.writeStartElement("inputVars");
     funcBlock.inputs.forEach((arg) => {
@@ -292,13 +292,17 @@ XMLExporter.writeFunctionBlockVariables = function(workspace, funcBlock) {
 
     //Local variables
     //Filter local input variables from local variables
+    //TODO FIX VARIABLES FILTERING
     this.writer.writeStartElement("localVars");
+    let filterVars = funcBlock.inputs.map(i => i.variable.name).concat(funcBlock.outputs.map(i => i.name));
+    console.log('filter', filterVars);
     let localVars = [];
     for (let variable of workspace.getAllVariables()) {
-        if (funcBlock.inputs.findIndex(i => i.variable.getId() === variable.getId()) === -1 || funcBlock.outputs.find(i => i.getId() === variable.getId())) {
+        if (!filterVars.includes(variable.name)) {
             localVars.push(variable);
         }
     }
+    console.log('localVars', localVars);
     //Local variables
     localVars.forEach((variable) => {
         this.writeVariable(variable);
@@ -306,30 +310,32 @@ XMLExporter.writeFunctionBlockVariables = function(workspace, funcBlock) {
 
     //function blocks
     let functionBlocks = Blockly.FunctionBlocks.allFunctionBlocks(workspace);
-    functionBlocks.forEach((functionBlock) => {
-        this.writeElementWithAttributes_("variable", {name: functionBlock.name});
-        this.writer.writeStartElement("type");
-        this.writeClosedElement_("derived", {name: functionBlock.type});
-        this.writer.writeEndElement();
-        //End Variable Element
-        this.writer.writeEndElement();
-    });
+    for (var functionBlock of functionBlocks) {
+        if (functionBlock[0] !== funcBlock.name) {
+            this.writeElementWithAttributes_("variable", {name: functionBlock.name});
+            this.writer.writeStartElement("type");
+            this.writeClosedElement_("derived", {name: functionBlock.type});
+            this.writer.writeEndElement();
+            //End Variable Element
+            this.writer.writeEndElement();
+        }
+    }
     this.writer.writeEndElement();
 };
 
-XMLExporter.writeVariable = function(variable){
-    if(variable.address !== ''){
-        this.writeElementWithAttributes_("variable", {name:variable.name, address:variable.address});
-    }else{
-        this.writeElementWithAttributes_("variable", {name:variable.name});
+XMLExporter.writeVariable = function (variable) {
+    if (variable.address !== '') {
+        this.writeElementWithAttributes_("variable", {name: variable.name, address: variable.address});
+    } else {
+        this.writeElementWithAttributes_("variable", {name: variable.name});
     }
     this.writer.writeStartElement("type");
     this.writeClosedElement_(variable.type);
     this.writer.writeEndElement();
 
-    if(variable.initValue !== ''){
+    if (variable.initValue !== '') {
         this.writer.writeStartElement("initialValue");
-        this.writeElementWithAttributes_("simpleValue", {value:variable.initValue}, true);
+        this.writeElementWithAttributes_("simpleValue", {value: variable.initValue}, true);
         this.writer.writeEndElement();
     }
     this.writer.writeEndElement();
