@@ -90,6 +90,12 @@ XMLExporter.exportProject = function (project) {
         this.writeFunction(workspace, func);
     }
 
+    for(var block of project.getAllFunctionBlocks(true)){
+        workspace.clear();
+        Blockly.Xml.domToWorkspace(block.workspace, workspace);
+        this.writeFunctionBlock(workspace, block);
+    }
+
     //End POUS Element
     this.writer.writeEndElement();
     //End Types Element
@@ -176,28 +182,29 @@ XMLExporter.writeFunction = function (workspace, func) {
     this.writer.writeEndElement();
 };
 
+XMLExporter.writeFunctionBlock = function(workspace, funcBlock) {
+    this.writeElementWithAttributes_('pou', {name:funcBlock.name, pouType:"functionBlock"});
+    this.writer.writeStartElement("interface");
+    this.writeFunctionBlockVariables(workspace, funcBlock);
+    this.writer.writeEndElement();
+
+    this.writer.writeStartElement("body");
+    this.writer.writeStartElement("ST");
+
+    this.writeWorkspace(workspace);
+
+    this.writer.writeEndElement();
+    this.writer.writeEndElement();
+    this.writer.writeEndElement();
+};
+
 XMLExporter.writeVariables = function (variables, functionBlocks) {
     this.writer.writeStartElement("interface");
     this.writer.writeStartElement("localVars");
 
     variables.forEach((variable) => {
         //Begin Variable Element
-        if (variable.address !== '') {
-            this.writeElementWithAttributes_("variable", {name: variable.name, address: variable.address});
-        } else {
-            this.writeElementWithAttributes_("variable", {name: variable.name});
-        }
-        this.writer.writeStartElement("type");
-        //TODO Handle String optional Length attribute
-        this.writeClosedElement_(variable.type);
-        this.writer.writeEndElement();
-        if (variable.initValue !== '') {
-            this.writer.writeStartElement("initialValue");
-            this.writeElementWithAttributes_("simpleValue", {value: variable.initValue}, true);
-            this.writer.writeEndElement();
-        }
-        //End Variable Element
-        this.writer.writeEndElement();
+        this.writeVariable(variable);
     });
 
     functionBlocks.forEach((functionBlock) => {
@@ -215,6 +222,14 @@ XMLExporter.writeVariables = function (variables, functionBlocks) {
     this.writer.writeEndElement();
 };
 
+XMLExporter.writeVariables_ = function(type, variables) {
+    this.writer.writeStartElement(type);
+    for(var variable of variables){
+        this.writeVariable(variable);
+    }
+    this.writer.writeEndElement();
+};
+
 //TODO Refactor to use writeVariables function
 XMLExporter.writeFunctionVariables = function (workspace, func) {
     var variables = workspace.getAllVariables();
@@ -222,24 +237,14 @@ XMLExporter.writeFunctionVariables = function (workspace, func) {
     //Input variables
     this.writer.writeStartElement("inputVars");
     func.args.filter(arg => arg.is_reference !== 'TRUE').forEach((arg) => {
-        this.writeElementWithAttributes_("variable", {name: arg.variable.name});
-        this.writer.writeStartElement("type");
-        //TODO Handle String optional Length attribute
-        this.writeClosedElement_(arg.variable.type);
-        this.writer.writeEndElement();
-        this.writer.writeEndElement();
+        this.writeVariable(arg.variable);
     });
     this.writer.writeEndElement();
 
     //InOut variables
     this.writer.writeStartElement("inOutVars");
     func.args.filter(arg => arg.is_reference === 'TRUE').forEach((arg) => {
-        this.writeElementWithAttributes_("variable", {name: arg.variable.name});
-        this.writer.writeStartElement("type");
-        //TODO Handle String optional Length attribute
-        this.writeClosedElement_(arg.variable.type);
-        this.writer.writeEndElement();
-        this.writer.writeEndElement();
+       this.writeVariable(arg.variable);
     });
     this.writer.writeEndElement();
 
@@ -247,23 +252,13 @@ XMLExporter.writeFunctionVariables = function (workspace, func) {
     this.writer.writeStartElement("localVars");
     let localVars = [];
     for (let variable of workspace.getAllVariables()) {
-        if (func.args.findIndex(i => i.variable.id_ === variable.id_) === -1) {
+        if (func.args.findIndex(i => i.variable.getId() === variable.getId()) === -1) {
             localVars.push(variable);
         }
     }
     //Local variables
     localVars.forEach((variable) => {
-        this.writeElementWithAttributes_("variable", {name: variable.name});
-        this.writer.writeStartElement("type");
-        //TODO Handle String optional Length attribute
-        this.writeClosedElement_(variable.type);
-        this.writer.writeEndElement();
-        if (variable.initValue !== '') {
-            this.writer.writeStartElement("initialValue");
-            this.writeElementWithAttributes_("simpleValue", {value: variable.initValue}, true);
-            this.writer.writeEndElement();
-        }
-        this.writer.writeEndElement();
+        this.writeVariable(variable);
     });
 
     let functionBlocks = Blockly.FunctionBlocks.allFunctionBlocks(workspace);
@@ -276,6 +271,67 @@ XMLExporter.writeFunctionVariables = function (workspace, func) {
         this.writer.writeEndElement();
     });
 
+    this.writer.writeEndElement();
+
+};
+
+XMLExporter.writeFunctionBlockVariables = function(workspace, funcBlock) {
+    //Input variables
+    this.writer.writeStartElement("inputVars");
+    funcBlock.inputs.forEach((arg) => {
+        this.writeVariable(arg.variable);
+    });
+    this.writer.writeEndElement();
+
+    //Output variables
+    this.writer.writeStartElement("outputVars");
+    funcBlock.outputs.forEach((arg) => {
+        this.writeVariable(arg);
+    });
+    this.writer.writeEndElement();
+
+    //Local variables
+    //Filter local input variables from local variables
+    this.writer.writeStartElement("localVars");
+    let localVars = [];
+    for (let variable of workspace.getAllVariables()) {
+        if (funcBlock.inputs.findIndex(i => i.variable.getId() === variable.getId()) === -1 || funcBlock.outputs.find(i => i.getId() === variable.getId())) {
+            localVars.push(variable);
+        }
+    }
+    //Local variables
+    localVars.forEach((variable) => {
+        this.writeVariable(variable);
+    });
+
+    //function blocks
+    let functionBlocks = Blockly.FunctionBlocks.allFunctionBlocks(workspace);
+    functionBlocks.forEach((functionBlock) => {
+        this.writeElementWithAttributes_("variable", {name: functionBlock.name});
+        this.writer.writeStartElement("type");
+        this.writeClosedElement_("derived", {name: functionBlock.type});
+        this.writer.writeEndElement();
+        //End Variable Element
+        this.writer.writeEndElement();
+    });
+    this.writer.writeEndElement();
+};
+
+XMLExporter.writeVariable = function(variable){
+    if(variable.address !== ''){
+        this.writeElementWithAttributes_("variable", {name:variable.name, address:variable.address});
+    }else{
+        this.writeElementWithAttributes_("variable", {name:variable.name});
+    }
+    this.writer.writeStartElement("type");
+    this.writeClosedElement_(variable.type);
+    this.writer.writeEndElement();
+
+    if(variable.initValue !== ''){
+        this.writer.writeStartElement("initialValue");
+        this.writeElementWithAttributes_("simpleValue", {value:variable.initValue}, true);
+        this.writer.writeEndElement();
+    }
     this.writer.writeEndElement();
 
 };
