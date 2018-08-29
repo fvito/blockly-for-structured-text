@@ -18,8 +18,13 @@
 </head>
 <input type="file" style="display: none;" id="openFile"/>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-    <a class="navbar-brand" href="#">Blockly PLC</a>
+<div id="start_screen" class="intro">
+    <button class="btn btn-lg btn-block" onclick="Editor.newProject()">New project</button>
+    <button class="btn btn-lg btn-block" onclick="Editor.openProject()">Open existing project</button>
+</div>
+<div id="main" style="display: none">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+        <a class="navbar-brand" href="#">Blockly ST</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item dropdown">
@@ -29,9 +34,15 @@
                     Project
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">New</a>
-                    <a class="dropdown-item" href="#" onclick="Editor.loadProject()">Load</a>
-                    <a class="dropdown-item" href="#" onclick="Editor.showSaveDialog(Editor.saveProject)">Save</a>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newProject()">New</a>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.loadProject()">Load</a>
+                    <a class="dropdown-item" href="javascript:void(0)"
+                       onclick="Editor.showSaveDialog(Editor.saveProject)">Save</a>
+                    <hr>
+                    <a class="dropdown-item" href="javascript:void(0)"
+                       onclick="Editor.showSaveDialog(Editor.exportWorkspace)">Export Workspace</a>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.importWorkspace()">Import
+                        Workspace</a>
                 </div>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarEdit" role="button" data-toggle="dropdown"
@@ -39,12 +50,14 @@
                     <i class="fas fa-toolbox navbar-icon"></i>Edit
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" onclick="Editor.newVariable()" href="#">New variable</a>
-                    <a class="dropdown-item" onclick="Editor.showEditVariable()" href="#">Edit variable</a>
+                    <a class="dropdown-item" onclick="Editor.newVariable()" href="javascript:void(0)">New variable</a>
+                    <a class="dropdown-item" onclick="Editor.showEditVariable()" href="javascript:void(0)">Edit
+                        variable</a>
                     <hr>
-                    <a class="dropdown-item" onclick="Editor.newProgram()" href="#">New program</a>
-                    <a class="dropdown-item" onclick="Editor.newFunction()" href="#">New function</a>
-                    <a class="dropdown-item" onclick="Editor.newFunctionBlock()" href="#">New function block</a>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newProgram()">New program</a>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newFunction()">New function</a>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newFunctionBlock()">New function
+                        block</a>
                     <hr>
                     <a class="dropdown-item" href="#">Settings</a>
                 </div>
@@ -55,23 +68,26 @@
                     <i class="fas fa-file-export navbar-icon"></i>Export
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#" onclick="Editor.showSaveDialog(Editor.exportAsSt)">As .st</a>
-                    <a class="dropdown-item" href="#" onclick="Editor.showSaveDialog(Editor.exportAsXml)">As PLCOpen
+                    <a class="dropdown-item" href="javascript:void(0)"
+                       onclick="Editor.showSaveDialog(Editor.exportAsSt)">As .st</a>
+                    <a class="dropdown-item" href="javascript:void(0)"
+                       onclick="Editor.showSaveDialog(Editor.exportAsXml)">As PLCOpen
                         XML</a>
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" onclick="Editor.debug()">Generate</a>
+                <a class="nav-link" href="javascript:void(0)" onclick="Editor.debug()">Generate</a>
             </li>
         </ul>
     </div>
 </nav>
-<div class="container-fluid bg-dark d-flex">
+    <div class="container-fluid bg-dark d-flex">
     <div id="tree" style="height: 900px; display: inline-block;"></div>
     <div id="blocklyArea" style="width: 80%; height: 900px; display: inline-block;"></div>
 </div>
-<div class="container">
+    <div class="container">
     <textarea id="output" style="width: 100%; height: 500px; border: solid 1px gray;"></textarea>
+</div>
 </div>
 <!-- modals -->
 <div id="modals">

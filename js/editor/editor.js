@@ -6,7 +6,32 @@ Editor.workspace = null;
 Editor.project = null;
 Editor.tree = null;
 
-Editor.init = function () {
+Editor.initNewProject = function (project_name) {
+    Editor.project = new Editor.Project(project_name);
+    Editor.project.addProgram(new Editor.Program("MAIN_PRG"));
+    Editor.init_();
+    //Editor.project.addFunction(new Editor.Function("F_Test","BOOL"));
+    //Editor.project.addFunctionBlock(new Editor.FunctionBlock('FB_Test'));
+};
+
+Editor.initWithProject = function (loaded_project) {
+    //console.log("init with project");
+    var project = new Editor.Project(loaded_project.name);
+    for (var program of loaded_project.programs_) {
+        project.addProgram(Object.assign(new Editor.Program(program.name), program));
+    }
+    for (var func of loaded_project.functions_) {
+        project.addFunction(Object.assign(new Editor.Function(func.name, func.returnType), func));
+    }
+    for (var funcBlock of loaded_project.functionBlocks_) {
+        project.addFunctionBlock(Object.assign(new Editor.FunctionBlock(funcBlock.name), funcBlock));
+    }
+    console.log("project", project);
+    Editor.project = project;
+    Editor.init_();
+};
+
+Editor.init_ = function () {
     Editor.blocklyInit();
 
     $('#variableDialog').on('show.bs.modal', () => {
@@ -45,11 +70,6 @@ Editor.init = function () {
         });
     });
 
-    Editor.project = new Editor.Project("test");
-    Editor.project.addProgram(new Editor.Program("MAIN_PRG"));
-    Editor.project.addFunction(new Editor.Function("F_Test","BOOL"));
-    Editor.project.addFunctionBlock(new Editor.FunctionBlock('FB_Test'));
-
     $('#tree').treeview({
         color: "#FFFFFF",
         level: 1,
@@ -68,12 +88,7 @@ Editor.init = function () {
             Editor.saveWorkspace(data.dataAttr);
         },
     });
-
     Editor.tree = $('#tree').treeview(true);
-    //let programNode = Editor.tree.findNodes('MAIN_PRG', 'text');
-    //Editor.tree.selectNode(programNode);
-
-
 };
 
 Editor.blocklyInit = function () {
@@ -290,7 +305,6 @@ Editor.newFunction = function () {
 };
 
 Editor.createNewFunction = function () {
-
     var form = $('#newFunctionForm');
     var values = form.serializeArray();
     form[0].reset();
@@ -331,6 +345,11 @@ Editor.newFunctionBlock = function () {
     });
 };
 
+/**
+ * Populates the variable form with the variable data
+ * @param {String} form_name - Form which to populate
+ * @param {Blockly.VariableModel} variable - Variable that populates the form
+ */
 Editor.populateForm = function (form_name, variable) {
     var form = $(form_name);
     form.data('variableId', variable.getId());
@@ -341,40 +360,22 @@ Editor.populateForm = function (form_name, variable) {
     form[3].value = variable.address;
 };
 
-Editor.exportAsXml = function (fileName) {
-    var xml = XMLExporter.exportProject(Editor.project);
-    var blob = new Blob([xml], {type: "application/xml"});
-    saveAs(blob, fileName + ".xml");
-};
-
-Editor.exportAsSt = function (fileName) {
-    var code = Blockly.ST.fullOutput(Editor.workspace);
-    var blob = new Blob([code], {type: "text/plain"});
-    saveAs(blob, fileName + ".st");
-};
-
-
+/**
+ * Saves the currently active project to a file
+ *
+ * @callback saveCallback
+ *
+ * @param {String} fileName - Name of the file to save to
+ */
 Editor.saveProject = function (fileName) {
     //$('#saveDialog').modal('show');
-    var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
-    xml = Blockly.Xml.domToText(xml);
-    var blob = new Blob([xml], {type: "application/xml"});
-    saveAs(blob, fileName + ".xml");
+    var blob = new Blob([JSON.stringify(Editor.project)], {type: "application/json"});
+    saveAs(blob, fileName + ".json");
 };
 
-Editor.showSaveDialog = function (callback) {
-    bootbox.prompt({
-        title: "Save file",
-        inputType: "text",
-        placeholder: 'File name',
-        callback: function (result) {
-            if (result) {
-                callback(result);
-            }
-        }
-    });
-};
-
+/**
+ * Loads a new project and replaces the current one with a newly loaded one
+ */
 Editor.loadProject = function () {
     bootbox.confirm({
         message: "Are you sure you want to overwrite your current work?",
@@ -408,12 +409,103 @@ Editor.loadProject = function () {
     });
 };
 
-Editor.devGenerateXml = function () {
-    var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
-    xml = Blockly.Xml.domToPrettyText(xml);
-    document.getElementById('output').value = xml;
+/**
+ * Export the currently active project as PLCOpen file
+ * @param {String} fileName - File to save to
+ */
+Editor.exportAsXml = function (fileName) {
+    var xml = XMLExporter.exportProject(Editor.project);
+    var blob = new Blob([xml], {type: "application/xml"});
+    saveAs(blob, fileName + ".xml");
 };
 
+/**
+ * Export the currently active project as Structured Text source code
+ * @param {String} fileName - File to save to
+ */
+Editor.exportAsSt = function (fileName) {
+    var code = Blockly.ST.projectToCode(Editor.project);
+    var blob = new Blob([code], {type: "text/plain"});
+    saveAs(blob, fileName + ".st");
+};
+
+/**
+ * Saves the currently active workspace to a file
+ *
+ * @callback saveCallback
+ *
+ * @param {String} fileName - Name of the file to save to
+ */
+Editor.exportWorkspace = function (fileName) {
+    var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
+    xml = Blockly.Xml.domToText(xml);
+    var blob = new Blob([xml], {type: "application/xml"});
+    saveAs(blob, fileName + ".xml");
+};
+
+/**
+ * Clears and import a new workspace
+ */
+Editor.importWorkspace = function () {
+    bootbox.confirm({
+        message: "Are you sure you want to overwrite your current work?",
+        buttons: {
+            confirm: {
+                label: "Yes",
+                className: 'btn-success'
+            },
+            cancel: {
+                label: "No"
+            },
+        },
+        callback: function (result) {
+            if (result) {
+                var openFileDialog = $("#openFile");
+                openFileDialog.on("change", (e) => {
+                    var fr = new FileReader();
+                    fr.addEventListener('load', function (e) {
+                        console.log("file reader loaded");
+                        Blockly.mainWorkspace.clear();	// clear workspace
+
+                        var xml = Blockly.Xml.textToDom(e.target.result);
+                        Blockly.Xml.domToWorkspace(xml, Editor.workspace);	// fill workspace
+                    });
+                    console.log(e.target.files);
+                    fr.readAsText(e.target.files[0]);
+                });
+                openFileDialog.trigger("click");
+            }
+        }
+    });
+};
+
+/**
+ * Shows a save file dialog and calls a coresponding callback function with the input result
+ * @param {saveCallback} callback
+ */
+Editor.showSaveDialog = function (callback) {
+    bootbox.prompt({
+        title: "Save file",
+        inputType: "text",
+        placeholder: 'File name',
+        callback: function (result) {
+            if (result) {
+                callback(result);
+            }
+        }
+    });
+};
+
+/**
+ * Searches the project items for the correct item based on the id
+ * @param {String} type - Type of item to search for, available items are:
+ * <li>PROGRAM</li>
+ * <li>FUNCTION</li>
+ * <li>FUNCTION BLOCK</li>
+ *
+ * @param {String} id - Id of the item to look for
+ * @returns {null|Editor.Program|Editor.FunctionBlock|Editor.Function}
+ */
 Editor.getTargetFromProject = function (type, id) {
     if (type === 'PROGRAM') {
         return Editor.project.getProgramById(id);
@@ -425,6 +517,10 @@ Editor.getTargetFromProject = function (type, id) {
     return null;
 };
 
+/**
+ * Saves the workspace of the selected tree view node to the coresponding item in the project structure
+ * @param {{type:string, id:string}} data - Data with information about the selected tree node
+ */
 Editor.saveWorkspace = function (data) {
     if(data instanceof Array){
         data = data[0];
@@ -439,6 +535,13 @@ Editor.saveWorkspace = function (data) {
     }
 };
 
+/**
+ * Load workspace of the selected item in the tree view
+ * @param {{type:string, id:string}} data - Data with information about the selected node
+ *                                          from the tree view
+ *                                   - type Type of the selected node (Program, function block, function)
+ *                                   - id Id of the object to find in the projects structure
+ */
 Editor.loadWorkspace = function (data) {
     if(data instanceof Array){
         data = data[0];
@@ -453,16 +556,54 @@ Editor.loadWorkspace = function (data) {
     }
 };
 
+/**
+ * Creates a new project and initializes the editor
+ */
+Editor.newProject = function () {
+    bootbox.prompt({
+        title: "New project",
+        inputType: "text",
+        placeholder: 'Project name',
+        callback: function (result) {
+            if (result) {
+                $('#start_screen').hide();
+                $('#main').show();
+                Editor.init(result);
+            }
+        }
+    });
+};
+
+/**
+ * Loads and reads the JSON structure of the existing project from a file. After successful read,
+ * the editor is initialized with newly read project
+ */
+Editor.openProject = function () {
+    var openFileDialog = $("#openFile");
+    openFileDialog.on("change", (e) => {
+        var fr = new FileReader();
+        fr.addEventListener('load', function (e) {
+            var project = JSON.parse(e.target.result);
+            $('#start_screen').hide();
+            $('#main').show();
+            Editor.initWithProject(project);
+        });
+        fr.readAsText(e.target.files[0]);
+    });
+    openFileDialog.trigger("click");
+};
+
 Editor.debug = function () {
     var xml = XMLExporter.exportProject(Editor.project);
     document.getElementById('output').value = xml;
 };
 
+Editor.devGenerateXml = function () {
+    var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
+    xml = Blockly.Xml.domToPrettyText(xml);
+    document.getElementById('output').value = xml;
+};
+
 window.addEventListener('load', () => {
-    Editor.init();
-    //document.getElementById('generate').addEventListener('click', () => {
-    //Editor.workspace.createVariable('TEST', Blockly.ST.STRING_TYPE);
-    var code = Blockly.JavaScript.workspaceToCode(Editor.workspace);
-    //    document.getElementById('output').value = code;
-    //});
+    //Editor.init();
 });
