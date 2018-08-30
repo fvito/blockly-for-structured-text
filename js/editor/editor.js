@@ -2,10 +2,28 @@
 
 goog.provide('Editor');
 
+/**
+ * Currently active workspace
+ * @type {Blockly.Workspace}
+ */
 Editor.workspace = null;
+
+/**
+ * Currently active project
+ * @type {Editor.Project}
+ */
 Editor.project = null;
+
+/**
+ * Project tree structure
+ * @type {null}
+ */
 Editor.tree = null;
 
+/**
+ * Creates a new project and initializes the editor with it
+ * @param {string} project_name - Name of the new project
+ */
 Editor.initNewProject = function (project_name) {
     Editor.project = new Editor.Project(project_name);
     Editor.project.addProgram(new Editor.Program("MAIN_PRG"));
@@ -14,6 +32,10 @@ Editor.initNewProject = function (project_name) {
     //Editor.project.addFunctionBlock(new Editor.FunctionBlock('FB_Test'));
 };
 
+/**
+ * Initializes the editor with a provided project.
+ * @param {Editor.Project} loaded_project
+ */
 Editor.initWithProject = function (loaded_project) {
     //console.log("init with project");
     var project = new Editor.Project(loaded_project.name);
@@ -31,6 +53,10 @@ Editor.initWithProject = function (loaded_project) {
     Editor.init_();
 };
 
+/**
+ * Initializes the editor. Sets up the dialog listeners and initializes the project tree
+ * @private
+ */
 Editor.init_ = function () {
     Editor.blocklyInit();
 
@@ -70,6 +96,10 @@ Editor.init_ = function () {
         });
     });
 
+    if (Editor.tree) {
+        Editor.tree.remove();
+    }
+
     $('#tree').treeview({
         color: "#FFFFFF",
         level: 1,
@@ -82,6 +112,7 @@ Editor.init_ = function () {
         expandIcon: 'fas fa-folder-open',
         data: Editor.project.getAsTree(),
         onNodeSelected: function (event, data) {
+            console.log('selected');
             Editor.loadWorkspace(data.dataAttr);
         },
         onNodeUnselected: function (event, data) {
@@ -91,6 +122,9 @@ Editor.init_ = function () {
     Editor.tree = $('#tree').treeview(true);
 };
 
+/**
+ * Initializes blockly framework. Injects and registers the custom toolbox categories
+ */
 Editor.blocklyInit = function () {
     Editor.workspace = Blockly.inject("blocklyArea",
         {
@@ -132,6 +166,11 @@ Editor.blocklyInit = function () {
     Editor.workspace.registerToolboxCategoryCallback('CUSTOM_FUNCTION_BLOCKS', Editor.functionBlocksFlyoutCallback);
 };
 
+/**
+ * Flyout for CUSTOM_FUNCTION toolbox category
+ * @param workspace
+ * @returns {Array}
+ */
 Editor.functionsFlyoutCallback = function (workspace) {
     var xmlList = [];
     var button = goog.dom.createDom('button');
@@ -163,6 +202,11 @@ Editor.functionsFlyoutCallback = function (workspace) {
     return xmlList;
 };
 
+/**
+ * Flyout for CUSTOM_FUNCTION_BLOCK toolbox category
+ * @param workspace
+ * @returns {Array}
+ */
 Editor.functionBlocksFlyoutCallback = function (workspace) {
     var xmlList = [];
     var button = goog.dom.createDom('button');
@@ -199,6 +243,11 @@ Editor.functionBlocksFlyoutCallback = function (workspace) {
     return xmlList;
 };
 
+/**
+ * @deprecated Not used
+ * @param block
+ * @param event
+ */
 Editor.blockCreated = function (event) {
     var block = Editor.workspace.getBlockById(event.blockId);
     if (block.type === 'variables_declare') {
@@ -206,6 +255,11 @@ Editor.blockCreated = function (event) {
     }
 };
 
+/**
+ * @deprecated Not used
+ * @param block
+ * @param event
+ */
 Editor.blockChanged = function (event) {
     var block = Editor.workspace.getBlockById(event.blockId);
     if (block.type === 'variables_declare') {
@@ -213,6 +267,11 @@ Editor.blockChanged = function (event) {
     }
 };
 
+/**
+ * @deprecated Not used
+ * @param block
+ * @param event
+ */
 Editor.variableChangeEvent = function (block, event) {
     var ws = Editor.workspace;
     if (event.name === 'NAME') {
@@ -221,13 +280,18 @@ Editor.variableChangeEvent = function (block, event) {
     else if (event.name === 'TYPE') {
 
     }
-
 };
 
+/**
+ * Shows the dialog for editing a variable
+ */
 Editor.showEditVariable = function () {
     $('#editVariableDialog').modal('show');
 };
 
+/**
+ * Parses the edit variable form and calls {@link Editor.changeVariable_}
+ */
 Editor.editVariable = function () {
     var form = $('#editVariableForm');
     var values = form.serializeArray();
@@ -236,6 +300,9 @@ Editor.editVariable = function () {
     $('#editVariableDialog').modal('hide');
 };
 
+/**
+ * Wrapper for {@link workspace.deleteVariableById}. Deletes the selected variable
+ */
 Editor.deleteVariable = function () {
     bootbox.confirm({
         message: "Are you sure you want to delete this variable?",
@@ -259,10 +326,16 @@ Editor.deleteVariable = function () {
     });
 };
 
+/**
+ * Shows the new variable dialog
+ */
 Editor.newVariable = function () {
     $('#variableDialog').modal('show');
 };
 
+/**
+ * Parses the new variable form and call {@link Editor.createNewVariable} with the parsed values
+ */
 Editor.createNewVariable = function () {
     var form = $('#newVariableForm');
     var values = form.serializeArray();
@@ -271,14 +344,34 @@ Editor.createNewVariable = function () {
     $('#variableDialog').modal('hide');
 };
 
+/**
+ * Wrapper for {@link workspace.createVariable}
+ * @param {string} name - Variable name
+ * @param {string} type - Variable type
+ * @param {string} opt_value - Optional variable initial value
+ * @param {string} opt_address - Optional mapped address to variable
+ * @private
+ */
 Editor.createNewVariable_ = function (name, type, opt_value, opt_address) {
     Editor.workspace.createVariable(name, type, opt_value, opt_address);
 };
 
+/**
+ * Wrapper for the workspace change variable
+ * @param {string} id - Id of the variable to change
+ * @param {string }name - New name of the variable
+ * @param type
+ * @param {string} opt_value - Optional initial value for the variable
+ * @param {string} opt_address - Optional mapped address for the variable
+ * @private
+ */
 Editor.changeVariable_ = function (id, name, type, opt_value, opt_address) {
     Editor.workspace.changeVariable(id, name, opt_value, opt_address);
 };
 
+/**
+ * Prompts the user for a program name and creates a new program in the active project
+ */
 Editor.newProgram = function () {
     bootbox.prompt({
         title: "New program",
@@ -300,10 +393,16 @@ Editor.newProgram = function () {
     });
 };
 
+/**
+ * Shows the create function dialog
+ */
 Editor.newFunction = function () {
     $('#functionDialog').modal('show');
 };
 
+/**
+ * Parses the new function form and calls {@link createNewFunction_} with the parsed values
+ */
 Editor.createNewFunction = function () {
     var form = $('#newFunctionForm');
     var values = form.serializeArray();
@@ -314,6 +413,12 @@ Editor.createNewFunction = function () {
     Editor.createNewFunction_(funcName, returnType);
 };
 
+/**
+ * Creates a new function and adds its to the working project
+ * @param {String} name - Name of the new function
+ * @param {String} type - Return type of the function
+ * @private
+ */
 Editor.createNewFunction_ = function (name, type) {
     var func = new Editor.Function(name, type);
     Editor.project.addFunction(func);
@@ -325,6 +430,9 @@ Editor.createNewFunction_ = function (name, type) {
     }, parent);
 };
 
+/**
+ * Prompts user for the name of the new function block and crates it.
+ */
 Editor.newFunctionBlock = function () {
     bootbox.prompt({
         title: "New function block",
@@ -568,7 +676,7 @@ Editor.newProject = function () {
             if (result) {
                 $('#start_screen').hide();
                 $('#main').show();
-                Editor.init(result);
+                Editor.initNewProject(result);
             }
         }
     });
@@ -594,14 +702,20 @@ Editor.openProject = function () {
 };
 
 Editor.debug = function () {
-    var xml = XMLExporter.exportProject(Editor.project);
-    document.getElementById('output').value = xml;
+    //var xml = XMLExporter.exportProject(Editor.project);
+    //document.getElementById('output').value = xml;
+    var code = Blockly.ST.projectToCode(Editor.project);
+    document.getElementById('output').value = code;
 };
 
 Editor.devGenerateXml = function () {
-    var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
-    xml = Blockly.Xml.domToPrettyText(xml);
-    document.getElementById('output').value = xml;
+    //var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
+    //xml = Blockly.Xml.domToPrettyText(xml);
+    //document.getElementById('output').value = xml;
+
+    var code = Blockly.ST.projectToCode(Editor.project);
+    document.getElementById('output').value = code;
+
 };
 
 window.addEventListener('load', () => {

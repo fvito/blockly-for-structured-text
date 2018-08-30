@@ -19,8 +19,24 @@
 <input type="file" style="display: none;" id="openFile"/>
 
 <div id="start_screen" class="intro">
-    <button class="btn btn-lg btn-block" onclick="Editor.newProject()">New project</button>
-    <button class="btn btn-lg btn-block" onclick="Editor.openProject()">Open existing project</button>
+    <div class="container d-flex flex-column justify-content-center align-content-center align-self-center flex-nowrap"
+         style="width:50%; height:100%">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center text-light">Blockly ST</h1>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 15px">
+            <div class="col-md-12 d-flex flex-column justify-content-center align-items-center align-content-center">
+                <button class="btn btn-secondary" onclick="Editor.newProject()">New project</button>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 15px">
+            <div class="col-md-12 d-flex flex-column justify-content-center align-items-center align-content-center">
+                <button class="btn btn-secondary" onclick="Editor.openProject()">Open existing project</button>
+            </div>
+        </div>
+    </div>
 </div>
 <div id="main" style="display: none">
     <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">

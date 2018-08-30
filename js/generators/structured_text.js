@@ -139,19 +139,23 @@ Blockly.ST.variablesToCode = function (workspace) {
     var variablesCode = [];
     if (variables.length > 0) {
         variables.forEach((e) => {
-            var variable = e.name;
-            if (e.address !== '') {
-                variable += " AT " + e.address;
-            }
-            variable += " : " + e.type;
-            if (e.initValue !== '') {
-                variable += " := " + e.initValue;
-            }
-            variable += ";";
-            variablesCode.push(variable);
+            variablesCode.push(Blockly.ST.variableToCode(e));
         });
     }
     return variablesCode.join("\n\t");
+};
+
+Blockly.ST.variableToCode = function (variable) {
+    var code = variable.name;
+    if (variable.address !== '') {
+        code += " AT " + variable.address;
+    }
+    code += " : " + variable.type;
+    if (variable.initValue !== '') {
+        code += " := " + variable.initValue;
+    }
+    code += ";";
+    return code;
 };
 
 Blockly.ST.functionBlocksToCode = function (workspace) {
@@ -163,20 +167,99 @@ Blockly.ST.functionBlocksToCode = function (workspace) {
     return code.join("\n\t");
 };
 
+/**
+ *
+ * @param {Editor.Project} project
+ * @returns {string}
+ */
 Blockly.ST.projectToCode = function(project) {
+    var completeCode = '';
+    for (var funcBlock of project.getAllFunctionBlocks(true)) {
+        completeCode += Blockly.ST.functionBlockToCode(funcBlock) + "\n\n";
+    }
 
+    for (var func of project.getAllFunctions(true)) {
+        completeCode += Blockly.ST.functionToCode(func) + "\n\n";
+    }
+
+    for (var program of project.programs_) {
+        completeCode += Blockly.ST.programToCode(program) + "\n\n";
+    }
+
+    completeCode += Blockly.ST.generateConfiguration();
+    return completeCode;
 };
 
+/**
+ *
+ * @param  program
+ * @returns {string}
+ */
 Blockly.ST.programToCode = function(program) {
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(program.getWorkspaceDom(), ws);
+
+    var code = this.workspaceToCode(ws);
+    var variables = this.variablesToCode(ws);
+    var functionBlocks = this.functionBlocksToCode(ws);
+
+    code = "VAR\n\t" + variables + "\n\t" + functionBlocks + "\nEND_VAR;\n" + code;
+    code = 'PROGRAM ' + program.name + '\n' + code + '\nEND_PROGRAM';
+    return code;
 
 };
 
+/**
+ *
+ * @param  func
+ * @returns {string}
+ */
 Blockly.ST.functionToCode = function(func) {
-
+    var code = 'FUNCTION ' + func.name + " : " + func.return_type + "\n";
+    if (func.args.lenght > 0) {
+        code += "VAR_INPUT\n";
+        for (var input of func.args) {
+            code += "\t" + Blockly.ST.variableToCode(input.variable);
+        }
+        code += "END_VAR\n";
+    }
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(func.workspace, ws);
+    code += Blockly.ST.workspaceToCode(ws) + "\n";
+    code += "END_FUNCTION\n";
+    return code;
 };
 
+/**
+ *
+ * @param  funcBlock
+ * @returns {string}
+ */
 Blockly.ST.functionBlockToCode = function (funcBlock) {
+    var code = 'FUNCTION_BLOCK ' + funcBlock.name + "\n";
+    if (funcBlock.inputs.length > 0) {
+        code += "VAR_INPUT\n";
+        for (var input of funcBlock.inputs) {
+            code += "\t" + Blockly.ST.variableToCode(input.variable) + "\n";
+        }
+        code += "END_VAR\n";
+    }
 
+    if (funcBlock.outputs.length > 0) {
+        code += "VAR_OUTPUT\n";
+        for (var output of funcBlock.outputs) {
+            code += "\t" + Blockly.ST.variableToCode(output) + "\n";
+        }
+        code += "END_VAR\n";
+    }
+
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(funcBlock.workspace, ws);
+
+    code += Blockly.ST.workspaceToCode(ws);
+
+    code += "END_FUNCTION_BLOCK";
+    return code;
 };
 
 Blockly.ST.configurationToCode = function(configuration ){
