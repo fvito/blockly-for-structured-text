@@ -478,7 +478,7 @@ Editor.populateForm = function (form_name, variable) {
 Editor.saveProject = function (fileName) {
     //$('#saveDialog').modal('show');
     var blob = new Blob([JSON.stringify(Editor.project)], {type: "application/json"});
-    saveAs(blob, fileName + ".json");
+    saveAs(blob, fileName + ".b4st");
 };
 
 /**
@@ -499,6 +499,7 @@ Editor.loadProject = function () {
         callback: function (result) {
             if (result) {
                 var openFileDialog = $("#openFile");
+                openFileDialog.attr('accept', '.b4st');
                 openFileDialog.on("change", (e) => {
                     var fr = new FileReader();
                     fr.addEventListener('load', function (e) {
@@ -569,6 +570,7 @@ Editor.importWorkspace = function () {
         callback: function (result) {
             if (result) {
                 var openFileDialog = $("#openFile");
+                openFileDialog.attr('accept', '.xml');
                 openFileDialog.on("change", (e) => {
                     var fr = new FileReader();
                     fr.addEventListener('load', function (e) {
@@ -688,6 +690,7 @@ Editor.newProject = function () {
  */
 Editor.openProject = function () {
     var openFileDialog = $("#openFile");
+    openFileDialog.attr('accept', '.b4st');
     openFileDialog.on("change", (e) => {
         var fr = new FileReader();
         fr.addEventListener('load', function (e) {

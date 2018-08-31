@@ -162,7 +162,7 @@ Blockly.ST.functionBlocksToCode = function (workspace) {
     var code = [];
     var functionBlocks = Blockly.FunctionBlocks.allFunctionBlocks(workspace);
     functionBlocks.forEach((block) => {
-        code.push(block.name+" : "+block.type+";");
+        code.push(block.name + " : " + block.type + ";");
     });
     return code.join("\n\t");
 };
@@ -172,14 +172,77 @@ Blockly.ST.functionBlocksToCode = function (workspace) {
  * @param {Editor.Project} project
  * @returns {string}
  */
-Blockly.ST.projectToCode = function(project) {
+Blockly.ST.projectToCode = function (project) {
     var completeCode = '';
+    var compiled = [];
     for (var funcBlock of project.getAllFunctionBlocks(true)) {
+        // skip over already compiled function blocks
+        if (compiled[funcBlock.name]) {
+            continue;
+        }
+        let ws = new Blockly.Workspace();
+        Blockly.Xml.domToWorkspace(funcBlock.workspace, ws);
+
+        // get all function calls, function blocks
+        let allDependencies = Blockly.ST.getAllBlocksOfTypes(ws, ['procedures_callnoreturn', 'procedures_callreturn', 'function_block_call']);
+        for (let block of allDependencies) {
+            let name = block.getFieldValue('NAME');
+            if (compiled[name]) {
+                // already compiled, skip it
+                continue;
+            }
+            let type = block.type;
+            if (type === 'function_block_call') {
+                // function block dependency
+                let funcBlock = project.getFunctionBlockByName(name);
+                let def = project.getFunctionBlockDef(funcBlock, true);
+
+                // compile the dependency before the actual item
+                completeCode += "\n" + this.functionBlockToCode(def) + "\n\n";
+                compiled[def.name] = true;
+            }
+            else if (type === 'procedures_callnoreturn' || type === 'procedures_callreturn') {
+                // function dependency
+                let func = project.getFunctionByName(name);
+                let def = project.getFunctionDef(func, true);
+
+                // compile the dependency before the actual item
+                completeCode = "\n" + this.functionToCode(def) + "\n\n";
+                compiled[def.name] = true;
+            }
+        }
+
+        // compile the working item
         completeCode += Blockly.ST.functionBlockToCode(funcBlock) + "\n\n";
+        compiled[funcBlock.name] = true;
     }
 
     for (var func of project.getAllFunctions(true)) {
+        // skip over already compiled functions
+        if (compiled[func.name]) {
+            continue;
+        }
+
+        let ws = new Blockly.Workspace();
+        Blockly.Xml.domToWorkspace(func.workspace, ws);
+        let allDependencies = Blockly.ST.getAllBlocksOfTypes(ws, ['procedures_callnoreturn', 'procedures_callreturn']);
+        for (let block of allDependencies) {
+            let name = block.getFieldValue('NAME');
+            // skip already compiled dependencies
+            if (compiled[name]) {
+                continue;
+            }
+            let dependencyFunc = project.getFunctionByName(name);
+            let def = project.getFunctionDef(dependencyFunc, true);
+
+            //compile the dependency before the actual item
+            completeCode += this.functionToCode(def) + "\n";
+            compiled[def.name] = true;
+        }
+
+        //compile the actual item
         completeCode += Blockly.ST.functionToCode(func) + "\n\n";
+        compiled[func.name] = true;
     }
 
     for (var program of project.programs_) {
@@ -195,7 +258,7 @@ Blockly.ST.projectToCode = function(project) {
  * @param  program
  * @returns {string}
  */
-Blockly.ST.programToCode = function(program) {
+Blockly.ST.programToCode = function (program) {
     let ws = new Blockly.Workspace();
     Blockly.Xml.domToWorkspace(program.getWorkspaceDom(), ws);
 
@@ -214,15 +277,25 @@ Blockly.ST.programToCode = function(program) {
  * @param  func
  * @returns {string}
  */
-Blockly.ST.functionToCode = function(func) {
+Blockly.ST.functionToCode = function (func) {
     var code = 'FUNCTION ' + func.name + " : " + func.return_type + "\n";
-    if (func.args.lenght > 0) {
+    if (func.args.length > 0) {
         code += "VAR_INPUT\n";
-        for (var input of func.args) {
+        for (var input of func.args.fiter(i => i.is_reference === false)) {
             code += "\t" + Blockly.ST.variableToCode(input.variable);
         }
         code += "END_VAR\n";
     }
+
+    let references = func.args.filter(i => i.is_reference === true);
+    if (references.length > 0) {
+        code += "VAR_IN_OUT\n";
+        for (var ref of references) {
+            code += "\t" + Blockly.ST.variableToCode(ref.variable);
+        }
+        code += "END_VAR\n";
+    }
+
     let ws = new Blockly.Workspace();
     Blockly.Xml.domToWorkspace(func.workspace, ws);
     code += Blockly.ST.workspaceToCode(ws) + "\n";
@@ -262,7 +335,7 @@ Blockly.ST.functionBlockToCode = function (funcBlock) {
     return code;
 };
 
-Blockly.ST.configurationToCode = function(configuration ){
+Blockly.ST.configurationToCode = function (configuration) {
 
 };
 
@@ -313,7 +386,7 @@ Blockly.ST.scrub_ = function (block, code) {
         comment = Blockly.utils.wrap(comment, Blockly.ST.COMMENT_WRAP - 3);
         if (comment) {
             commentCode += Blockly.ST.prefixLines(comment, '(* ');
-            commentCode = commentCode+' *)\n';
+            commentCode = commentCode + ' *)\n';
             /*if (block.getProcedureDef) {
                 // Use documentation comment for function comments.
                 commentCode += Blockly.ST.prefixLines(comment, '{ ');
@@ -342,6 +415,16 @@ Blockly.ST.scrub_ = function (block, code) {
     var nextBlock = block.nextConnection && block.nextConnection.targetBlock();
     var nextCode = Blockly.ST.blockToCode(nextBlock);
     return commentCode + code + nextCode;
+};
+
+Blockly.ST.getAllBlocksOfTypes = function (workspace, types) {
+    var blocks = [];
+    for (var block of workspace.getAllBlocks(true)) {
+        if (types.includes(block.type)) {
+            blocks.push(block);
+        }
+    }
+    return blocks;
 };
 
 

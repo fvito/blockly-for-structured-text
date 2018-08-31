@@ -53,6 +53,15 @@ Editor.Project.prototype.getFunctionById = function (id) {
     return null;
 };
 
+Editor.Project.prototype.getFunctionByName = function (name) {
+    for (var func of this.functions_) {
+        if (func.name === name) {
+            return func;
+        }
+    }
+    return null;
+};
+
 Editor.Project.prototype.getFunctionBlockByIndex = function (index) {
     return this.functionBlocks_[index];
 };
@@ -66,52 +75,68 @@ Editor.Project.prototype.getFunctionBlockById = function (id) {
     return null;
 };
 
-Editor.Project.prototype.getAllFunctions = function (opt_inc_workspace) {
-    var functions = [];
-    let tmpWs = new Blockly.Workspace();
-    for(var func of this.functions_){
-        tmpWs.clear();
-        Blockly.Xml.domToWorkspace(func.getWorkspaceDom(), tmpWs);
-        let topBlock = tmpWs.getTopBlocks(true)[0];
-        if(topBlock.callType_ === 'procedures_callnoreturn' || topBlock.callType_ === 'procedures_callreturn'){
-            var def = {
-                'name':func.name,
-                'return_type':func.returnType,
-                'args':topBlock.argumentVarModels_
-            };
-            if (opt_inc_workspace) {
-                def["workspace"] = func.getWorkspaceDom();
-            }
-            functions.push(def);
-        }else{
-            console.error(`Top block in function(id:${func.id}) workspace was not a function wrapper`);
+Editor.Project.prototype.getFunctionBlockByName = function (name) {
+    for (var fb of this.functionBlocks_) {
+        if (fb.name === name) {
+            return fb;
         }
+    }
+    return null;
+};
 
+Editor.Project.prototype.getFunctionDef = function (func, opt_inc_workspace) {
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(func.getWorkspaceDom(), ws);
+    let topBlock = ws.getTopBlocks(true)[0];
+    if (topBlock.type === 'procedures_defnoreturn' || topBlock.type === 'procedures_defreturn') {
+        let def = {
+            'name': func.name,
+            'return_type': func.returnType,
+            'args': topBlock.argumentVarModels_
+        };
+        if (opt_inc_workspace) {
+            def['workspace'] = func.getWorkspaceDom();
+        }
+        return def;
+    } else {
+        console.error(`Top block in function(id:${func.id}) workspace was not a function wrapper`);
+    }
+};
+
+Editor.Project.prototype.getFunctionBlockDef = function (block, opt_inc_workspace) {
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(block.getWorkspaceDom(), ws);
+
+    let topBlock = ws.getTopBlocks(true)[0];
+    if (topBlock.callType_ === 'function_blocks_call') {
+        let def = {
+            'name': block.name,
+            'inputs': topBlock.argumentVarModels_,
+            'outputs': topBlock.outputsVarModels_
+        };
+        if (opt_inc_workspace) {
+            def['workspace'] = block.getWorkspaceDom();
+        }
+        return def;
+    } else {
+        console.error(`Top block in function(id:${block.id}) workspace was not a function blocks define block`);
+    }
+
+};
+
+Editor.Project.prototype.getAllFunctions = function (opt_inc_workspace) {
+    let functions = [];
+    for (const func of this.functions_) {
+        functions.push(this.getFunctionDef(func, opt_inc_workspace));
     }
     //console.log(functions);
     return functions;
 };
 
 Editor.Project.prototype.getAllFunctionBlocks = function (opt_inc_workspace) {
-    var functionBlocks = [];
-    let tmpWs = new Blockly.Workspace();
-    for (var block of this.functionBlocks_) {
-        tmpWs.clear();
-        Blockly.Xml.domToWorkspace(block.getWorkspaceDom(), tmpWs);
-        let topBlock = tmpWs.getTopBlocks(true)[0];
-        if (topBlock.callType_ === 'function_blocks_call') {
-            var def = {
-                'name': block.name,
-                'inputs': topBlock.argumentVarModels_,
-                'outputs': topBlock.outputsVarModels_
-            };
-            if (opt_inc_workspace) {
-                def['workspace'] = block.getWorkspaceDom();
-            }
-            functionBlocks.push(def);
-        } else {
-            console.error(`Top block in function(id:${block.id}) workspace was not a function blocks define block`);
-        }
+    let functionBlocks = [];
+    for (const block of this.functionBlocks_) {
+        functionBlocks.push(this.getFunctionBlockDef(block, opt_inc_workspace));
     }
     return functionBlocks;
 };
