@@ -50,7 +50,6 @@ Blockly.ST['procedures_defreturn'] = function (block) {
     var branch = Blockly.ST.statementToCode(block, 'STACK');
     var value =  Blockly.ST.valueToCode(block, 'RETURN', Blockly.ST.ORDER_ATOMIC);
     var name = block.getFieldValue('NAME');
-    console.log(value);
     return branch + "\n" + name + ":=" +value;
 };
 

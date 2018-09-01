@@ -1,5 +1,9 @@
 'use strict';
 
+goog.require('goog.positioning.Corner');
+goog.require('goog.ui.MenuItem');
+goog.require('goog.ui.PopupMenu');
+
 goog.provide('Editor');
 
 /**
@@ -19,6 +23,8 @@ Editor.project = null;
  * @type {null}
  */
 Editor.tree = null;
+
+Editor.loading = $('#loadingDialog');
 
 /**
  * Creates a new project and initializes the editor with it
@@ -58,7 +64,11 @@ Editor.initWithProject = function (loaded_project) {
  * @private
  */
 Editor.init_ = function () {
-    Editor.blocklyInit();
+    if (!Editor.workspace) {
+        Editor.blocklyInit();
+    } else {
+        Editor.workspace.clear();
+    }
 
     $('#variableDialog').on('show.bs.modal', () => {
         $('#newVariableType').empty();
@@ -156,6 +166,7 @@ Editor.blocklyInit = function () {
         */
         var code = Blockly.ST.workspaceToCode(Editor.workspace);
         document.getElementById('output').value = code;
+
         //console.log(Editor.tree.getSelected()[0].dataAttr);
         if(Editor.tree.getSelected()[0]) {
             Editor.saveWorkspace(Editor.tree.getSelected()[0].dataAttr);
@@ -172,6 +183,10 @@ Editor.blocklyInit = function () {
  * @returns {Array}
  */
 Editor.functionsFlyoutCallback = function (workspace) {
+    let selectedFunction = '';
+    if (Editor.tree.getSelected().length > 0) {
+        selectedFunction = Editor.tree.getSelected()[0].text;
+    }
     var xmlList = [];
     var button = goog.dom.createDom('button');
     button.setAttribute('text', 'New Function');
@@ -184,6 +199,10 @@ Editor.functionsFlyoutCallback = function (workspace) {
     xmlList.push(button);
 
     for(var func of Editor.project.getAllFunctions()){
+        if (func.name === selectedFunction) {
+            //skip currently selected function. Prevent recursion
+            continue;
+        }
         var block = goog.dom.createDom('block');
         block.setAttribute('type', func.return_type === 'NONE' ? 'procedures_callnoreturn' : 'procedures_callreturn');
         block.setAttribute('gap', 16);
@@ -208,6 +227,10 @@ Editor.functionsFlyoutCallback = function (workspace) {
  * @returns {Array}
  */
 Editor.functionBlocksFlyoutCallback = function (workspace) {
+    let selectedFunctionBlock = '';
+    if (Editor.tree.getSelected().length > 0) {
+        selectedFunctionBlock = Editor.tree.getSelected()[0].text;
+    }
     var xmlList = [];
     var button = goog.dom.createDom('button');
     button.setAttribute('text', 'New Function Block');
@@ -218,6 +241,10 @@ Editor.functionBlocksFlyoutCallback = function (workspace) {
     });
     xmlList.push(button);
     for (var funcBlock of Editor.project.getAllFunctionBlocks()) {
+        if (funcBlock.name === selectedFunctionBlock) {
+            //skip selected function block
+            continue;
+        }
         var block = goog.dom.createDom('block');
         block.setAttribute('type', 'function_block_call');
         block.setAttribute('gap', 16);
@@ -498,21 +525,7 @@ Editor.loadProject = function () {
         },
         callback: function (result) {
             if (result) {
-                var openFileDialog = $("#openFile");
-                openFileDialog.attr('accept', '.b4st');
-                openFileDialog.on("change", (e) => {
-                    var fr = new FileReader();
-                    fr.addEventListener('load', function (e) {
-                        console.log("file reader loaded");
-                        Blockly.mainWorkspace.clear();	// clear workspace
-
-                        var xml = Blockly.Xml.textToDom(e.target.result);
-                        Blockly.Xml.domToWorkspace(xml, Editor.workspace);	// fill workspace
-                    });
-                    console.log(e.target.files);
-                    fr.readAsText(e.target.files[0]);
-                });
-                openFileDialog.trigger("click");
+                Editor.openProject();
             }
         }
     });
@@ -715,12 +728,14 @@ Editor.devGenerateXml = function () {
     //var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
     //xml = Blockly.Xml.domToPrettyText(xml);
     //document.getElementById('output').value = xml;
-
     var code = Blockly.ST.projectToCode(Editor.project);
     document.getElementById('output').value = code;
 
 };
 
 window.addEventListener('load', () => {
+    $('#openProjectBtn').prop('disabled', false);
+    $('#newProjectBtn').prop('disabled', false);
+    $('#editorLoading').prop('hidden', true);
     //Editor.init();
 });

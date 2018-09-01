@@ -714,14 +714,6 @@ Blockly.Blocks['procedures_callnoreturn'] = {
         // And rebuild the argument model list.
         this.argumentVarModels_ = [];
 
-        // We don't need function variables in this workspace/scope
-        /*for (var i = 0; i < this.arguments_.length; i++) {
-            var variable = Blockly.Variables.getOrCreateVariablePackage(
-                this.workspace, null, this.arguments_[i], '');
-            this.argumentVarModels_.push(variable);
-        }
-        */
-
         this.updateShape_();
         this.quarkIds_ = paramIds;
         // Reconnect any child blocks.
@@ -841,62 +833,6 @@ Blockly.Blocks['procedures_callnoreturn'] = {
         if (!this.workspace || this.workspace.isFlyout) {
             // Block is deleted or is in a flyout.
             return;
-        }
-        if (event.type == Blockly.Events.BLOCK_CREATE &&
-            event.ids.indexOf(this.id) != -1) {
-            // Look for the case where a procedure call was created (usually through
-            // paste) and there is no matching definition.  In this case, create
-            // an empty definition block with the correct signature.
-            var name = this.getProcedureCall();
-            var def = Blockly.Procedures.getDefinition(name, this.workspace);
-            if (def && (def.type != this.defType_ ||
-                JSON.stringify(def.arguments_) != JSON.stringify(this.arguments_))) {
-                // The signatures don't match.
-                def = null;
-            }
-            //if (!def) {
-            //Blockly.Events.setGroup(event.group);
-            /**
-             * Create matching definition block.
-             * <xml>
-             *   <block type="procedures_defreturn" x="10" y="20">
-             *     <mutation name="test">
-             *       <arg name="x"></arg>
-             *     </mutation>
-             *     <field name="NAME">test</field>
-             *   </block>
-             * </xml>
-             */
-            /*var xml = goog.dom.createDom('xml');
-            var block = goog.dom.createDom('block');
-            block.setAttribute('type', this.defType_);
-            var xy = this.getRelativeToSurfaceXY();
-            var x = xy.x + Blockly.SNAP_RADIUS * (this.RTL ? -1 : 1);
-            var y = xy.y + Blockly.SNAP_RADIUS * 2;
-            block.setAttribute('x', x);
-            block.setAttribute('y', y);
-            var mutation = this.mutationToDom();
-            block.appendChild(mutation);
-            var field = goog.dom.createDom('field');
-            field.setAttribute('name', 'NAME');
-            field.appendChild(document.createTextNode(this.getProcedureCall()));
-            block.appendChild(field);
-            xml.appendChild(block);
-            Blockly.Xml.domToWorkspace(xml, this.workspace);
-            Blockly.Events.setGroup(false);
-        }
-        */
-        } else if (event.type == Blockly.Events.BLOCK_DELETE) {
-            // Look for the case where a procedure definition has been deleted,
-            // leaving this block (a procedure call) orphaned.  In this case, delete
-            // the orphan.
-            var name = this.getProcedureCall();
-            var def = Blockly.Procedures.getDefinition(name, this.workspace);
-            if (!def) {
-                Blockly.Events.setGroup(event.group);
-                this.dispose(true, false);
-                Blockly.Events.setGroup(false);
-            }
         }
     },
     /**

@@ -988,7 +988,7 @@ Blockly.Blocks['function_block_call'] = {
                     Blockly.Events.enable();
                 }
             } else {
-                field = new Blockly.FieldLabel(this.arguments_[i].name);
+                field = new Blockly.FieldLabel(this.arguments_[i].name + "(" + this.arguments_[i].check + ")");
                 var input = this.appendValueInput('ARG' + i)
                     .setAlign(Blockly.ALIGN_RIGHT)
                     .setCheck(this.arguments_[i].check)

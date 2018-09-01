@@ -135,7 +135,7 @@ Blockly.ST.finish = function (code) {
 };
 
 Blockly.ST.variablesToCode = function (workspace) {
-    var variables = Blockly.Variables.allUsedVarModels(Blockly.mainWorkspace);
+    var variables = Blockly.Variables.allUsedVarModels(workspace);
     var variablesCode = [];
     if (variables.length > 0) {
         variables.forEach((e) => {
@@ -173,6 +173,7 @@ Blockly.ST.functionBlocksToCode = function (workspace) {
  * @returns {string}
  */
 Blockly.ST.projectToCode = function (project) {
+    console.log("----------------------------------------");
     var completeCode = '';
     var compiled = [];
     for (var funcBlock of project.getAllFunctionBlocks(true)) {
@@ -180,40 +181,8 @@ Blockly.ST.projectToCode = function (project) {
         if (compiled[funcBlock.name]) {
             continue;
         }
-        let ws = new Blockly.Workspace();
-        Blockly.Xml.domToWorkspace(funcBlock.workspace, ws);
-
-        // get all function calls, function blocks
-        let allDependencies = Blockly.ST.getAllBlocksOfTypes(ws, ['procedures_callnoreturn', 'procedures_callreturn', 'function_block_call']);
-        for (let block of allDependencies) {
-            let name = block.getFieldValue('NAME');
-            if (compiled[name]) {
-                // already compiled, skip it
-                continue;
-            }
-            let type = block.type;
-            if (type === 'function_block_call') {
-                // function block dependency
-                let funcBlock = project.getFunctionBlockByName(name);
-                let def = project.getFunctionBlockDef(funcBlock, true);
-
-                // compile the dependency before the actual item
-                completeCode += "\n" + this.functionBlockToCode(def) + "\n\n";
-                compiled[def.name] = true;
-            }
-            else if (type === 'procedures_callnoreturn' || type === 'procedures_callreturn') {
-                // function dependency
-                let func = project.getFunctionByName(name);
-                let def = project.getFunctionDef(func, true);
-
-                // compile the dependency before the actual item
-                completeCode = "\n" + this.functionToCode(def) + "\n\n";
-                compiled[def.name] = true;
-            }
-        }
-
         // compile the working item
-        completeCode += Blockly.ST.functionBlockToCode(funcBlock) + "\n\n";
+        completeCode += Blockly.ST.functionBlockToCode(funcBlock, project, compiled) + "\n\n";
         compiled[funcBlock.name] = true;
     }
 
@@ -223,25 +192,8 @@ Blockly.ST.projectToCode = function (project) {
             continue;
         }
 
-        let ws = new Blockly.Workspace();
-        Blockly.Xml.domToWorkspace(func.workspace, ws);
-        let allDependencies = Blockly.ST.getAllBlocksOfTypes(ws, ['procedures_callnoreturn', 'procedures_callreturn']);
-        for (let block of allDependencies) {
-            let name = block.getFieldValue('NAME');
-            // skip already compiled dependencies
-            if (compiled[name]) {
-                continue;
-            }
-            let dependencyFunc = project.getFunctionByName(name);
-            let def = project.getFunctionDef(dependencyFunc, true);
-
-            //compile the dependency before the actual item
-            completeCode += this.functionToCode(def) + "\n";
-            compiled[def.name] = true;
-        }
-
         //compile the actual item
-        completeCode += Blockly.ST.functionToCode(func) + "\n\n";
+        completeCode += Blockly.ST.functionToCode(func, project, compiled) + "\n\n";
         compiled[func.name] = true;
     }
 
@@ -250,6 +202,81 @@ Blockly.ST.projectToCode = function (project) {
     }
 
     completeCode += Blockly.ST.generateConfiguration();
+    console.log("----------------------------------------");
+    return completeCode;
+};
+
+Blockly.ST.functionToCode = function (func, project, compiledList) {
+    var completeCode = '';
+    console.log('started compiling function: ' + func.name);
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(func.workspace, ws);
+    let allDependencies = Blockly.ST.getAllBlocksOfTypes(ws, ['procedures_callnoreturn', 'procedures_callreturn']);
+    for (let block of allDependencies) {
+        let name = block.getFieldValue('NAME');
+        // skip already compiled dependencies
+        if (compiledList[name]) {
+            console.log(`dependency ${name} already compiled, skipping`);
+            continue;
+        }
+        console.log('found dependency ' + name);
+        let dependencyFunc = project.getFunctionByName(name);
+        let def = project.getFunctionDef(dependencyFunc, true);
+
+        //compile the dependency before the actual item
+        completeCode += this.functionToCode(def, project, compiledList) + "\n";
+        compiledList[def.name] = true;
+        console.log(`dependency ${name} compiled!`);
+    }
+
+    //compile the actual item
+    completeCode += Blockly.ST.functionToCode_(func) + "\n\n";
+    compiledList[func.name] = true;
+    console.log('finished compiling function: ' + func.name);
+    return completeCode;
+};
+
+Blockly.ST.functionBlockToCode = function (funcBlock, project, compiledList) {
+    var completeCode = '';
+    console.log('started compiling function block: ' + funcBlock.name);
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(funcBlock.workspace, ws);
+
+    // get all function calls, function blocks
+    let allDependencies = Blockly.ST.getAllBlocksOfTypes(ws, ['procedures_callnoreturn', 'procedures_callreturn', 'function_block_call']);
+    for (let block of allDependencies) {
+        let type = block.type;
+        let name = type === 'function_block_call' ? block.getFieldValue('BLOCK') : block.getFieldValue('NAME');
+        if (compiledList[name]) {
+            console.log(`dependency ${name} already compiled, skipping`);
+            // already compiled, skip it
+            continue;
+        }
+        console.log('found dependency ' + name);
+        if (type === 'function_block_call') {
+            // function block dependency
+            let block = project.getFunctionBlockByName(name);
+            let def = project.getFunctionBlockDef(block, true);
+
+            // compile the dependency before the actual item
+            completeCode += "\n" + this.functionBlockToCode(def, project, compiledList) + "\n\n";
+            compiledList[def.name] = true;
+            console.log(`dependency ${name} compiled!`);
+        }
+        else if (type === 'procedures_callnoreturn' || type === 'procedures_callreturn') {
+            // function dependency
+            let func = project.getFunctionByName(name);
+            let def = project.getFunctionDef(func, true);
+
+            // compile the dependency before the actual item
+            completeCode += "\n" + this.functionToCode(def, project, compiledList) + "\n\n";
+            compiledList[def.name] = true;
+            console.log(`dependency ${name} compiled!`);
+        }
+    }
+    completeCode += Blockly.ST.functionBlockToCode_(funcBlock) + "\n\n";
+    compiledList[funcBlock.name] = true;
+    console.log('finished compiling function block: ' + funcBlock.name);
     return completeCode;
 };
 
@@ -266,7 +293,7 @@ Blockly.ST.programToCode = function (program) {
     var variables = this.variablesToCode(ws);
     var functionBlocks = this.functionBlocksToCode(ws);
 
-    code = "VAR\n\t" + variables + "\n\t" + functionBlocks + "\nEND_VAR;\n" + code;
+    code = "VAR\n\t" + variables + "\n\t" + functionBlocks + "\nEND_VAR\n" + code;
     code = 'PROGRAM ' + program.name + '\n' + code + '\nEND_PROGRAM';
     return code;
 
@@ -277,7 +304,7 @@ Blockly.ST.programToCode = function (program) {
  * @param  func
  * @returns {string}
  */
-Blockly.ST.functionToCode = function (func) {
+Blockly.ST.functionToCode_ = function (func) {
     var code = 'FUNCTION ' + func.name + " : " + func.return_type + "\n";
     if (func.args.length > 0) {
         code += "VAR_INPUT\n";
@@ -308,7 +335,7 @@ Blockly.ST.functionToCode = function (func) {
  * @param  funcBlock
  * @returns {string}
  */
-Blockly.ST.functionBlockToCode = function (funcBlock) {
+Blockly.ST.functionBlockToCode_ = function (funcBlock) {
     var code = 'FUNCTION_BLOCK ' + funcBlock.name + "\n";
     if (funcBlock.inputs.length > 0) {
         code += "VAR_INPUT\n";

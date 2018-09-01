@@ -6,7 +6,8 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <link rel="stylesheet" id="bootstrap" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+    <link rel="stylesheet" id="bootstrap"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
     <link rel="stylesheet" id="font-awesome-solid" href="https://use.fontawesome.com/releases/v5.2.0/css/solid.css"
           integrity="sha384-wnAC7ln+XN0UKdcPvJvtqIH3jOjs9pnKnq9qX68ImXvOGz2JuFoEiCjT8jyZQX2z" crossorigin="anonymous">
@@ -23,17 +24,24 @@
          style="width:50%; height:100%">
         <div class="row">
             <div class="col-md-12">
+                <p class="text-center text-light">
+                    <i class="fas fa-spinner fa-pulse fa-3x" id="editorLoading"></i>
+                </p>
                 <h1 class="text-center text-light">Blockly ST</h1>
             </div>
         </div>
         <div class="row" style="margin-top: 15px">
             <div class="col-md-12 d-flex flex-column justify-content-center align-items-center align-content-center">
-                <button class="btn btn-secondary" onclick="Editor.newProject()">New project</button>
+                <button class="btn btn-secondary" onclick="Editor.newProject()" id="newProjectBtn" disabled>New
+                    project
+                </button>
             </div>
         </div>
         <div class="row" style="margin-top: 15px">
             <div class="col-md-12 d-flex flex-column justify-content-center align-items-center align-content-center">
-                <button class="btn btn-secondary" onclick="Editor.openProject()">Open existing project</button>
+                <button class="btn btn-secondary" onclick="Editor.openProject()" id="openProjectBtn" disabled>Open
+                    existing project
+                </button>
             </div>
         </div>
     </div>
@@ -41,69 +49,72 @@
 <div id="main" style="display: none">
     <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
         <a class="navbar-brand" href="#">Blockly ST</a>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarProject" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-file navbar-icon"></i>
-                    Project
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newProject()">New</a>
-                    <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.loadProject()">Load</a>
-                    <a class="dropdown-item" href="javascript:void(0)"
-                       onclick="Editor.showSaveDialog(Editor.saveProject)">Save</a>
-                    <hr>
-                    <a class="dropdown-item" href="javascript:void(0)"
-                       onclick="Editor.showSaveDialog(Editor.exportWorkspace)">Export Workspace</a>
-                    <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.importWorkspace()">Import
-                        Workspace</a>
-                </div>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarEdit" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-toolbox navbar-icon"></i>Edit
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" onclick="Editor.newVariable()" href="javascript:void(0)">New variable</a>
-                    <a class="dropdown-item" onclick="Editor.showEditVariable()" href="javascript:void(0)">Edit
-                        variable</a>
-                    <hr>
-                    <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newProgram()">New program</a>
-                    <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newFunction()">New function</a>
-                    <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newFunctionBlock()">New function
-                        block</a>
-                    <hr>
-                    <a class="dropdown-item" href="#">Settings</a>
-                </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarExport" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-file-export navbar-icon"></i>Export
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="javascript:void(0)"
-                       onclick="Editor.showSaveDialog(Editor.exportAsSt)">As .st</a>
-                    <a class="dropdown-item" href="javascript:void(0)"
-                       onclick="Editor.showSaveDialog(Editor.exportAsXml)">As PLCOpen
-                        XML</a>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="javascript:void(0)" onclick="Editor.debug()">Generate</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarProject" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-file navbar-icon"></i>
+                        Project
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newProject()">New</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.loadProject()">Load</a>
+                        <a class="dropdown-item" href="javascript:void(0)"
+                           onclick="Editor.showSaveDialog(Editor.saveProject)">Save</a>
+                        <hr>
+                        <a class="dropdown-item" href="javascript:void(0)"
+                           onclick="Editor.showSaveDialog(Editor.exportWorkspace)">Export Workspace</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.importWorkspace()">Import
+                            Workspace</a>
+                    </div>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarEdit" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-toolbox navbar-icon"></i>Edit
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" onclick="Editor.newVariable()" href="javascript:void(0)">New
+                            variable</a>
+                        <a class="dropdown-item" onclick="Editor.showEditVariable()" href="javascript:void(0)">Edit
+                            variable</a>
+                        <hr>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newProgram()">New program</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newFunction()">New
+                            function</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newFunctionBlock()">New
+                            function
+                            block</a>
+                        <hr>
+                        <a class="dropdown-item" href="#">Settings</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarExport" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-file-export navbar-icon"></i>Export
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="javascript:void(0)"
+                           onclick="Editor.showSaveDialog(Editor.exportAsSt)">As .st</a>
+                        <a class="dropdown-item" href="javascript:void(0)"
+                           onclick="Editor.showSaveDialog(Editor.exportAsXml)">As PLCOpen
+                            XML</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)" onclick="Editor.debug()">Generate</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <div class="container-fluid bg-dark d-flex">
-    <div id="tree" style="height: 900px; display: inline-block;"></div>
-    <div id="blocklyArea" style="width: 80%; height: 900px; display: inline-block;"></div>
-</div>
+        <div id="tree" style="height: 900px; display: inline-block;"></div>
+        <div id="blocklyArea" style="width: 80%; height: 900px; display: inline-block;"></div>
+    </div>
     <div class="container">
-    <textarea id="output" style="width: 100%; height: 500px; border: solid 1px gray;"></textarea>
-</div>
+        <textarea id="output" style="width: 100%; height: 500px; border: solid 1px gray;"></textarea>
+    </div>
 </div>
 <!-- modals -->
 <div id="modals">
@@ -220,6 +231,19 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="Editor.createNewFunction()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bootbox modal fade show" tabindex="-1" role="dialog" id="loadingDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true">×
+                    </button>
+                    <h4 class="modal-title">Loading</h4></div>
+                <div class="modal-body">
+                    <div class="bootbox-body"><p><i class="fa fa-spin fa-spinner"></i> Loading please wait...</p></div>
                 </div>
             </div>
         </div>
