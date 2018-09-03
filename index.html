@@ -15,7 +15,7 @@
           integrity="sha384-HbmWTHay9psM8qyzEKPc8odH4DsOuzdejtnr+OFtDmOcIVnhgReQ4GZBH7uwcjf6" crossorigin="anonymous">
     <link rel="stylesheet" id="bootstrap-treeview" href="lib/bootstrap-treeview/bootstrap-treeview.css">
     <link rel="stylesheet" id="app-styles" href="css/style.css">
-    <title>Document</title>
+    <title>Blockly 4 ST</title>
 </head>
 <input type="file" style="display: none;" id="openFile"/>
 
@@ -27,7 +27,7 @@
                 <p class="text-center text-light">
                     <i class="fas fa-spinner fa-pulse fa-3x" id="editorLoading"></i>
                 </p>
-                <h1 class="text-center text-light">Blockly ST</h1>
+                <h1 class="text-center text-light">Blockly for Structured Text</h1>
             </div>
         </div>
         <div class="row" style="margin-top: 15px">
@@ -48,7 +48,7 @@
 </div>
 <div id="main" style="display: none">
     <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-        <a class="navbar-brand" href="#">Blockly ST</a>
+        <a class="navbar-brand" href="#">Blockly 4 ST</a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item dropdown">
@@ -253,7 +253,7 @@
     <a class="dropdown-item" tabindex="-1" href="javascript:void(0)">New</a>
     <a class="dropdown-item" tabindex="-1" href="javascript:void(0)">Delete</a>
 </div>
-<!-- toolbox -->
+<!-- General toolbox -->
 <xml id="toolbox" style="display: none">
     <category name="Logic" colour="%{BKY_LOGIC_HUE}">
         <block type="controls_if"></block>
@@ -572,9 +572,19 @@
     <category name="Variables" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>
     <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="FUNCTIONS"></category>
 </xml>
+<!-- Configuration toolbox -->
+<xml id="configToolbox" style="display: none">
+    <category name="Configuration">
+        <block type="task_container"></block>
+        <block type="single_task"></block>
+        <block type="math_number">
+            <field name="NUM">123</field>
+        </block>
+        <block type="time_value"></block>
+    </category>
+</xml>
 
 <!-- Libs -->
-
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -612,6 +622,7 @@
 <script src="js/blocks/conversions.js"></script>
 <script src="js/blocks/time_date.js"></script>
 <script src="js/blocks/function_blocks.js"></script>
+<script src="js/blocks/configuration.js"></script>
 
 <!-- Generators -->
 <script src="js/generators/structured_text/logic.js"></script>
@@ -623,6 +634,7 @@
 <script src="js/generators/structured_text/conversions.js"></script>
 <script src="js/generators/structured_text/time_date.js"></script>
 <script src="js/generators/structured_text/function_blocks.js"></script>
+<script src="js/generators/structured_text/configration.js"></script>
 
 <!-- Editor logic -->
 <script src="js/xml_exporter.js"></script>

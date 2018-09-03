@@ -174,7 +174,8 @@ Blockly.ST.functionBlocksToCode = function (workspace) {
  */
 Blockly.ST.projectToCode = function (project) {
     console.log("----------------------------------------");
-    var completeCode = '';
+    var completeCode = '(* Auto generated *)\n';
+    completeCode += `(* Project: ${project.name} *)\n`;
     var compiled = [];
     for (var funcBlock of project.getAllFunctionBlocks(true)) {
         // skip over already compiled function blocks

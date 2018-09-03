@@ -10,6 +10,7 @@ Editor.Project.FUNCTION_BLOCK_TYPE = 'FUNCTION_BLOCK';
 Editor.Project = function (name) {
     this.name = name;
     this.configuration = new Editor.Configuration();
+    this.configuration.addTask(new Editor.Task('TaskMain', 'T#50ms', 0));
     this.programs_ = [];
     this.functions_ = [];
     this.functionBlocks_ = [];
@@ -196,7 +197,16 @@ Editor.Project.prototype.getAsTree = function () {
     root.nodes.push(funcBlocks);
 
 
-    root.nodes.push({text: "Configuration"});
+    var confingNode = {text: "Configuration", selectable: false, nodes: []};
+    for (var task of this.configuration.getAllTasks()) {
+        confingNode.nodes.push({
+            text: task.name,
+            dataAttr: [{id: task.getId(), type: 'TASK'}],
+            icon: 'fas fa-file',
+            class: 'context-text'
+        })
+    }
+    root.nodes.push(confingNode);
     tree.push(root);
     return tree;
 };

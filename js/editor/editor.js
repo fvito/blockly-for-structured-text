@@ -24,6 +24,9 @@ Editor.project = null;
  */
 Editor.tree = null;
 
+
+Editor.currentToolbox = 'general';
+
 Editor.loading = $('#loadingDialog');
 
 /**
@@ -180,6 +183,11 @@ Editor.blocklyInit = function () {
         if (Editor.tree.getSelected()[0]) {
             Editor.saveWorkspace(Editor.tree.getSelected()[0].dataAttr);
         }
+
+        if (event.type === Blockly.Events.BLOCK_CREATE) {
+            console.log(event);
+        }
+
     });
 
     Editor.workspace.registerToolboxCategoryCallback('FUNCTIONS', Editor.functionsFlyoutCallback);
@@ -711,6 +719,8 @@ Editor.getTargetFromProject = function (type, id) {
         return Editor.project.getFunctionById(id);
     } else if (type === 'FUNCTION_BLOCK') {
         return Editor.project.getFunctionBlockById(id);
+    } else if (type === 'TASK') {
+        return Editor.project.configuration.getTaskById(id);
     }
     return null;
 };
@@ -743,6 +753,17 @@ Editor.saveWorkspace = function (data) {
 Editor.loadWorkspace = function (data) {
     if (data instanceof Array) {
         data = data[0];
+    }
+    if (data.type === 'TASK') {
+        Editor.currentToolbox = 'task';
+        let tree = document.getElementById("configToolbox");
+        Editor.workspace.updateToolbox(tree);
+    } else {
+        if (Editor.currentToolbox !== 'general') {
+            Editor.currentToolbox = 'general';
+            let tree = document.getElementById("toolbox");
+            Editor.workspace.updateToolbox(tree);
+        }
     }
     //console.log('load', data);
     var target = Editor.getTargetFromProject(data.type, data.id);
@@ -822,6 +843,14 @@ Editor.contextMenuCommand = function (command, item) {
         }
     }
     console.log(treeNode);
+};
+
+Editor.programMenuBuilder = function () {
+    let options = [];
+    for (let program of Editor.project.programs_) {
+        options.push([program.name, program.name]);
+    }
+    return options;
 };
 
 Editor.debug = function () {

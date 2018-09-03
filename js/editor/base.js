@@ -32,6 +32,7 @@ this.EDITOR_BOOT = function (root) {
     goog.addDependency('../../../../js/' + dir + '/editor.js', ['Editor'], []);
     goog.addDependency('../../../../js/' + dir + '/project.js', ['Editor.Project'], ['Blockly.utils']);
     goog.addDependency('../../../../js/' + dir + '/configuration.js', ['Editor.Configuration'], ['Blockly.utils']);
+    goog.addDependency('../../../../js/' + dir + '/task.js', ['Editor.Task'], ['Blockly.utils']);
     goog.addDependency('../../../../js/' + dir + '/program.js', ['Editor.Program'], ['Blockly.utils']);
     goog.addDependency('../../../../js/' + dir + '/function.js', ['Editor.Function'], ['Blockly.utils']);
     goog.addDependency('../../../../js/' + dir + '/function_block.js', ['Editor.FunctionBlock'], ['Blockly.utils']);
@@ -40,6 +41,7 @@ this.EDITOR_BOOT = function (root) {
     goog.require('Editor');
     goog.require('Editor.Project');
     goog.require('Editor.Configuration');
+    goog.require('Editor.Task');
     goog.require('Editor.Program');
     goog.require('Editor.Function');
     goog.require('Editor.FunctionBlock');
