@@ -27,6 +27,23 @@ Editor.Project.prototype.addFunctionBlock = function (fblock) {
     this.functionBlocks_.push(fblock);
 };
 
+Editor.Project.prototype.deleteProgram = function (id) {
+    console.log('delete id:', id);
+    var index = this.programs_.findIndex(i => i.getId() === id);
+    console.log(index);
+    this.programs_.splice(index, 1);
+};
+
+Editor.Project.prototype.deleteFunction = function (id) {
+    var index = this.functions_.findIndex(i => i.getId() === id);
+    this.functions_.splice(index, 1);
+};
+
+Editor.Project.prototype.deleteFunctionBlock = function (id) {
+    var index = this.functionBlocks_.findIndex(i => i.getId() === id);
+    this.functionBlocks_.splice(index, 1);
+};
+
 Editor.Project.prototype.getProgramByIndex = function (index) {
     return this.programs_[index]
 };
@@ -145,12 +162,13 @@ Editor.Project.prototype.getAsTree = function () {
     var tree = [];
     var root = {text: `Project - ${this.name}`, selectable: false, nodes: []};
 
-    var programs = {text: "Programs", selectable: false, nodes: [],};
+    var programs = {text: "Programs", selectable: false, nodes: []};
     for (var program of this.programs_) {
         programs.nodes.push({
             text: program.name,
             dataAttr: [{id: program.getId(), type: 'PROGRAM'}],
-            icon: 'fas fa-file'
+            icon: 'fas fa-file',
+            class: 'context-text'
         });
     }
     root.nodes.push(programs);
@@ -160,7 +178,8 @@ Editor.Project.prototype.getAsTree = function () {
         functions.nodes.push({
             text: func.name,
             dataAttr: [{id: func.getId(), type: 'FUNCTION',}],
-            icon: 'fas fa-file'
+            icon: 'fas fa-file',
+            class: 'context-text'
         });
     }
     root.nodes.push(functions);
@@ -170,7 +189,8 @@ Editor.Project.prototype.getAsTree = function () {
         funcBlocks.nodes.push({
             text: block.name,
             dataAttr: [{id: block.getId(), type: 'FUNCTION_BLOCK'}],
-            icon: 'fas fa-file'
+            icon: 'fas fa-file',
+            class: 'context-text'
         });
     }
     root.nodes.push(funcBlocks);

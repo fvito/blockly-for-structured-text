@@ -128,6 +128,15 @@ Editor.init_ = function () {
         onNodeUnselected: function (event, data) {
             Editor.saveWorkspace(data.dataAttr);
         },
+        onRendered: function (event, data) {
+            $('.context-text').contextMenu({
+                menuSelector: "#contextMenu",
+                menuSelected: function (invokedOn, selectedMenu) {
+                    let command = selectedMenu.text().toLowerCase();
+                    Editor.contextMenuCommand(command, invokedOn);
+                }
+            })
+        }
     });
     Editor.tree = $('#tree').treeview(true);
 };
@@ -168,7 +177,7 @@ Editor.blocklyInit = function () {
         document.getElementById('output').value = code;
 
         //console.log(Editor.tree.getSelected()[0].dataAttr);
-        if(Editor.tree.getSelected()[0]) {
+        if (Editor.tree.getSelected()[0]) {
             Editor.saveWorkspace(Editor.tree.getSelected()[0].dataAttr);
         }
     });
@@ -198,7 +207,7 @@ Editor.functionsFlyoutCallback = function (workspace) {
     });
     xmlList.push(button);
 
-    for(var func of Editor.project.getAllFunctions()){
+    for (var func of Editor.project.getAllFunctions()) {
         if (func.name === selectedFunction) {
             //skip currently selected function. Prevent recursion
             continue;
@@ -413,7 +422,8 @@ Editor.newProgram = function () {
                 Editor.tree.addNode({
                     text: program.name,
                     dataAttr: [{id: program.getId(), type: 'PROGRAM'}],
-                    icon: 'fas fa-file'
+                    icon: 'fas fa-file',
+                    class: 'context-text'
                 }, parent);
             }
         }
@@ -453,7 +463,8 @@ Editor.createNewFunction_ = function (name, type) {
     Editor.tree.addNode({
         text: func.name,
         dataAttr: [{id: func.getId(), type: 'FUNCTION'}],
-        icon: 'fas fa-file'
+        icon: 'fas fa-file',
+        class: 'context-text'
     }, parent);
 };
 
@@ -473,8 +484,72 @@ Editor.newFunctionBlock = function () {
                 Editor.tree.addNode({
                     text: functionBlock.name,
                     dataAttr: [{id: functionBlock.getId(), type: 'FUNCTION_BLOCK'}],
-                    icon: 'fas fa-file'
+                    icon: 'fas fa-file',
+                    class: 'context-text'
                 }, parent);
+            }
+        }
+    });
+};
+
+Editor.deleteProgram = function (id, node) {
+    bootbox.confirm({
+        message: "Are you sure you want to delete this program?",
+        buttons: {
+            confirm: {
+                label: "Yes",
+                className: 'btn-success'
+            },
+            cancel: {
+                label: "No"
+            },
+        },
+        callback: function (result) {
+            if (result) {
+                Editor.tree.removeNode(node, {silent: true});
+                Editor.project.deleteProgram(id);
+            }
+        }
+    });
+};
+
+Editor.deleteFunction = function (id, node) {
+    bootbox.confirm({
+        message: "Are you sure you want to delete this function?",
+        buttons: {
+            confirm: {
+                label: "Yes",
+                className: 'btn-success'
+            },
+            cancel: {
+                label: "No"
+            },
+        },
+        callback: function (result) {
+            if (result) {
+                Editor.tree.removeNode(node, {silent: true});
+                Editor.project.deleteFunction(id);
+            }
+        }
+    });
+};
+
+Editor.deleteFunctionBlock = function (id, node) {
+    bootbox.confirm({
+        message: "Are you sure you want to delete this function block?",
+        buttons: {
+            confirm: {
+                label: "Yes",
+                className: 'btn-success'
+            },
+            cancel: {
+                label: "No"
+            },
+        },
+        callback: function (result) {
+            if (result) {
+                Editor.tree.removeNode(node, {silent: true});
+                Editor.project.deleteFunctionBlock(id);
             }
         }
     });
@@ -645,7 +720,7 @@ Editor.getTargetFromProject = function (type, id) {
  * @param {{type:string, id:string}} data - Data with information about the selected tree node
  */
 Editor.saveWorkspace = function (data) {
-    if(data instanceof Array){
+    if (data instanceof Array) {
         data = data[0];
     }
     //console.log('save',data);
@@ -666,7 +741,7 @@ Editor.saveWorkspace = function (data) {
  *                                   - id Id of the object to find in the projects structure
  */
 Editor.loadWorkspace = function (data) {
-    if(data instanceof Array){
+    if (data instanceof Array) {
         data = data[0];
     }
     //console.log('load', data);
@@ -715,6 +790,38 @@ Editor.openProject = function () {
         fr.readAsText(e.target.files[0]);
     });
     openFileDialog.trigger("click");
+};
+
+Editor.contextMenuCommand = function (command, item) {
+    var treeNode = Editor.tree.findNodes(item.text(), 'text')[0];
+    var nodeType = treeNode.dataAttr[0].type;
+    if (command === 'new') {
+        switch (nodeType) {
+            case 'PROGRAM':
+                Editor.newProgram();
+                break;
+            case 'FUNCTION':
+                Editor.newFunction();
+                break;
+            case 'FUNCTION_BLOCK':
+                Editor.newFunctionBlock();
+                break;
+        }
+    } else if (command === 'delete') {
+        var id = treeNode.dataAttr[0].id;
+        switch (nodeType) {
+            case 'PROGRAM':
+                Editor.deleteProgram(id, treeNode);
+                break;
+            case 'FUNCTION':
+                Editor.deleteFunction(id, treeNode);
+                break;
+            case 'FUNCTION_BLOCK':
+                Editor.deleteFunctionBlock(id, treeNode);
+                break;
+        }
+    }
+    console.log(treeNode);
 };
 
 Editor.debug = function () {
