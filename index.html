@@ -85,6 +85,7 @@
                         <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newFunctionBlock()">New
                             function
                             block</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newTask()">New task</a>
                         <hr>
                         <a class="dropdown-item" href="#">Settings</a>
                     </div>
@@ -231,6 +232,41 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="Editor.createNewFunction()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal " tabindex="-1" role="dialog" id="taskDialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title text-light">New task</h5>
+                    <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="newTaskForm">
+                        <div class="form-group">
+                            <label for="newTaskName" class="text-light">Name</label>
+                            <input name="name" required type="email" class="form-control" id="newTaskName"
+                                   placeholder="Enter task name">
+                        </div>
+                        <div class="form-group">
+                            <label for="newTaskPriority" class="text-light">Type</label>
+                            <input name="priority" required class="form-control" id="newTaskPriority"
+                                   placeholder="Enter task priority" type="number" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="newTaskInterval" class="text-light">Initial value</label>
+                            <input name="internval" class="form-control" id="newTaskInterval"
+                                   placeholder="Enter task scan interval ie. T#50ms">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="Editor.createNewTask()">Create</button>
                 </div>
             </div>
         </div>

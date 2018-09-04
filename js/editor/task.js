@@ -16,7 +16,9 @@ Editor.Task.prototype.getId = function () {
 };
 
 Editor.Task.prototype.getInitialDom_ = function () {
-    return '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="task_container" deletable="false" movable="false"><field name="NAME">' + this.name + '</field><value name="PRIORITY"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="INTERVAL"><block type="time_value"><field name="VALUE">50</field></block></value></block></xml>';
+    let interval = this.extractInterval_();
+    let dom = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="task_container" deletable="false" movable="false"><field name="NAME">' + this.name + '</field><value name="PRIORITY"><shadow type="math_number"><field name="NUM">' + this.interval + '</field></shadow></value><value name="INTERVAL"><block type="time_value"><field name="VALUE">' + interval[0] + '</field><field name="UNIT">' + interval[1] + '</field></block></value></block></xml>';
+    return dom;
 };
 
 Editor.Task.prototype.getAllInstances = function () {
@@ -38,6 +40,13 @@ Editor.Task.prototype.getWorkspaceDom = function () {
 };
 
 Editor.Task.prototype.updateWorkspace = function (workspace) {
+    let blocks = workspace.getTopBlocks(true);
+    if (blocks[0].type === 'task_container') {
+        //update internal task variables
+        let block = blocks[0];
+        this.priority = Blockly.ST.valueToCode(block, 'PRIORITY', Blockly.ST.ORDER_NONE) || 0;
+        this.interval = Blockly.ST.valueToCode(block, 'INTERVAL', Blockly.ST.ORDER_NONE) || 'TIME#50ms';
+    }
     let dom = Blockly.Xml.workspaceToDom(workspace);
     this.workspaceDomText_ = Blockly.Xml.domToText(dom);
 };
@@ -49,4 +58,19 @@ Editor.Task.prototype.toTreeNode = function () {
         icon: 'fas fa-file',
         class: 'context-text'
     };
+};
+
+/**
+ * Extracts the number and unit from combined input. Returns as tuple [number, unit].
+ * @returns {string[]}
+ * @private
+ */
+Editor.Task.prototype.extractInterval_ = function () {
+    let tuple = [];
+    let startIndex = this.interval.indexOf('#');
+    let split = this.interval.substring(startIndex + 1);
+    let number = split.match(/\d+/)[0];
+    let unit = split.match(/[A-Za-z]+/)[0];
+    console.log('number: ', number, 'unit: ', unit);
+    return [number, unit];
 };

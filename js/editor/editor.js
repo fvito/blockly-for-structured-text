@@ -428,7 +428,11 @@ Editor.newProgram = function () {
         placeholder: 'Program name',
         callback: function (result) {
             if (result) {
-                console.log(result);
+                let hash = 'PROGRAM_' + result;
+                let index = Editor.deletedItems.indexOf(hash);
+                if (index !== -1) {
+                    Editor.deletedItems.splice(index, 1);
+                }
                 var program = new Editor.Program(result);
                 Editor.project.addProgram(program);
                 var parent = Editor.tree.findNodes('Programs', 'text');
@@ -500,6 +504,28 @@ Editor.newFunctionBlock = function () {
     });
 };
 
+Editor.newTask = function () {
+    $('#taskDialog').modal('show');
+};
+
+Editor.createNewTask = function () {
+    var form = $('#newTaskForm');
+    var values = form.serializeArray();
+    form[0].reset();
+    $('#taskDialog').modal('hide');
+    let name = values[0].value;
+    let priority = values[1].value;
+    let interval = values[2].value;
+    Editor.createNewTask_(name, interval, priority);
+};
+
+Editor.createNewTask_ = function (name, interval, priority) {
+    let task = new Editor.Task(name, interval, priority);
+    Editor.project.configuration.addTask(task);
+    var parent = Editor.tree.findNodes('Configuration', 'text');
+    Editor.tree.addNode(task.toTreeNode(), parent);
+};
+
 Editor.deleteProgram = function (id, node) {
     bootbox.confirm({
         message: "Are you sure you want to delete this program?",
@@ -565,6 +591,27 @@ Editor.deleteFunctionBlock = function (id, node) {
                 Editor.deletedItems.push(itemHash);
                 Editor.tree.removeNode(node, {silent: true});
                 Editor.project.deleteFunctionBlock(id);
+            }
+        }
+    });
+};
+
+Editor.deleteTask = function (id, node) {
+    bootbox.confirm({
+        message: "Are you sure you want to delete this task?",
+        buttons: {
+            confirm: {
+                label: "Yes",
+                className: 'btn-success'
+            },
+            cancel: {
+                label: "No"
+            },
+        },
+        callback: function (result) {
+            if (result) {
+                Editor.tree.removeNode(node, {silent: true});
+                Editor.project.configuration.deleteTask(id);
             }
         }
     });
@@ -836,7 +883,8 @@ Editor.openProject = function () {
 };
 
 Editor.contextMenuCommand = function (command, item) {
-    var treeNode = Editor.tree.findNodes(item.text(), 'text')[0];
+    var treeNode = Editor.tree.findNodes(item.data().nodeid, 'nodeId')[0];
+    console.log('context', treeNode, 'item', item);
     var nodeType = treeNode.dataAttr[0].type;
     if (command === 'new') {
         switch (nodeType) {
@@ -848,6 +896,9 @@ Editor.contextMenuCommand = function (command, item) {
                 break;
             case 'FUNCTION_BLOCK':
                 Editor.newFunctionBlock();
+                break;
+            case 'TASK':
+                Editor.newTask();
                 break;
         }
     } else if (command === 'delete') {
@@ -862,6 +913,8 @@ Editor.contextMenuCommand = function (command, item) {
             case 'FUNCTION_BLOCK':
                 Editor.deleteFunctionBlock(id, treeNode);
                 break;
+            case 'TASK':
+                Editor.deleteTask(id, treeNode);
         }
     }
     console.log(treeNode);
