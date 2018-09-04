@@ -163,25 +163,49 @@ Editor.Project.prototype.getAsTree = function () {
     let tree = [];
     let root = {text: `Project - ${this.name}`, selectable: false, nodes: []};
 
-    let programs = {text: "Programs", selectable: false, nodes: []};
+    let programs = {
+        text: "Programs",
+        selectable: false,
+        nodes: [],
+        dataAttr: [{type: 'PROGRAM'}],
+        class: 'context-general'
+    };
     for (let program of this.programs_) {
         programs.nodes.push(program.toTreeNode());
     }
     root.nodes.push(programs);
 
-    let functions = {text: "Functions", selectable: false, nodes: []};
+    let functions = {
+        text: "Functions",
+        selectable: false,
+        nodes: [],
+        dataAttr: [{type: 'FUNCTION'}],
+        class: 'context-general'
+    };
     for (let func of this.functions_) {
         functions.nodes.push(func.toTreeNode());
     }
     root.nodes.push(functions);
 
-    let funcBlocks = {text: "Function Blocks", selectable: false, nodes: []};
+    let funcBlocks = {
+        text: "Function Blocks",
+        selectable: false,
+        nodes: [],
+        dataAttr: [{type: 'FUNCTION_BLOCK'}],
+        class: 'context-general'
+    };
     for (let block of this.functionBlocks_) {
         funcBlocks.nodes.push(block.toTreeNode());
     }
     root.nodes.push(funcBlocks);
 
-    let configNode = {text: "Configuration", selectable: false, nodes: []};
+    let configNode = {
+        text: "Configuration",
+        selectable: false,
+        nodes: [],
+        dataAttr: [{type: 'TASK'}],
+        class: 'context-general'
+    };
     for (let task of this.configuration.getAllTasks()) {
         configNode.nodes.push(task.toTreeNode())
     }

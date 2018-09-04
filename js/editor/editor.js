@@ -143,7 +143,14 @@ Editor.init_ = function () {
                     let command = selectedMenu.text().toLowerCase();
                     Editor.contextMenuCommand(command, invokedOn);
                 }
-            })
+            });
+            $('.context-general').contextMenu({
+                menuSelector: "#contextMenuGeneral",
+                menuSelected: function (invokedOn, selectedMenu) {
+                    let command = selectedMenu.text().toLowerCase();
+                    Editor.contextMenuCommand(command, invokedOn);
+                }
+            });
         }
     });
     Editor.tree = $('#tree').treeview(true);
