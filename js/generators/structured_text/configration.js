@@ -14,8 +14,14 @@ Blockly.ST['task_container'] = function (block) {
 };
 
 Blockly.ST['single_task'] = function (block) {
+    if (!block.getSurroundParent()) {
+        return null;
+    }
     let name = block.getFieldValue('NAME');
     let program = block.getFieldValue('INSTANCE');
+    if (program === '--select--') {
+        return null;
+    }
     let task = block.getSurroundParent().getFieldValue('NAME');
     var code = 'PROGRAM ' + name + ' WITH ' + task + ' : ' + program + ";\n";
     return code;

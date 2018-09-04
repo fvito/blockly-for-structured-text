@@ -24,8 +24,17 @@ Editor.Function.prototype.updateWorkspace = function (workspace) {
 
 Editor.Function.prototype.getInitialDom_ = function () {
     if(this.returnType === 'NONE'){
-        return '<xml xmlns=\"http://www.w3.org/1999/xhtml\"><variables></variables><block type=\"procedures_defnoreturn\" x=\"238\" y=\"238\" deletable="false" movable="false"><field name=\"NAME\">'+this.name+'</field><comment pinned=\"false\" h=\"80\" w=\"160\">Describe this function...</comment></block></xml>';
+        return '<xml xmlns=\"http://www.w3.org/1999/xhtml\"><variables></variables><block type=\"procedures_defnoreturn\" deletable="false" movable="false"><field name=\"NAME\">' + this.name + '</field><comment pinned=\"false\" h=\"80\" w=\"160\">Describe this function...</comment></block></xml>';
     }else{
-        return '<xml xmlns=\"http://www.w3.org/1999/xhtml\"><variables></variables><block type=\"procedures_defreturn\" x=\"238\" y=\"238\" deletable="false" movable="false"><field name=\"NAME\">'+this.name+'</field><comment pinned=\"false\" h=\"80\" w=\"160\">Describe this function...</comment></block></xml>';
+        return '<xml xmlns=\"http://www.w3.org/1999/xhtml\"><variables></variables><block type=\"procedures_defreturn\" deletable="false" movable="false"><field name=\"NAME\">' + this.name + '</field><comment pinned=\"false\" h=\"80\" w=\"160\">Describe this function...</comment></block></xml>';
     }
+};
+
+Editor.Function.prototype.toTreeNode = function () {
+    return {
+        text: this.name,
+        dataAttr: [{id: this.getId(), type: 'FUNCTION'}],
+        icon: 'fas fa-file',
+        class: 'context-text'
+    };
 };

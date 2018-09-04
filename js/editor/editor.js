@@ -432,12 +432,7 @@ Editor.newProgram = function () {
                 var program = new Editor.Program(result);
                 Editor.project.addProgram(program);
                 var parent = Editor.tree.findNodes('Programs', 'text');
-                Editor.tree.addNode({
-                    text: program.name,
-                    dataAttr: [{id: program.getId(), type: 'PROGRAM'}],
-                    icon: 'fas fa-file',
-                    class: 'context-text'
-                }, parent);
+                Editor.tree.addNode(program.toTreeNode(), parent);
             }
         }
     });
@@ -478,12 +473,7 @@ Editor.createNewFunction_ = function (name, type) {
     var func = new Editor.Function(name, type);
     Editor.project.addFunction(func);
     var parent = Editor.tree.findNodes('Functions', 'text');
-    Editor.tree.addNode({
-        text: func.name,
-        dataAttr: [{id: func.getId(), type: 'FUNCTION'}],
-        icon: 'fas fa-file',
-        class: 'context-text'
-    }, parent);
+    Editor.tree.addNode(func.toTreeNode(), parent);
 };
 
 /**
@@ -504,12 +494,7 @@ Editor.newFunctionBlock = function () {
                 var functionBlock = new Editor.FunctionBlock(result);
                 Editor.project.addFunctionBlock(functionBlock);
                 var parent = Editor.tree.findNodes('Function Blocks', 'text');
-                Editor.tree.addNode({
-                    text: functionBlock.name,
-                    dataAttr: [{id: functionBlock.getId(), type: 'FUNCTION_BLOCK'}],
-                    icon: 'fas fa-file',
-                    class: 'context-text'
-                }, parent);
+                Editor.tree.addNode(functionBlock.toTreeNode(), parent);
             }
         }
     });
@@ -791,12 +776,17 @@ Editor.loadWorkspace = function (data) {
     var target = Editor.getTargetFromProject(data.type, data.id);
     if (target !== null) {
         Blockly.Xml.clearWorkspaceAndLoadFromXml(target.getWorkspaceDom(), Editor.workspace);
-        var blocks = Blockly.ST.getAllBlocksOfTypes(Editor.workspace, ['procedures_callnoreturn', 'procedures_callreturn', 'function_block_call']);
+        var blocks = Blockly.ST.getAllBlocksOfTypes(Editor.workspace, ['procedures_callnoreturn', 'procedures_callreturn', 'function_block_call', 'single_task']);
         for (let block of blocks) {
             let type = block.type;
-            let hash = type === 'function_block_call' ? 'FUNCTION_BLOCK_' : 'FUNCTION_';
-            hash += block.getFieldValue('NAME');
-
+            let hash = '';
+            if (type === 'single_task') {
+                hash = 'PROGRAM_' + block.getFieldValue('INSTANCE');
+            } else {
+                hash = type === 'function_block_call' ? 'FUNCTION_BLOCK_' : 'FUNCTION_';
+                hash += block.getFieldValue('NAME');
+            }
+            console.log('hash', hash);
             if (Editor.deletedItems.includes(hash)) {
                 block.dispose();
             }
@@ -878,7 +868,7 @@ Editor.contextMenuCommand = function (command, item) {
 };
 
 Editor.programMenuBuilder = function () {
-    let options = [];
+    let options = [['--Select--', '--select--']];
     for (let program of Editor.project.programs_) {
         options.push([program.name, program.name]);
     }

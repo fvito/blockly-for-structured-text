@@ -30,18 +30,18 @@ Editor.Project.prototype.addFunctionBlock = function (fblock) {
 
 Editor.Project.prototype.deleteProgram = function (id) {
     console.log('delete id:', id);
-    var index = this.programs_.findIndex(i => i.getId() === id);
+    let index = this.programs_.findIndex(i => i.getId() === id);
     console.log(index);
     this.programs_.splice(index, 1);
 };
 
 Editor.Project.prototype.deleteFunction = function (id) {
-    var index = this.functions_.findIndex(i => i.getId() === id);
+    let index = this.functions_.findIndex(i => i.getId() === id);
     this.functions_.splice(index, 1);
 };
 
 Editor.Project.prototype.deleteFunctionBlock = function (id) {
-    var index = this.functionBlocks_.findIndex(i => i.getId() === id);
+    let index = this.functionBlocks_.findIndex(i => i.getId() === id);
     this.functionBlocks_.splice(index, 1);
 };
 
@@ -50,7 +50,7 @@ Editor.Project.prototype.getProgramByIndex = function (index) {
 };
 
 Editor.Project.prototype.getProgramById = function (id) {
-    for (var program of this.programs_) {
+    for (let program of this.programs_) {
         if (program.getId() === id) {
             return program;
         }
@@ -63,7 +63,7 @@ Editor.Project.prototype.getFunctionByIndex = function (index) {
 };
 
 Editor.Project.prototype.getFunctionById = function (id) {
-    for (var func of this.functions_) {
+    for (let func of this.functions_) {
         if (func.getId() === id) {
             return func;
         }
@@ -72,7 +72,7 @@ Editor.Project.prototype.getFunctionById = function (id) {
 };
 
 Editor.Project.prototype.getFunctionByName = function (name) {
-    for (var func of this.functions_) {
+    for (let func of this.functions_) {
         if (func.name === name) {
             return func;
         }
@@ -85,7 +85,7 @@ Editor.Project.prototype.getFunctionBlockByIndex = function (index) {
 };
 
 Editor.Project.prototype.getFunctionBlockById = function (id) {
-    for (var fb of this.functionBlocks_) {
+    for (let fb of this.functionBlocks_) {
         if (fb.getId() === id) {
             return fb;
         }
@@ -94,7 +94,7 @@ Editor.Project.prototype.getFunctionBlockById = function (id) {
 };
 
 Editor.Project.prototype.getFunctionBlockByName = function (name) {
-    for (var fb of this.functionBlocks_) {
+    for (let fb of this.functionBlocks_) {
         if (fb.name === name) {
             return fb;
         }
@@ -160,53 +160,32 @@ Editor.Project.prototype.getAllFunctionBlocks = function (opt_inc_workspace) {
 };
 
 Editor.Project.prototype.getAsTree = function () {
-    var tree = [];
-    var root = {text: `Project - ${this.name}`, selectable: false, nodes: []};
+    let tree = [];
+    let root = {text: `Project - ${this.name}`, selectable: false, nodes: []};
 
-    var programs = {text: "Programs", selectable: false, nodes: []};
-    for (var program of this.programs_) {
-        programs.nodes.push({
-            text: program.name,
-            dataAttr: [{id: program.getId(), type: 'PROGRAM'}],
-            icon: 'fas fa-file',
-            class: 'context-text'
-        });
+    let programs = {text: "Programs", selectable: false, nodes: []};
+    for (let program of this.programs_) {
+        programs.nodes.push(program.toTreeNode());
     }
     root.nodes.push(programs);
 
-    var functions = {text: "Functions", selectable: false, nodes: []};
-    for (var func of this.functions_) {
-        functions.nodes.push({
-            text: func.name,
-            dataAttr: [{id: func.getId(), type: 'FUNCTION',}],
-            icon: 'fas fa-file',
-            class: 'context-text'
-        });
+    let functions = {text: "Functions", selectable: false, nodes: []};
+    for (let func of this.functions_) {
+        functions.nodes.push(func.toTreeNode());
     }
     root.nodes.push(functions);
 
-    var funcBlocks = {text: "Function Blocks", selectable: false, nodes: []};
-    for (var block of this.functionBlocks_) {
-        funcBlocks.nodes.push({
-            text: block.name,
-            dataAttr: [{id: block.getId(), type: 'FUNCTION_BLOCK'}],
-            icon: 'fas fa-file',
-            class: 'context-text'
-        });
+    let funcBlocks = {text: "Function Blocks", selectable: false, nodes: []};
+    for (let block of this.functionBlocks_) {
+        funcBlocks.nodes.push(block.toTreeNode());
     }
     root.nodes.push(funcBlocks);
 
-
-    var confingNode = {text: "Configuration", selectable: false, nodes: []};
-    for (var task of this.configuration.getAllTasks()) {
-        confingNode.nodes.push({
-            text: task.name,
-            dataAttr: [{id: task.getId(), type: 'TASK'}],
-            icon: 'fas fa-file',
-            class: 'context-text'
-        })
+    let configNode = {text: "Configuration", selectable: false, nodes: []};
+    for (let task of this.configuration.getAllTasks()) {
+        configNode.nodes.push(task.toTreeNode())
     }
-    root.nodes.push(confingNode);
+    root.nodes.push(configNode);
     tree.push(root);
     return tree;
 };

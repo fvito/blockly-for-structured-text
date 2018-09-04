@@ -41,3 +41,12 @@ Editor.Task.prototype.updateWorkspace = function (workspace) {
     let dom = Blockly.Xml.workspaceToDom(workspace);
     this.workspaceDomText_ = Blockly.Xml.domToText(dom);
 };
+
+Editor.Task.prototype.toTreeNode = function () {
+    return {
+        text: this.name,
+        dataAttr: [{id: this.getId(), type: 'TASK'}],
+        icon: 'fas fa-file',
+        class: 'context-text'
+    };
+};
