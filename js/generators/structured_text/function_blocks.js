@@ -87,7 +87,7 @@ Blockly.ST['function_block_def'] = function (block) {
 };
 
 Blockly.ST['function_block_call'] = function (block) {
-    var name = block.getFieldValue('NAME');
+    var name = block.getFieldValue('FB_NAME');
     var args = [];
     for (var i = 0; i < block.arguments_.length; i++) {
         var argument = block.arguments_[i].name + ":=" + Blockly.ST.valueToCode(block, 'ARG' + i, Blockly.ST.ORDER_ATOMIC) || 'null';

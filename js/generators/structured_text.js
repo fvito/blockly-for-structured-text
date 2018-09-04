@@ -202,7 +202,7 @@ Blockly.ST.projectToCode = function (project) {
         completeCode += Blockly.ST.programToCode(program) + "\n\n";
     }
 
-    completeCode += Blockly.ST.generateConfiguration();
+    completeCode += Blockly.ST.configurationToCode(project.configuration);
     console.log("----------------------------------------");
     return completeCode;
 };
@@ -247,7 +247,7 @@ Blockly.ST.functionBlockToCode = function (funcBlock, project, compiledList) {
     let allDependencies = Blockly.ST.getAllBlocksOfTypes(ws, ['procedures_callnoreturn', 'procedures_callreturn', 'function_block_call']);
     for (let block of allDependencies) {
         let type = block.type;
-        let name = type === 'function_block_call' ? block.getFieldValue('BLOCK') : block.getFieldValue('NAME');
+        let name = block.getFieldValue('NAME');
         if (compiledList[name]) {
             console.log(`dependency ${name} already compiled, skipping`);
             // already compiled, skip it
@@ -364,7 +364,18 @@ Blockly.ST.functionBlockToCode_ = function (funcBlock) {
 };
 
 Blockly.ST.configurationToCode = function (configuration) {
+    var config = "\nCONFIGURATION Config0\n" +
+        "\tRESOURCE Res0 ON PLC\n";
+    let ws = new Blockly.Workspace();
+    for (let task of configuration.getAllTasks()) {
+        ws.clear();
+        Blockly.Xml.domToWorkspace(task.getWorkspaceDom(), ws);
+        config += Blockly.ST.workspaceToCode(ws);
+    }
+    config += "\tEND_RESOURCE\n" +
+        "END_CONFIGURATION";
 
+    return config;
 };
 
 Blockly.ST.fullOutput = function (workspace) {

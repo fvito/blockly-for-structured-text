@@ -946,8 +946,8 @@ Blockly.Blocks['function_block_r_trig'] = {
 Blockly.Blocks['function_block_call'] = {
     init: function () {
         this.appendDummyInput('TOPROW')
-            .appendField('', 'BLOCK')
-            .appendField(new Blockly.FieldTextInput(Blockly.FunctionBlocks.findLegalName('fb0', this), Blockly.FunctionBlocks.rename), 'NAME');
+            .appendField('', 'NAME')
+            .appendField(new Blockly.FieldTextInput(Blockly.FunctionBlocks.findLegalName('fb0', this), Blockly.FunctionBlocks.rename), 'FB_NAME');
         this.setPreviousStatement(true);
         this.setNextStatement(true);
         this.setColour(270);
@@ -1010,7 +1010,7 @@ Blockly.Blocks['function_block_call'] = {
      */
     mutationToDom: function () {
         var container = document.createElement('mutation');
-        container.setAttribute('name', this.getFieldValue('BLOCK'));
+        container.setAttribute('name', this.getFieldValue('NAME'));
         for (var i = 0; i < this.arguments_.length; i++) {
             var input = document.createElement('inArg');
             input.setAttribute('name', this.arguments_[i].name);
@@ -1035,7 +1035,7 @@ Blockly.Blocks['function_block_call'] = {
     domToMutation: function (xmlElement) {
         var name = xmlElement.getAttribute('name');
         this.name = name;
-        this.setFieldValue(name, 'BLOCK');
+        this.setFieldValue(name, 'NAME');
         var inputs = [];
         var inputIds = [];
 
@@ -1060,7 +1060,7 @@ Blockly.Blocks['function_block_call'] = {
     },
 
     getName: function () {
-        return this.getFieldValue('NAME');
+        return this.getFieldValue('FB_NAME');
     },
 
     getFuncBlockDefine: function () {
@@ -1074,7 +1074,7 @@ Blockly.Blocks['function_block_call'] = {
     },
 
     getType: function () {
-        return this.getFieldValue('BLOCK');
+        return this.getFieldValue('NAME');
     },
 
     getMembers: function () {

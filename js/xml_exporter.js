@@ -103,7 +103,8 @@ XMLExporter.exportProject = function (project) {
     this.writer.writeEndElement();
 
     //Instances Element
-    this.writeGenericInstance_(project);
+    this.writeConfiguration(project.configuration);
+    //this.writeGenericInstance_(project);
     //End Instances Element
 
     //End Project Element
@@ -346,6 +347,26 @@ XMLExporter.writeWorkspace = function (workspace) {
     this.writeElementWithAttributes_("xhtml:p", false);
     this.writer.writeCDATA(Blockly.ST.workspaceToCode(workspace));
     this.writer.writeEndElement();
+};
+
+XMLExporter.writeConfiguration = function (config) {
+    this.writer.writeStartElement("instances")
+        .writeStartElement("configurations")
+        .writeStartElement("configuration").writeAttributeString("name", "config0")
+        .writeStartElement("resource").writeAttributeString("name", "Res0");
+
+    for (let task of config.getAllTasks()) {
+        this.writeElementWithAttributes_('task', {name: task.name, priority: task.priority, interval: task.interval});
+        for (let instance of task.getAllInstances()) {
+            this.writeElementWithAttributes_('pouInstance', {name: instance.name, typeName: instance.instance}, true);
+        }
+        this.writer.writeEndElement();
+    }
+
+    this.writer.writeEndElement()
+        .writeEndElement()
+        .writeEndElement()
+        .writeEndElement();
 };
 
 XMLExporter.writeGenericInstance_ = function (opt_project) {

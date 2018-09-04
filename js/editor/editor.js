@@ -26,6 +26,7 @@ Editor.tree = null;
 
 
 Editor.currentToolbox = 'general';
+Editor.deletedItems = [];
 
 Editor.loading = $('#loadingDialog');
 
@@ -56,6 +57,10 @@ Editor.initWithProject = function (loaded_project) {
     }
     for (var funcBlock of loaded_project.functionBlocks_) {
         project.addFunctionBlock(Object.assign(new Editor.FunctionBlock(funcBlock.name), funcBlock));
+    }
+    project.configuration = new Editor.Configuration();
+    for (var task of loaded_project.configuration.tasks_) {
+        project.configuration.addTask(Object.assign(new Editor.Task(task.name, task.interval, task.priority), task));
     }
     console.log("project", project);
     Editor.project = project;
@@ -465,6 +470,11 @@ Editor.createNewFunction = function () {
  * @private
  */
 Editor.createNewFunction_ = function (name, type) {
+    let hash = 'FUNCTION_' + name;
+    let index = Editor.deletedItems.indexOf(hash);
+    if (index !== -1) {
+        Editor.deletedItems.splice(index, 1);
+    }
     var func = new Editor.Function(name, type);
     Editor.project.addFunction(func);
     var parent = Editor.tree.findNodes('Functions', 'text');
@@ -486,6 +496,11 @@ Editor.newFunctionBlock = function () {
         placeholder: 'Function block name',
         callback: function (result) {
             if (result) {
+                let hash = 'FUNCTION_BLOCK' + name;
+                let index = Editor.deletedItems.indexOf(hash);
+                if (index !== -1) {
+                    Editor.deletedItems.splice(index, 1);
+                }
                 var functionBlock = new Editor.FunctionBlock(result);
                 Editor.project.addFunctionBlock(functionBlock);
                 var parent = Editor.tree.findNodes('Function Blocks', 'text');
@@ -514,7 +529,10 @@ Editor.deleteProgram = function (id, node) {
         },
         callback: function (result) {
             if (result) {
-                Editor.tree.removeNode(node, {silent: true});
+                console.log(node.text);
+                var itemHash = "PROGRAM_" + node.text;
+                Editor.deletedItems.push(itemHash);
+                Editor.tree.removeNode(node);
                 Editor.project.deleteProgram(id);
             }
         }
@@ -535,6 +553,8 @@ Editor.deleteFunction = function (id, node) {
         },
         callback: function (result) {
             if (result) {
+                var itemHash = "FUNCTION_" + node.text;
+                Editor.deletedItems.push(itemHash);
                 Editor.tree.removeNode(node, {silent: true});
                 Editor.project.deleteFunction(id);
             }
@@ -556,6 +576,8 @@ Editor.deleteFunctionBlock = function (id, node) {
         },
         callback: function (result) {
             if (result) {
+                var itemHash = "FUNCTION_BLOCK_" + node.text;
+                Editor.deletedItems.push(itemHash);
                 Editor.tree.removeNode(node, {silent: true});
                 Editor.project.deleteFunctionBlock(id);
             }
@@ -769,6 +791,16 @@ Editor.loadWorkspace = function (data) {
     var target = Editor.getTargetFromProject(data.type, data.id);
     if (target !== null) {
         Blockly.Xml.clearWorkspaceAndLoadFromXml(target.getWorkspaceDom(), Editor.workspace);
+        var blocks = Blockly.ST.getAllBlocksOfTypes(Editor.workspace, ['procedures_callnoreturn', 'procedures_callreturn', 'function_block_call']);
+        for (let block of blocks) {
+            let type = block.type;
+            let hash = type === 'function_block_call' ? 'FUNCTION_BLOCK_' : 'FUNCTION_';
+            hash += block.getFieldValue('NAME');
+
+            if (Editor.deletedItems.includes(hash)) {
+                block.dispose();
+            }
+        }
         Editor.workspace.scrollCenter();
     } else {
         console.error("Unabled to find the target to load workspace from, target id: " + data.id);
@@ -858,15 +890,6 @@ Editor.debug = function () {
     //document.getElementById('output').value = xml;
     var code = Blockly.ST.projectToCode(Editor.project);
     document.getElementById('output').value = code;
-};
-
-Editor.devGenerateXml = function () {
-    //var xml = Blockly.Xml.workspaceToDom(Editor.workspace);
-    //xml = Blockly.Xml.domToPrettyText(xml);
-    //document.getElementById('output').value = xml;
-    var code = Blockly.ST.projectToCode(Editor.project);
-    document.getElementById('output').value = code;
-
 };
 
 window.addEventListener('load', () => {

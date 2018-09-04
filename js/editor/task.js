@@ -20,7 +20,17 @@ Editor.Task.prototype.getInitialDom_ = function () {
 };
 
 Editor.Task.prototype.getAllInstances = function () {
-    return [];
+    let instances = [];
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(this.getWorkspaceDom(), ws);
+    let blocks = Blockly.ST.getAllBlocksOfTypes(ws, 'single_task');
+    for (let block of blocks) {
+        instances.push({
+            "name": block.getFieldValue('NAME'),
+            "instance": block.getFieldValue('INSTANCE')
+        });
+    }
+    return instances;
 };
 
 Editor.Task.prototype.getWorkspaceDom = function () {
