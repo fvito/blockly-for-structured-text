@@ -137,20 +137,12 @@ Editor.init_ = function () {
             Editor.saveWorkspace(data.dataAttr);
         },
         onRendered: function (event, data) {
-            $('.context-text').contextMenu({
-                menuSelector: "#contextMenu",
-                menuSelected: function (invokedOn, selectedMenu) {
-                    let command = selectedMenu.text().toLowerCase();
-                    Editor.contextMenuCommand(command, invokedOn);
-                }
-            });
-            $('.context-general').contextMenu({
-                menuSelector: "#contextMenuGeneral",
-                menuSelected: function (invokedOn, selectedMenu) {
-                    let command = selectedMenu.text().toLowerCase();
-                    Editor.contextMenuCommand(command, invokedOn);
-                }
-            });
+
+            Editor.selectFirstItem_();
+            Editor.setupContextMenus_();
+        },
+        onNodeRendered: function (event, node) {
+            console.log(node);
         }
     });
     Editor.tree = $('#tree').treeview(true);
@@ -887,6 +879,29 @@ Editor.openProject = function () {
         fr.readAsText(e.target.files[0]);
     });
     openFileDialog.trigger("click");
+};
+
+Editor.selectFirstItem_ = function () {
+    var node = Editor.tree.findNodes('0.0.0.0', 'nodeId')[0];
+    Editor.tree.revealNode(node, {silent: true});
+    Editor.tree.selectNode(node);
+};
+
+Editor.setupContextMenus_ = function () {
+    $('.context-text').contextMenu({
+        menuSelector: "#contextMenu",
+        menuSelected: function (invokedOn, selectedMenu) {
+            let command = selectedMenu.text().toLowerCase();
+            Editor.contextMenuCommand(command, invokedOn);
+        }
+    });
+    $('.context-general').contextMenu({
+        menuSelector: "#contextMenuGeneral",
+        menuSelected: function (invokedOn, selectedMenu) {
+            let command = selectedMenu.text().toLowerCase();
+            Editor.contextMenuCommand(command, invokedOn);
+        }
+    });
 };
 
 Editor.contextMenuCommand = function (command, item) {
