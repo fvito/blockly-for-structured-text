@@ -10,7 +10,7 @@ Editor.Project.FUNCTION_BLOCK_TYPE = 'FUNCTION_BLOCK';
 Editor.Project = function (name) {
     this.name = name;
     this.configuration = new Editor.Configuration();
-    this.configuration.addTask(new Editor.Task('TaskMain', 'T#50ms', 0));
+    this.configuration.addTask(new Editor.Task('TaskMain', 'T#50ms', '0'));
     this.programs_ = [];
     this.functions_ = [];
     this.functionBlocks_ = [];

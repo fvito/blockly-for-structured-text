@@ -17,7 +17,7 @@ Editor.Task.prototype.getId = function () {
 
 Editor.Task.prototype.getInitialDom_ = function () {
     let interval = this.extractInterval_();
-    let dom = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="task_container" deletable="false" movable="false"><field name="NAME">' + this.name + '</field><value name="PRIORITY"><shadow type="math_number"><field name="NUM">' + this.interval + '</field></shadow></value><value name="INTERVAL"><block type="time_value"><field name="VALUE">' + interval[0] + '</field><field name="UNIT">' + interval[1] + '</field></block></value></block></xml>';
+    let dom = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="task_container" deletable="false" movable="false"><field name="NAME">' + this.name + '</field><value name="PRIORITY"><shadow type="math_number"><field name="NUM">' + this.priority + '</field></shadow></value><value name="INTERVAL"><block type="time_value"><field name="VALUE">' + interval[0] + '</field><field name="UNIT">' + interval[1] + '</field></block></value></block></xml>';
     return dom;
 };
 

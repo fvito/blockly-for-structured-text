@@ -1086,8 +1086,7 @@ Blockly.Blocks['function_block_call'] = {
 
 Blockly.Blocks['function_block_def'] = {
     init: function () {
-        var nameField = new Blockly.FieldTextInput('',
-            Blockly.FunctionBlocks.rename);
+        var nameField = new Blockly.FieldTextInput('');
         nameField.setSpellcheck(false);
         this.appendDummyInput()
             .appendField(Blockly.Msg.PROCEDURES_DEFRETURN_TITLE)

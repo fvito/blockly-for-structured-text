@@ -141,9 +141,6 @@ Editor.init_ = function () {
             Editor.selectFirstItem_();
             Editor.setupContextMenus_();
         },
-        onNodeRendered: function (event, node) {
-            console.log(node);
-        }
     });
     Editor.tree = $('#tree').treeview(true);
 };
