@@ -6,66 +6,120 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+    <link rel="stylesheet" id="bootstrap"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/solid.css"
+    <link rel="stylesheet" id="font-awesome-solid" href="https://use.fontawesome.com/releases/v5.2.0/css/solid.css"
           integrity="sha384-wnAC7ln+XN0UKdcPvJvtqIH3jOjs9pnKnq9qX68ImXvOGz2JuFoEiCjT8jyZQX2z" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css"
+    <link rel="stylesheet" id="font-awesome-base" href="https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css"
           integrity="sha384-HbmWTHay9psM8qyzEKPc8odH4DsOuzdejtnr+OFtDmOcIVnhgReQ4GZBH7uwcjf6" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/style.css">
-    <title>Document</title>
+    <link rel="stylesheet" id="bootstrap-treeview" href="lib/bootstrap-treeview/bootstrap-treeview.css">
+    <link rel="stylesheet" id="app-styles" href="css/style.css">
+    <title>Blockly 4 ST</title>
 </head>
 <input type="file" style="display: none;" id="openFile"/>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-    <a class="navbar-brand" href="#">Blockly PLC</a>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarProject" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-file navbar-icon"></i>
-                    Project
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">New</a>
-                    <a class="dropdown-item" href="#" onclick="Editor.loadProject()">Load</a>
-                    <a class="dropdown-item" href="#" onclick="Editor.showSaveDialog(Editor.saveProject)">Save</a>
-                </div>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarEdit" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-toolbox navbar-icon"></i>Edit
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" onclick="Editor.newVariable()" href="#">New variable</a>
-                    <a class="dropdown-item" onclick="Editor.showEditVariable()" href="#">Edit variable</a>
-                    <hr>
-                    <a class="dropdown-item" href="#">Settings</a>
-                </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarExport" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-file-export navbar-icon"></i>Export
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#" onclick="Editor.showSaveDialog(Editor.exportAsSt)">As .st</a>
-                    <a class="dropdown-item" href="#" onclick="Editor.showSaveDialog(Editor.exportAsXml)">As PLCOpen
-                        XML</a>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" onclick="Editor.devGenerateXml()">Generate</a>
-            </li>
-        </ul>
+<div id="start_screen" class="intro">
+    <div class="container d-flex flex-column justify-content-center align-content-center align-self-center flex-nowrap"
+         style="width:50%; height:100%">
+        <div class="row">
+            <div class="col-md-12">
+                <p class="text-center text-light">
+                    <i class="fas fa-spinner fa-pulse fa-3x" id="editorLoading"></i>
+                </p>
+                <h1 class="text-center text-light">Blockly for Structured Text</h1>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 15px">
+            <div class="col-md-12 d-flex flex-column justify-content-center align-items-center align-content-center">
+                <button class="btn btn-secondary" onclick="Editor.newProject()" id="newProjectBtn" disabled>New
+                    project
+                </button>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 15px">
+            <div class="col-md-12 d-flex flex-column justify-content-center align-items-center align-content-center">
+                <button class="btn btn-secondary" onclick="Editor.openProject()" id="openProjectBtn" disabled>Open an
+                    existing project
+                </button>
+            </div>
+        </div>
     </div>
-</nav>
-<div class="container-fluid bg-dark">
-    <div id="blocklyArea" style="width: 80%; height: 900px; display: inline-block;"></div>
-    <textarea id="output" style="width: 19%; height: 900px; border: solid 1px gray;"></textarea>
 </div>
-<!-- modals -->
+<div id="main" style="display: none">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+        <a class="navbar-brand" href="#">Blockly 4 ST</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarProject" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-file navbar-icon"></i>
+                        Project
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newProject()">New</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.loadProject()">Load</a>
+                        <a class="dropdown-item" href="javascript:void(0)"
+                           onclick="Editor.saveProject(Editor.project.name)">Save</a>
+                        <a class="dropdown-item" href="javascript:void(0)"
+                           onclick="Editor.showSaveDialog(Editor.saveProject)">Save as</a>
+                        <hr>
+                        <a class="dropdown-item" href="javascript:void(0)"
+                           onclick="Editor.showSaveDialog(Editor.exportWorkspace)">Export Workspace</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.importWorkspace()">Import
+                            Workspace</a>
+                    </div>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarEdit" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-toolbox navbar-icon"></i>Edit
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" onclick="Editor.newVariable()" href="javascript:void(0)">New
+                            variable</a>
+                        <a class="dropdown-item" onclick="Editor.showEditVariable()" href="javascript:void(0)">Edit
+                            variable</a>
+                        <hr>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newProgram()">New program</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newFunction()">New
+                            function</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newFunctionBlock()">New
+                            function
+                            block</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="Editor.newTask()">New task</a>
+                        <hr>
+                        <a class="dropdown-item" href="#">Settings</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarExport" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-file-export navbar-icon"></i>Export
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="javascript:void(0)"
+                           onclick="Editor.showSaveDialog(Editor.exportAsSt)">As ST source</a>
+                        <a class="dropdown-item" href="javascript:void(0)"
+                           onclick="Editor.showSaveDialog(Editor.exportAsXml)">As PLCOpen
+                            XML</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)" onclick="Editor.debug()">Generate</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container-fluid bg-dark d-flex">
+        <div id="tree" style="height: 900px; display: inline-block;"></div>
+        <div id="blocklyArea" style="width: 80%; height: 900px; display: inline-block;"></div>
+    </div>
+    <div class="container">
+        <textarea id="output" style="width: 100%; height: 500px; border: solid 1px gray;"></textarea>
+    </div>
+</div>
+<!-- Modals -->
 <div id="modals">
     <div class="modal " tabindex="-1" role="dialog" id="variableDialog">
         <div class="modal-dialog" role="document">
@@ -118,8 +172,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="variableSelect" class="text-light">Select variable</label><select name="variable" class="form-control"
-                                                                                   id="variableSelect"></select>
+                        <label for="variableSelect" class="text-light">Select variable</label><select name="variable"
+                                                                                                      class="form-control"
+                                                                                                      id="variableSelect"></select>
                     </div>
                     <hr>
                     <form id="editVariableForm">
@@ -153,8 +208,94 @@
             </div>
         </div>
     </div>
+    <div class="modal " tabindex="-1" role="dialog" id="functionDialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title text-light">New function</h5>
+                    <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="newFunctionForm">
+                        <div class="form-group">
+                            <label for="newVariableName" class="text-light">Name</label>
+                            <input name="name" required type="email" class="form-control" id="newFunctionName"
+                                   placeholder="Enter function name">
+                        </div>
+                        <div class="form-group">
+                            <label for="newVariableType" class="text-light">Return type</label>
+                            <select name="type" required class="form-control" id="newFunctionReturnType">
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="Editor.createNewFunction()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal " tabindex="-1" role="dialog" id="taskDialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title text-light">New task</h5>
+                    <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="newTaskForm">
+                        <div class="form-group">
+                            <label for="newTaskName" class="text-light">Name</label>
+                            <input name="name" required type="email" class="form-control" id="newTaskName"
+                                   placeholder="Enter task name">
+                        </div>
+                        <div class="form-group">
+                            <label for="newTaskPriority" class="text-light">Type</label>
+                            <input name="priority" required class="form-control" id="newTaskPriority"
+                                   placeholder="Enter task priority" type="number" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="newTaskInterval" class="text-light">Initial value</label>
+                            <input name="internval" class="form-control" id="newTaskInterval"
+                                   placeholder="Enter task scan interval ie. T#50ms">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="Editor.createNewTask()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bootbox modal fade show" tabindex="-1" role="dialog" id="loadingDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true">×
+                    </button>
+                    <h4 class="modal-title">Loading</h4></div>
+                <div class="modal-body">
+                    <div class="bootbox-body"><p><i class="fa fa-spin fa-spinner"></i> Loading please wait...</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<!-- toolbox -->
+<!-- Context menus -->
+<div id="contextMenu" class="dropdown-menu" role="menu" style="display:none">
+    <a class="dropdown-item" tabindex="-1" href="javascript:void(0)">New</a>
+    <a class="dropdown-item" tabindex="-1" href="javascript:void(0)">Delete</a>
+</div>
+<div id="contextMenuGeneral" class="dropdown-menu" role="menu" style="display:none">
+    <a class="dropdown-item" tabindex="-1" href="javascript:void(0)">New</a>
+</div>
+<!-- General toolbox -->
 <xml id="toolbox" style="display: none">
     <category name="Logic" colour="%{BKY_LOGIC_HUE}">
         <block type="controls_if"></block>
@@ -446,6 +587,7 @@
     </category>
     <category name="Function Blocks" colour="270">
         <category name="Used blocks" custom="FUNCTION_BLOCK" colour="270"></category>
+        <category name="Custom blocks" custom="CUSTOM_FUNCTION_BLOCKS" colour="270"></category>
         <category name="Bistable" colour="270">
             <block type="function_block_sr"></block>
             <block type="function_block_rs"></block>
@@ -470,11 +612,21 @@
     </category>
     <sep></sep>
     <category name="Variables" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>
-    <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE"></category>
+    <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="FUNCTIONS"></category>
+</xml>
+<!-- Configuration toolbox -->
+<xml id="configToolbox" style="display: none">
+    <category name="Configuration">
+        <block type="task_container"></block>
+        <block type="single_task"></block>
+        <block type="math_number">
+            <field name="NUM">123</field>
+        </block>
+        <block type="time_value"></block>
+    </category>
 </xml>
 
 <!-- Libs -->
-
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -485,9 +637,11 @@
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
-<script src="lib/XMLWriter/XMLWriter.js"></script>
 <script src="lib/moment/moment.min.js"></script>
 <script src="lib/FileSaver/FileSaver.min.js"></script>
+<script src="lib/bootstrap-treeview/bootstrap-treeview.js"></script>
+<script src="lib/XMLWriter/XMLWriter.js"></script>
+<script src="js/context_menu.js"></script>
 
 <!-- Base Blockly-->
 <script src="lib/blockly/blockly_uncompressed.js"></script>
@@ -510,6 +664,7 @@
 <script src="js/blocks/conversions.js"></script>
 <script src="js/blocks/time_date.js"></script>
 <script src="js/blocks/function_blocks.js"></script>
+<script src="js/blocks/configuration.js"></script>
 
 <!-- Generators -->
 <script src="js/generators/structured_text/logic.js"></script>
@@ -521,11 +676,11 @@
 <script src="js/generators/structured_text/conversions.js"></script>
 <script src="js/generators/structured_text/time_date.js"></script>
 <script src="js/generators/structured_text/function_blocks.js"></script>
-
+<script src="js/generators/structured_text/configration.js"></script>
 
 <!-- Editor logic -->
 <script src="js/xml_exporter.js"></script>
-<script src="js/editor.js"></script>
+<script src="js/editor/base.js"></script>
 
 
 </body>

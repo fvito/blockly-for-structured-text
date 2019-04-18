@@ -134,38 +134,285 @@ Blockly.ST.finish = function (code) {
     return code;
 };
 
-Blockly.ST.variablesToCode = function (workspace) {
-    var variables = Blockly.Variables.allUsedVarModels(Blockly.mainWorkspace);
-    var variablesCode = [];
-    if (variables.length > 0) {
-        variables.forEach((e) => {
-            var variable = e.name;
-            if (e.address !== '') {
-                variable += " AT " + e.address;
-            }
-            variable += " : " + e.type;
-            if (e.initValue !== '') {
-                variable += " := " + e.initValue;
-            }
-            variable += ";";
-            variablesCode.push(variable);
-        });
-    }
-    return variablesCode.join("\n\t");
+Blockly.ST.variablesToCodeWorkspace = function (workspace) {
+    let variables = Blockly.Variables.allUsedVarModels(workspace);
+    var functionBlocks = Blockly.FunctionBlocks.allFunctionBlocks(workspace);
+    return Blockly.ST.variablesToCode(variables, functionBlocks);
 };
 
-Blockly.ST.functionBlocksToCode = function (workspace) {
+Blockly.ST.variablesToCode = function (variables, functionBlocks) {
+    let code = '';
+    let variablesCode = [];
+    let addressVariablesCode = [];
+    if (variables.length > 0) {
+        variables.forEach((e) => {
+            if (e.address === '') {
+                variablesCode.push(Blockly.ST.variableToCode(e));
+            } else {
+                addressVariablesCode.push(Blockly.ST.variableToCode(e));
+            }
+        });
+    }
+
+    if (addressVariablesCode.length > 0) {
+        code += 'VAR\n\t' + addressVariablesCode.join("\n\t") + "\nEND_VAR\n";
+    }
+    if (variables.length > 0) {
+        code += 'VAR\n\t' + variablesCode.join("\n\t") + "\n\t" + Blockly.ST.functionBlocksToCode(functionBlocks) + "\nEND_VAR\n";
+    }
+    return code;
+};
+
+Blockly.ST.variableToCode = function (variable) {
+    var code = variable.name;
+    if (variable.address !== '') {
+        code += " AT " + variable.address;
+    }
+    code += " : " + variable.type;
+    if (variable.initValue !== '') {
+        code += " := " + variable.initValue;
+    }
+    code += ";";
+    return code;
+};
+
+Blockly.ST.functionBlocksToCode = function (functionBlocks) {
     var code = [];
-    var functionBlocks = Blockly.FunctionBlocks.allFunctionBlocks(workspace);
     functionBlocks.forEach((block) => {
-        code.push(block.name+" : "+block.type+";");
+        code.push(block.name + " : " + block.type + ";");
     });
     return code.join("\n\t");
 };
 
+/**
+ *
+ * @param {Editor.Project} project
+ * @returns {string}
+ */
+Blockly.ST.projectToCode = function (project) {
+    console.log("----------------------------------------");
+    var completeCode = '(* Auto generated *)\n';
+    completeCode += `(* Project: ${project.name} *)\n`;
+    var compiled = [];
+    for (var funcBlock of project.getAllFunctionBlocks(true)) {
+        // skip over already compiled function blocks
+        if (compiled[funcBlock.name]) {
+            continue;
+        }
+        // compile the working item
+        completeCode += Blockly.ST.functionBlockToCode(funcBlock, project, compiled) + "\n\n";
+        compiled[funcBlock.name] = true;
+    }
+
+    for (var func of project.getAllFunctions(true)) {
+        // skip over already compiled functions
+        if (compiled[func.name]) {
+            continue;
+        }
+
+        //compile the actual item
+        completeCode += Blockly.ST.functionToCode(func, project, compiled) + "\n\n";
+        compiled[func.name] = true;
+    }
+
+    for (var program of project.programs_) {
+        completeCode += Blockly.ST.programToCode(program) + "\n\n";
+    }
+
+    completeCode += Blockly.ST.configurationToCode(project.configuration);
+    console.log("----------------------------------------");
+    return completeCode;
+};
+
+Blockly.ST.functionToCode = function (func, project, compiledList) {
+    var completeCode = '';
+    console.log('started compiling function: ' + func.name);
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(func.workspace, ws);
+    let allDependencies = Blockly.ST.getAllBlocksOfTypes(ws, ['procedures_callnoreturn', 'procedures_callreturn']);
+    for (let block of allDependencies) {
+        let name = block.getFieldValue('NAME');
+        // skip already compiled dependencies
+        if (compiledList[name]) {
+            console.log(`dependency ${name} already compiled, skipping`);
+            continue;
+        }
+        console.log('found dependency ' + name);
+        let dependencyFunc = project.getFunctionByName(name);
+        let def = project.getFunctionDef(dependencyFunc, true);
+
+        //compile the dependency before the actual item
+        completeCode += this.functionToCode(def, project, compiledList) + "\n";
+        compiledList[def.name] = true;
+        console.log(`dependency ${name} compiled!`);
+    }
+
+    //compile the actual item
+    completeCode += Blockly.ST.functionToCode_(func) + "\n\n";
+    compiledList[func.name] = true;
+    console.log('finished compiling function: ' + func.name);
+    return completeCode;
+};
+
+Blockly.ST.functionBlockToCode = function (funcBlock, project, compiledList) {
+    var completeCode = '';
+    console.log('started compiling function block: ' + funcBlock.name);
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(funcBlock.workspace, ws);
+
+    // get all function calls, function blocks
+    let allDependencies = Blockly.ST.getAllBlocksOfTypes(ws, ['procedures_callnoreturn', 'procedures_callreturn', 'function_block_call']);
+    for (let block of allDependencies) {
+        let type = block.type;
+        let name = block.getFieldValue('NAME');
+        if (compiledList[name]) {
+            console.log(`dependency ${name} already compiled, skipping`);
+            // already compiled, skip it
+            continue;
+        }
+        console.log('found dependency ' + name);
+        if (type === 'function_block_call') {
+            // function block dependency
+            let block = project.getFunctionBlockByName(name);
+            let def = project.getFunctionBlockDef(block, true);
+
+            // compile the dependency before the actual item
+            completeCode += "\n" + this.functionBlockToCode(def, project, compiledList) + "\n\n";
+            compiledList[def.name] = true;
+            console.log(`dependency ${name} compiled!`);
+        }
+        else if (type === 'procedures_callnoreturn' || type === 'procedures_callreturn') {
+            // function dependency
+            let func = project.getFunctionByName(name);
+            let def = project.getFunctionDef(func, true);
+
+            // compile the dependency before the actual item
+            completeCode += "\n" + this.functionToCode(def, project, compiledList) + "\n\n";
+            compiledList[def.name] = true;
+            console.log(`dependency ${name} compiled!`);
+        }
+    }
+    completeCode += Blockly.ST.functionBlockToCode_(funcBlock) + "\n\n";
+    compiledList[funcBlock.name] = true;
+    console.log('finished compiling function block: ' + funcBlock.name);
+    return completeCode;
+};
+
+/**
+ *
+ * @param  program
+ * @returns {string}
+ */
+Blockly.ST.programToCode = function (program) {
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(program.getWorkspaceDom(), ws);
+
+    var code = this.workspaceToCode(ws);
+    var variables = this.variablesToCodeWorkspace(ws);
+
+    code = variables + "\n" + code;
+    code = 'PROGRAM ' + program.name + '\n' + code + '\nEND_PROGRAM';
+    return code;
+
+};
+
+/**
+ *
+ * @param  func
+ * @returns {string}
+ */
+Blockly.ST.functionToCode_ = function (func) {
+    var filter = [];
+    var code = 'FUNCTION ' + func.name + " : " + func.return_type + "\n";
+    if (func.args.length > 0) {
+        code += "VAR_INPUT\n";
+        for (var input of func.args.filter(i => i.is_reference === 'FALSE')) {
+            filter.push(input.variable.getId());
+            code += "\t" + Blockly.ST.variableToCode(input.variable);
+        }
+        code += "END_VAR\n";
+    }
+
+    let references = func.args.filter(i => i.is_reference === 'TRUE');
+    if (references.length > 0) {
+        code += "VAR_IN_OUT\n";
+        for (var ref of references) {
+            filter.push(ref.variable.getId());
+            code += "\t" + Blockly.ST.variableToCode(ref.variable);
+        }
+        code += "END_VAR\n";
+    }
+
+
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(func.workspace, ws);
+    let variables = Blockly.Variables.allUsedVarModels(ws).filter(i => !filter.includes(i.getId()));
+    let functionBlocks = Blockly.FunctionBlocks.allFunctionBlocks(ws);
+    if (variables.length > 0) {
+        code += Blockly.ST.variablesToCode(variables, functionBlocks)
+    }
+    code += Blockly.ST.workspaceToCode(ws) + "\n";
+    code += "END_FUNCTION\n";
+    return code;
+};
+
+/**
+ *
+ * @param  funcBlock
+ * @returns {string}
+ */
+Blockly.ST.functionBlockToCode_ = function (funcBlock) {
+    let code = 'FUNCTION_BLOCK ' + funcBlock.name + "\n";
+    let filter = [];
+    if (funcBlock.inputs.length > 0) {
+        code += "VAR_INPUT\n";
+        for (var input of funcBlock.inputs) {
+            filter.push(input.variable.getId());
+            code += "\t" + Blockly.ST.variableToCode(input.variable) + "\n";
+        }
+        code += "END_VAR\n";
+    }
+
+    if (funcBlock.outputs.length > 0) {
+        code += "VAR_OUTPUT\n";
+        for (var output of funcBlock.outputs) {
+            filter.push(output.getId());
+            code += "\t" + Blockly.ST.variableToCode(output) + "\n";
+        }
+        code += "END_VAR\n";
+    }
+
+    let ws = new Blockly.Workspace();
+    Blockly.Xml.domToWorkspace(funcBlock.workspace, ws);
+    let variables = Blockly.Variables.allUsedVarModels(ws).filter(i => !filter.includes(i.getId()));
+    let functionBlocks = Blockly.FunctionBlocks.allFunctionBlocks(ws);
+    if (variables.length > 0) {
+        code += Blockly.ST.variablesToCode(variables, functionBlocks);
+    }
+
+    code += Blockly.ST.workspaceToCode(ws);
+    code += "END_FUNCTION_BLOCK";
+    return code;
+};
+
+Blockly.ST.configurationToCode = function (configuration) {
+    var config = "\nCONFIGURATION Config0\n" +
+        "\tRESOURCE Res0 ON PLC\n";
+    let ws = new Blockly.Workspace();
+    for (let task of configuration.getAllTasks()) {
+        ws.clear();
+        Blockly.Xml.domToWorkspace(task.getWorkspaceDom(), ws);
+        config += Blockly.ST.workspaceToCode(ws);
+    }
+    config += "\tEND_RESOURCE\n" +
+        "END_CONFIGURATION";
+
+    return config;
+};
+
 Blockly.ST.fullOutput = function (workspace) {
     var code = this.workspaceToCode(workspace);
-    var variables = this.variablesToCode(workspace);
+    var variables = this.variablesToCodeWorkspace(workspace);
     var functionBlocks = this.functionBlocksToCode(workspace);
 
     code = "VAR\n\t" + variables + "\n\t" + functionBlocks + "\nEND_VAR;\n" + code;
@@ -209,13 +456,19 @@ Blockly.ST.scrub_ = function (block, code) {
         var comment = block.getCommentText();
         comment = Blockly.utils.wrap(comment, Blockly.ST.COMMENT_WRAP - 3);
         if (comment) {
-            if (block.getProcedureDef) {
+            commentCode += Blockly.ST.prefixLines(comment, '(* ');
+            commentCode = commentCode + ' *)\n';
+            /*if (block.getProcedureDef) {
                 // Use documentation comment for function comments.
-                commentCode += Blockly.ST.prefixLines(comment + '\n', '/// ');
+                commentCode += Blockly.ST.prefixLines(comment, '{ ');
+                commentCode = commentCode+' }';
             } else {
-                commentCode += Blockly.ST.prefixLines(comment + '\n', '// ');
+                commentCode += Blockly.ST.prefixLines(comment, '(* ');
+                commentCode = commentCode + ' *)';
             }
+            */
         }
+
         // Collect comments for all value arguments.
         // Don't collect comments for nested statements.
         for (var i = 0; i < block.inputList.length; i++) {
@@ -233,6 +486,16 @@ Blockly.ST.scrub_ = function (block, code) {
     var nextBlock = block.nextConnection && block.nextConnection.targetBlock();
     var nextCode = Blockly.ST.blockToCode(nextBlock);
     return commentCode + code + nextCode;
+};
+
+Blockly.ST.getAllBlocksOfTypes = function (workspace, types) {
+    var blocks = [];
+    for (var block of workspace.getAllBlocks(true)) {
+        if (types.includes(block.type)) {
+            blocks.push(block);
+        }
+    }
+    return blocks;
 };
 
 
