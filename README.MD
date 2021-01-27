@@ -1,5 +1,7 @@
 # Blockly for Structured Text
 
+*Warning* This is software was made for EDUCATIONAL/RESEARCH purpose only. **Do not** use in production environments. Support is limited
+
 This repository contains the source code of my master's thesis, Blockly language for programming PLC controllers.
 The goal of the thesis was to develop a new Blockly based visual programing language that allows programing PLC controllers through Structured Text code generation.
 To do so, some extra libraries were used and some of the Blockly source code was modified.
